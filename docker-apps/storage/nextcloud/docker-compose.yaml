@@ -5,7 +5,7 @@ networks:
 
 services:
   nextcloud-mariadb:
-    image: mariadb:10.11
+    image: mariadb:11.7
     container_name: nextcloud-mariadb
     command: --transaction-isolation=READ-COMMITTED
     volumes:
