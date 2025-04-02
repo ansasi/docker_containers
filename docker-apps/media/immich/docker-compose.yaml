@@ -71,7 +71,7 @@ services:
 
   immich-redis:
     container_name: immich_redis
-    image: docker.io/redis:6.2-alpine
+    image: docker.io/redis:7.4-alpine
     healthcheck:
       test: redis-cli ping || exit 1
     networks:
