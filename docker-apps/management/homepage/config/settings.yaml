@@ -1,0 +1,58 @@
+---
+title: Homepage
+headerStyle: boxed
+
+background: 
+  image: https://images.unsplash.com/photo-1637825891028-564f672aa42c
+  blur: 3xl
+  saturate: 20
+  brightness: 90
+  opacity: 40
+
+theme: dark
+
+color: slate
+
+# cardBlur: md
+
+language: en
+
+providers:
+  openweathermap: openweathermapapikey
+  weatherapi: weatherapiapikey
+
+# useEqualHeights: true
+
+layout:
+  Networking:
+    icon: pi-hole.svg
+    columns: 4
+  Management:
+    icon: portainer.svg
+    columns: 4
+  Monitoring:
+    icon: prometheus.svg
+    columns: 4
+  Storage:
+    icon: qnap.svg
+    columns: 4
+  AI:
+    icon: chatgpt.svg
+    columns: 4
+  Automation:
+    icon: home-assistant.svg
+    columns: 4
+  Media:
+    icon: plex.svg
+    columns: 4
+  Torrent:
+    icon: si-bittorrent
+    # initiallyCollapsed: true
+    columns: 4
+
+quicklaunch:
+  searchDescriptions: true
+  hideInternetSearch: true
+  showSearchSuggestions: true
+  hideVisitURL: true
+  provider: duckduckgo # google, duckduckgo, bing, baidu, brave or custom

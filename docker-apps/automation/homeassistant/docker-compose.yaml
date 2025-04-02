@@ -1,0 +1,58 @@
+---
+volumes:
+  homeassistant-db-data:
+    driver: local
+
+networks:
+  proxy:
+    external: true
+  home-assistant:
+    driver: bridge
+
+services:
+  homeassistant:
+    container_name: homeassistant
+    image: "ghcr.io/home-assistant/home-assistant:stable"
+    environment:
+      TZ: Europe/Madrid
+    volumes:
+      - .config:/config
+      - /etc/localtime:/etc/localtime:ro
+    privileged: true
+    ports:
+     - 8123:8123
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.home-assistant-https.entrypoints=websecure
+      - traefik.http.routers.home-assistant-https.rule=Host(`home-assistant.${DOMAIN}`)
+      - traefik.http.routers.home-assistant-https.tls=true
+      - traefik.http.routers.home-assistant-https.tls.certresolver=cloudflare
+      - traefik.http.routers.home-assistant-https.service=home-assistant
+      - traefik.http.services.home-assistant.loadbalancer.server.port=8123
+      - traefik.http.services.home-assistant.loadbalancer.server.scheme=http
+    networks:
+      home-assistant:
+      proxy:
+    restart: unless-stopped
+    depends_on:
+      - homeassistant-db
+    security_opt:
+      - no-new-privileges:true
+
+  homeassistant-db:
+    image: docker.io/postgres:16.8
+    container_name: homeassistant-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: '${HOMEASSISTANT_PG_USER}'
+      POSTGRES_PASSWORD: '${HOMEASSISTANT_PG_PASSWORD}' # TODO: Change this password
+      POSTGRES_DB: 'homeassistant-db'
+      # ensure the database gets created correctly
+      # https://github.com/matrix-org/synapse/blob/master/docs/postgres.md#set-up-database
+      POSTGRES_INITDB_ARGS: '--encoding=UTF-8'
+    volumes:
+      - homeassistant-db-data:/var/lib/postgresql/data
+    networks:
+      home-assistant:
+    security_opt:
+      - no-new-privileges:true

@@ -1,0 +1,41 @@
+---
+networks:
+  proxy:
+    external: true
+
+services:
+  traefik:
+    image: traefik:v3
+    container_name: traefik
+    ports:
+      - "80:80"
+      - "443:443"
+    environment:
+      CF_DNS_API_TOKEN: '${CF_DNS_API_TOKEN}'
+      CF_API_EMAIL: '${CF_API_EMAIL}'
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - ./traefik-config/traefik.yaml:/etc/traefik/traefik.yaml:ro
+      - /home/docker/docker_apps/traefik/certs:/etc/traefik/certs/
+    networks:
+      - proxy
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.traefik.entrypoints=web" # restricts dashboard to internal entrypoint
+      - "traefik.http.routers.traefik.rule=Host(`traefik-dashboard.${DOMAIN}`)"
+      - "traefik.http.routers.traefik.tls=true"
+      # TODO: Add authentication
+      # - "traefik.http.middlewares.traefik-auth.basicauth.users=admin:$$apr1$$nEtRnmaw$$ZR1MFB6/9sgKpoT7793nb0"
+      # - "traefik.http.routers.traefik-secure.middlewares=traefik-auth"
+      - "traefik.http.middlewares.traefik-https-redirect.redirectscheme.scheme=https"
+      - "traefik.http.middlewares.sslheader.headers.customrequestheaders.X-Forwarded-Proto=https"
+      - "traefik.http.routers.traefik.middlewares=traefik-https-redirect"
+      - "traefik.http.routers.traefik-secure.entrypoints=websecure"
+      - "traefik.http.routers.traefik-secure.rule=Host(`traefik-dashboard.${DOMAIN}`)"
+      - "traefik.http.routers.traefik-secure.tls=true"
+      - "traefik.http.routers.traefik-secure.tls.certresolver=cloudflare"
+      - "traefik.http.routers.traefik-secure.tls.domains[0].main=${DOMAIN}" # if you use the .home.yourdomain.co.uk entry you have to change the [0] into [1]
+      - "traefik.http.routers.traefik-secure.tls.domains[0].sans=*.${DOMAIN}" # same here, change 0 to 1
+      - "traefik.http.routers.traefik-secure.service=api@internal"
+    restart: unless-stopped

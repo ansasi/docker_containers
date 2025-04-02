@@ -1,0 +1,60 @@
+---
+networks:
+  proxy:
+    external: true
+
+services:
+  plex:
+    image: lscr.io/linuxserver/plex:latest
+    container_name: plex
+    environment:
+      PGID: "${PGID:-1000}"
+      PUID: "${PUID:-1000}"
+      VERSION: docker
+      LOG_LEVEL: "debug"
+      TZ: "Etc/UTC"
+    volumes:
+      - "${MEDIA_ARRS_FOLDER:-/media}/library/tv:/media/TV"
+      - "${MEDIA_ARRS_FOLDER:-/media}/library/movies:/media/movies"
+      - "${MEDIA_ARRS_FOLDER:-/media}/library/music:/media/music"
+      - "${MEDIA_ARRS_FOLDER:-/media}/library/pictures:/media/pictures"
+      - "${MEDIA_ARRS_FOLDER:-/media}/library/books:/media/books"
+      - /home/docker/docker_apps/plex/config:/config
+    networks:
+      - proxy
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.plex.entrypoints=web
+      - traefik.http.routers.plex.rule=Host(`plex.${DOMAIN}`)
+      - traefik.http.routers.plex-secure.entrypoints=websecure
+      - traefik.http.routers.plex-secure.rule=Host(`plex.${DOMAIN}`)
+      - traefik.http.routers.plex-secure.tls=true
+      - traefik.http.routers.plex-secure.tls.certresolver=cloudflare
+      - traefik.http.services.plex.loadbalancer.server.port=32400
+    restart: unless-stopped
+
+  jellyseerr-plex:
+    image: fallenbagel/jellyseerr:latest
+    container_name: jellyseerr-plex
+    environment:
+      PGID: "${PGID:-1000}"
+      PUID: "${PUID:-1000}"
+      UMASK: "002"
+      LOG_LEVEL: "debug"
+      TZ: "Etc/UTC"
+    volumes:
+      - /home/docker/docker_apps/jellyseerr-plex/config:/app/config
+    # ports:
+    #   - 8111:5055
+    networks:
+      - proxy
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.jellyseerr-plex.entrypoints=web
+      - traefik.http.routers.jellyseerr-plex.rule=Host(`jellyseerr-plex.${DOMAIN}`)
+      - traefik.http.routers.jellyseerr-plex-secure.entrypoints=websecure
+      - traefik.http.routers.jellyseerr-plex-secure.rule=Host(`jellyseerr-plex.${DOMAIN}`)
+      - traefik.http.routers.jellyseerr-plex-secure.tls=true
+      - traefik.http.routers.jellyseerr-plex-secure.tls.certresolver=cloudflare
+      - traefik.http.services.jellyseerr-plex.loadbalancer.server.port=5055
+    restart: unless-stopped

@@ -1,0 +1,80 @@
+networks:
+  grafana-monitoring:
+    driver: bridge
+  proxy:
+    external: true
+
+services:
+  # TODO: Add services:
+  # - Loki
+  # - Promtail
+  # - InfluxDB
+  # - Telegraf
+  # - Graphite
+
+# --- Grafana Image
+  grafana:
+    image: grafana/grafana
+    container_name: grafana
+    volumes:
+      - /home/docker/docker_apps/grafana:/var/lib/grafana
+    networks:
+      - grafana-monitoring
+      - proxy
+    ports:
+      # Web Interface (using traefik)
+      - "8164:3000"
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.grafana.entrypoints=web
+      - traefik.http.routers.grafana.rule=Host(`grafana.${DOMAIN}`)
+      - traefik.http.middlewares.grafana-https-redirect.redirectscheme.scheme=https
+      - traefik.http.routers.grafana.middlewares=grafana-https-redirect
+      - traefik.http.routers.grafana-websecure.entrypoints=websecure
+      - traefik.http.routers.grafana-websecure.rule=Host(`grafana.${DOMAIN}`)
+      - traefik.http.routers.grafana-websecure.tls=true
+      - traefik.http.routers.grafana-websecure.tls.certresolver=cloudflare
+      - traefik.http.routers.grafana-websecure.service=grafana
+      - traefik.http.services.grafana.loadbalancer.server.port=3000
+    restart: unless-stopped
+
+# --- Prometheus Image
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: prometheus
+    command:
+      - '--config.file=/etc/config/prometheus.yml'
+      - '--storage.tsdb.retention.time=7d'
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./config/prometheus.yml:/etc/config/prometheus.yml:ro
+      - /home/docker/docker_apps/prometheus:/prometheus
+    networks:
+      - grafana-monitoring
+      - proxy
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.prometheus.entrypoints=web
+      - traefik.http.routers.prometheus.rule=Host(`prometheus.${DOMAIN}`)
+      - traefik.http.middlewares.prometheus-https-redirect.redirectscheme.scheme=https
+      - traefik.http.routers.prometheus.middlewares=prometheus-https-redirect
+      - traefik.http.routers.prometheus-websecure.entrypoints=websecure
+      - traefik.http.routers.prometheus-websecure.rule=Host(`prometheus.${DOMAIN}`)
+      - traefik.http.routers.prometheus-websecure.tls=true
+      - traefik.http.routers.prometheus-websecure.tls.certresolver=cloudflare
+      - traefik.http.routers.prometheus-websecure.service=prometheus
+      - traefik.http.services.prometheus.loadbalancer.server.port=9090
+    restart: unless-stopped
+
+  node_exporter:
+    image: quay.io/prometheus/node-exporter:latest
+    container_name: node_exporter
+    command:
+      - '--path.rootfs=/host'
+    networks:
+      - grafana-monitoring
+    pid: host
+    restart: unless-stopped
+    volumes:
+      - '/:/host:ro,rslave'
