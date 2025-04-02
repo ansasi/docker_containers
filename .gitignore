@@ -1,0 +1,30 @@
+*.env
+# Traefik
+docker-apps/networking/traefik/certs/*
+
+# Home Assistant
+docker-apps/automation/homeassistant/config/*
+!docker-apps/automation/homeassistant/config/configuration.yaml
+!docker-apps/automation/homeassistant/config/automations.yaml
+!docker-apps/automation/homeassistant/config/groups.yaml
+!docker-apps/automation/homeassistant/config/scripts.yaml
+!docker-apps/automation/homeassistant/config/scenes.yaml
+!docker-apps/automation/homeassistant/config/sensors.yaml
+!docker-apps/automation/homeassistant/config/switches.yaml
+
+# Pihole
+docker-apps/networking/pihole/pihole/etc-pihole/*
+docker-apps/networking/pihole/pihole/etc-dnsmasq.d/*
+!docker-apps/networking/pihole/pihole/etc-pihole/pihole.toml
+
+# Authentik
+docker-apps/security/authentik/*
+!docker-apps/security/authentik/docker-compose.yaml
+!docker-apps/security/authentik/README.md
+docker-apps/monitoring/monitoring/*
+
+.vscode
+*.log
+
+# TODO: Remove this line later
+ansible/inventory/group_vars/all.yml
