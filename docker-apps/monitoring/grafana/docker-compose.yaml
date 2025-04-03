@@ -1,6 +1,5 @@
 networks:
   grafana-monitoring:
-    driver: bridge
   proxy:
     external: true
 
@@ -26,6 +25,7 @@ services:
       - "8164:3000"
     labels:
       - traefik.enable=true
+      - traefik.docker.network=proxy
       - traefik.http.routers.grafana.entrypoints=web
       - traefik.http.routers.grafana.rule=Host(`grafana.${DOMAIN}`)
       - traefik.http.middlewares.grafana-https-redirect.redirectscheme.scheme=https
@@ -55,6 +55,7 @@ services:
       - proxy
     labels:
       - traefik.enable=true
+      - traefik.docker.network=proxy
       - traefik.http.routers.prometheus.entrypoints=web
       - traefik.http.routers.prometheus.rule=Host(`prometheus.${DOMAIN}`)
       - traefik.http.middlewares.prometheus-https-redirect.redirectscheme.scheme=https

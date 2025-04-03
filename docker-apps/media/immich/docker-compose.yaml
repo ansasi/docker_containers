@@ -32,6 +32,7 @@ services:
       DB_HOSTNAME: immich-db
     labels:
       - traefik.enable=true
+      - traefik.docker.network=proxy
       - traefik.http.routers.immich.entrypoints=web
       - traefik.http.routers.immich.rule=Host(`immich.${DOMAIN}`)
       - traefik.http.routers.immich-secure.entrypoints=websecure
