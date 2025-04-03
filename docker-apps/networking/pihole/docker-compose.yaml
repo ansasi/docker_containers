@@ -48,8 +48,8 @@ services:
       FTLCONF_dns_listeningMode: 'all'
       FTLCONF_dns_upstreams: '172.70.9.2#5053'
     volumes:
-      - /home/docker/docker_apps/pihole/etc-pihole:/etc/pihole
-      - /home/docker/docker_apps/pihole/etc-dnsmasq.d:/etc/dnsmasq.d
+      - ${WORKDIR}/etc-pihole:/etc/pihole
+      - ${WORKDIR}/etc-dnsmasq.d:/etc/dnsmasq.d
     # cap_add:
     #   # Required if you are using Pi-hole as your DHCP server, else not needed
     #   # See Note On Capabilities below
