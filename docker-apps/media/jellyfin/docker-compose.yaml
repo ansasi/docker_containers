@@ -2,18 +2,14 @@ networks:
   proxy:
     external: true
 
-volumes:
-  jellyfin:
-  jellyseerr-jellyfin:
-
 services:
   # Jellyfin Image - Media Library / Player - Used to play the media content
   jellyfin:
     container_name: jellyfin
     image: jellyfin/jellyfin:latest
     environment:
-      PGID: "${PGID:-1000}"
-      PUID: "${PUID:-1000}"
+      PGID: "${PGID}"
+      PUID: "${PUID}"
       UMASK: "002"
       TZ: "Etc/UTC"
     volumes:
@@ -22,7 +18,7 @@ services:
       - "${MEDIA_ARRS_FOLDER:-/media}/library/music:/media/music"
       - "${MEDIA_ARRS_FOLDER:-/media}/library/pictures:/media/pictures"
       - "${MEDIA_ARRS_FOLDER:-/media}/library/books:/media/books"
-      - jellyfin/config:/config
+      - "${WORKDIR}/config:/config"
       # - /dev/shm:/transcode
     # ports:
     #   - 8096:8096
@@ -51,7 +47,7 @@ services:
       LOG_LEVEL: "debug"
       TZ: "Etc/UTC"
     volumes:
-      - jellyseerr-jellyfin/config:/app/config
+      - ${WORKDIR}/jellyseerr/config:/app/config
     # ports:
     #   - 8111:5055
     networks:
