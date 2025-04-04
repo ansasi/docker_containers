@@ -3,6 +3,9 @@ networks:
   proxy:
     external: true
 
+volumes:
+  prometheus:
+    
 services:
   # TODO: Add services:
   # - Loki
@@ -16,7 +19,7 @@ services:
     image: grafana/grafana
     container_name: grafana
     volumes:
-      - /home/docker/docker_apps/grafana:/var/lib/grafana
+      - ${WORKDIR}:/var/lib/grafana
     networks:
       - grafana-monitoring
       - proxy
@@ -49,7 +52,7 @@ services:
       - "9090:9090"
     volumes:
       - ./config/prometheus.yml:/etc/config/prometheus.yml:ro
-      - /home/docker/docker_apps/prometheus:/prometheus
+      - prometheus:/prometheus
     networks:
       - grafana-monitoring
       - proxy
