@@ -3,13 +3,16 @@ networks:
     external: true
   nextcloud:
 
+volumes:
+  nextcloud:
+
 services:
   nextcloud-mariadb:
     image: mariadb:10.11
     container_name: nextcloud-mariadb
     command: --transaction-isolation=READ-COMMITTED
     volumes:
-      - /home/docker/docker_apps/nextcloud-mariadb:/var/lib/mysql
+      - ${WORKDIR}/nextcloud-mariadb:/var/lib/mysql
     environment:
       MYSQL_ROOT_PASSWORD: '${NEXTCLOUD_DB_ROOT_PASSWORD}'
       MYSQL_PASSWORD: '${NEXTCLOUD_DB_PASSWORD}'
@@ -38,7 +41,7 @@ services:
       NEXTCLOUD_ADMIN_PASSWORD: '${NEXTCLOUD_ADMIN_PASSWORD}'
       NEXTCLOUD_TRUSTED_DOMAINS: '${DOMAIN}'
     volumes:
-      - /home/docker/docker_apps/nextcloud:/var/www/html
+      - nextcloud:/var/www/html
     # ports:
     #   - 8082:80
     labels:
