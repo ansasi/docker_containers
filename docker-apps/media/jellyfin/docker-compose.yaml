@@ -30,6 +30,7 @@ services:
       - proxy
     labels:
       - traefik.enable=true
+      - traefik.docker.network=proxy
       - traefik.http.routers.jellyfin.entrypoints=web
       - traefik.http.routers.jellyfin.rule=Host(`jellyfin.${DOMAIN}`)
       - traefik.http.routers.jellyfin-secure.entrypoints=websecure
@@ -57,6 +58,7 @@ services:
       - proxy
     labels:
       - traefik.enable=true
+      - traefik.docker.network=proxy
       - traefik.http.routers.jellyseerr-jellyfin.entrypoints=web
       - traefik.http.routers.jellyseerr-jellyfin.rule=Host(`jellyseerr-jellyfin.${DOMAIN}`)
       - traefik.http.routers.jellyseerr-jellyfin-secure.entrypoints=websecure

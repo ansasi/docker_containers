@@ -49,44 +49,11 @@ services:
       - frontend
     labels:
       - "traefik.enable=true"
+      - traefik.docker.network=proxy
       - "traefik.http.routers.portainer.entrypoints=websecure"
       - "traefik.http.routers.portainer.rule=Host(`portainer.${DOMAIN}`)"
       - "traefik.http.routers.portainer.tls=true"
       - "traefik.http.routers.portainer.tls.certresolver=cloudflare"
       - "traefik.http.services.portainer.loadbalancer.server.port=9000"
-    restart: unless-stopped
-```
-
-### Grafana
-
-```yaml
-
----
-networks:
-  frontend:
-    external: true
-
-volumes:
-  grafana-data:
-    driver: local
-
-services:
-  grafana:
-    image: grafana/grafana
-    container_name: grafana
-    environment:
-      - GF_SECURITY_ADMIN_PASSWORD=admin  # TODO: Replace with a secure password
-    volumes:
-      - grafana-data:/var/lib/grafana
-    networks:
-      - frontend
-    labels:
-      - traefik.enable=true
-      - traefik.http.routers.grafana-http.entrypoints=web
-      - traefik.http.routers.grafana-http.rule=Host(`grafana.${DOMAIN}`)
-      - traefik.http.routers.grafana-https.entrypoints=websecure
-      - traefik.http.routers.grafana-https.rule=Host(`grafana.${DOMAIN}`)
-      - traefik.http.routers.grafana-https.tls=true
-      - traefik.http.routers.grafana-https.tls.certresolver=cloudflare
     restart: unless-stopped
 ```

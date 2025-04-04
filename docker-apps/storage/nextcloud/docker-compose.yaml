@@ -42,8 +42,8 @@ services:
     # ports:
     #   - 8082:80
     labels:
-      - traefik.docker.network=proxy
       - traefik.enable=true
+      - traefik.docker.network=proxy
       - traefik.http.routers.nextcloud.entrypoints=web
       - traefik.http.routers.nextcloud.rule=Host(`nextcloud.${DOMAIN}`)
       - traefik.http.middlewares.nextcloud-https-redirect.redirectscheme.scheme=https

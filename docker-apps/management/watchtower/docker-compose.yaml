@@ -37,6 +37,7 @@ services:
       - watchtower
     # labels:
     #   - traefik.enable=true
+    #   - traefik.docker.network=proxy
     #   - traefik.http.routers.watchtower.entrypoints=web
     #   - traefik.http.routers.watchtower.rule=Host(`watchtower.${DOMAIN}`)
     #   - traefik.http.routers.watchtower-secure.entrypoints=websecure

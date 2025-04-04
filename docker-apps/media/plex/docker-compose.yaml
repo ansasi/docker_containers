@@ -24,6 +24,7 @@ services:
       - proxy
     labels:
       - traefik.enable=true
+      - traefik.docker.network=proxy
       - traefik.http.routers.plex.entrypoints=web
       - traefik.http.routers.plex.rule=Host(`plex.${DOMAIN}`)
       - traefik.http.routers.plex-secure.entrypoints=websecure
@@ -50,6 +51,7 @@ services:
       - proxy
     labels:
       - traefik.enable=true
+      - traefik.docker.network=proxy
       - traefik.http.routers.jellyseerr-plex.entrypoints=web
       - traefik.http.routers.jellyseerr-plex.rule=Host(`jellyseerr-plex.${DOMAIN}`)
       - traefik.http.routers.jellyseerr-plex-secure.entrypoints=websecure

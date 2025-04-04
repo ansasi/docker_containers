@@ -24,6 +24,7 @@ services:
     #           capabilities: [gpu]
     labels:
       - traefik.enable=true
+      - traefik.docker.network=proxy
       - traefik.http.routers.ollama.entrypoints=web
       - traefik.http.routers.ollama.rule=Host(`ollama.${DOMAIN}`)
       - traefik.http.routers.ollama-secure.entrypoints=websecure

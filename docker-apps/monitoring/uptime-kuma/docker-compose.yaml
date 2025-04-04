@@ -16,6 +16,7 @@ services:
     restart: unless-stopped
     labels:
       - traefik.enable=true
+      - traefik.docker.network=proxy
       - traefik.http.routers.uptimekuma.entrypoints=web
       - traefik.http.routers.uptimekuma.rule=Host(`uptimekuma.${DOMAIN}`)
       - traefik.http.middlewares.uptimekuma-https-redirect.redirectscheme.scheme=https

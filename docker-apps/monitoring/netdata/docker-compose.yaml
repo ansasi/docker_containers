@@ -24,6 +24,7 @@ services:
       - proxy
     labels:
       - traefik.enable=true
+      - traefik.docker.network=proxy
       - traefik.http.routers.netdata.entrypoints=web
       - traefik.http.routers.netdata.rule=Host(`netdata.${DOMAIN}`)
       - traefik.http.routers.netdata-secure.entrypoints=websecure
