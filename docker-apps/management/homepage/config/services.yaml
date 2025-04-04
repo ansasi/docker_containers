@@ -9,13 +9,13 @@
             type: fritzbox
             url: http://192.168.178.1
     - PiHole:
-        href: http://192.168.178.25/admin # https://pihole.sheetgenius.app
+        href: http://pihole.local/admin # https://pihole.sheetgenius.app
         icon: pi-hole.svg
         description: pihole-prod-1 on rpi-nico-small
         container: pihole
         widget:
             type: pihole
-            url: http://192.168.178.25 # https://pihole.sheetgenius.app
+            url: http://pihole.local # https://pihole.sheetgenius.app
             version: 6
             key: '{{HOMEPAGE_VAR_PIHOLE_KEY}}'
     # - Wireguard:
