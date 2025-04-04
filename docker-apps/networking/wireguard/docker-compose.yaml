@@ -10,7 +10,7 @@ services:
         WG_HOST: '${DOMAIN}'
         PASSWORD_HASH: '${WIREGUARD_PW}'
       volumes:
-        - /home/docker/docker_apps/wg-easy/etc_wireguard:/etc/wireguard
+        - ${WORKDIR}/etc:/etc/wireguard
       ports:
         - "51820:51820/udp"
         # - "51821:51821/tcp" # Uncomment if you want to use the web interface
