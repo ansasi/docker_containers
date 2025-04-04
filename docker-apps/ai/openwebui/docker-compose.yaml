@@ -3,9 +3,6 @@ networks:
   proxy:
     external: true
 
-volumes:
-  open-webui:
-
 services:
   openwebui:
     container_name: openwebui
@@ -19,14 +16,15 @@ services:
     #           count: all
     #           capabilities: [gpu]
     environment:
-      OLLAMA_BASE_URL: ${OLLAMA_DOMAIN-http://ollama:11434}
-      WEBUI_URL: ${DOMAIN-http://localhost:3003}
+      OLLAMA_BASE_URL: ${OLLAMA_DOMAIN:-http://ollama:11434}
+      WEBUI_URL: http://localhost:3003 # openwebui.${DOMAIN}
     volumes:
-      - open-webui:/app/backend/data
+      - ${WORKDIR}:/app/backend/data
     ports:
       - ${OPEN_WEBUI_PORT-3003}:8080
     labels:
       - traefik.enable=true
+      - traefik.docker.network=proxy
       - traefik.http.routers.openwebui.entrypoints=web
       - traefik.http.routers.openwebui.rule=Host(`openwebui.${DOMAIN}`)
       - traefik.http.routers.openwebui-secure.entrypoints=websecure
