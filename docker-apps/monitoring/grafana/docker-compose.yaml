@@ -23,6 +23,7 @@ services:
     networks:
       - grafana-monitoring
       - proxy
+    user: ${PUID}
     ports:
       # Web Interface (using traefik)
       - "8164:3000"
