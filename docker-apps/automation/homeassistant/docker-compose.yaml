@@ -1,24 +1,19 @@
----
-volumes:
-  homeassistant-db-data:
-    driver: local
-
 networks:
   proxy:
     external: true
   home-assistant:
-    driver: bridge
 
 services:
   homeassistant:
     container_name: homeassistant
     image: "ghcr.io/home-assistant/home-assistant:stable"
     environment:
+      # Run as non-root user
+      PUID: ${PUID}
+      PGID: ${PGID}
       TZ: Europe/Madrid
     volumes:
-      - .config:/config
-      - /etc/localtime:/etc/localtime:ro
-    privileged: true
+      - .config:/config # TODO
     ports:
      - 8123:8123
     labels:
@@ -51,7 +46,7 @@ services:
       # https://github.com/matrix-org/synapse/blob/master/docs/postgres.md#set-up-database
       POSTGRES_INITDB_ARGS: '--encoding=UTF-8'
     volumes:
-      - homeassistant-db-data:/var/lib/postgresql/data
+      - ${WORKDIR}/pg-data:/var/lib/postgresql/data
     networks:
       home-assistant:
     security_opt:
