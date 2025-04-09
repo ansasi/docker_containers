@@ -11,7 +11,7 @@ services:
       RESTIC_BACKUP_SOURCES: /mnt/volumes
       RESTIC_COMPRESSION: auto 
       RESTIC_BACKUP_ARGS: >-
-        --tag restic-proxmox #add tags, whatever you need to mark backups
+        --tag restic-qnap #add tags, whatever you need to mark backups
         --verbose
       RESTIC_FORGET_ARGS: >- # change as required
         --keep-last 10
