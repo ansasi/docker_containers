@@ -23,10 +23,12 @@ services:
     networks:
       - grafana-monitoring
       - proxy
-    user: ${PUID}
     ports:
       # Web Interface (using traefik)
       - "8164:3000"
+    environment:
+      PUID: ${PUID}
+      PGID: ${PGID}
     labels:
       - traefik.enable=true
       - traefik.docker.network=proxy
