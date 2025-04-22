@@ -4,8 +4,6 @@ services:
     container_name: restic
     # hostname: ${HOSTNAME}
     environment:
-      # PUID: '${PUID}'
-      # PGID: '${PGID}'
       RUN_ON_STARTUP: "true" # optional
       BACKUP_CRON: "0 */12 * * *" # this is twice daily, i.e., every 12 hours
       RESTIC_REPOSITORY: /restic
@@ -13,8 +11,8 @@ services:
       RESTIC_BACKUP_SOURCES: /mnt/volumes
       RESTIC_COMPRESSION: auto 
       RESTIC_BACKUP_ARGS: >-
-        --tag restic-qnap # add tags, whatever you need to mark backups
-        --verbose # you can exclude files with --exclude
+        --tag restic-qnap
+        --verbose
       RESTIC_FORGET_ARGS: >-
         --keep-last 10
         --keep-daily 7
