@@ -4,8 +4,8 @@ services:
     container_name: restic
     # hostname: ${HOSTNAME}
     environment:
-      PUID: '${PUID}'
-      PGID: '${PGID}'
+      # PUID: '${PUID}'
+      # PGID: '${PGID}'
       RUN_ON_STARTUP: "true" # optional
       BACKUP_CRON: "0 */12 * * *" # this is twice daily, i.e., every 12 hours
       RESTIC_REPOSITORY: /restic
@@ -13,9 +13,9 @@ services:
       RESTIC_BACKUP_SOURCES: /mnt/volumes
       RESTIC_COMPRESSION: auto 
       RESTIC_BACKUP_ARGS: >-
-        --tag restic-qnap #add tags, whatever you need to mark backups
-        --verbose
-      RESTIC_FORGET_ARGS: >- # change as required
+        --tag restic-qnap # add tags, whatever you need to mark backups
+        --verbose # you can exclude files with --exclude
+      RESTIC_FORGET_ARGS: >-
         --keep-last 10
         --keep-daily 7
         --keep-weekly 5
@@ -26,7 +26,7 @@ services:
       # - ${WORKING_DIR}/restic:/restic
       # - ${WORKING_DIR}/restic-restore:/tmp-for-restore
     # For NAS storage
-      - ${NAS_DRIVE}/restic_backup:/restic # change the left hand side to where you want to store the backups
+      - ${NAS_DRIVE}/restic_backup/restic:/restic # change the left hand side to where you want to store the backups
       - ${NAS_DRIVE}/restic_backup/tmp-for-restore:/tmp-for-restore # USE THIS FOLDER FOR RESTORE - CAN VIEW EACH CONTAINER
     # The data of your existing containers (i.e., all of the containers in here /docker)
       - ${WORKDIR_TO_BACKUP}:/mnt/volumes:ro
