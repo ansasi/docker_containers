@@ -4,6 +4,8 @@ services:
     container_name: restic
     # hostname: ${HOSTNAME}
     environment:
+      PUID: '${PUID}'
+      PGID: '${PGID}'
       RUN_ON_STARTUP: "true" # optional
       BACKUP_CRON: "0 */12 * * *" # this is twice daily, i.e., every 12 hours
       RESTIC_REPOSITORY: /restic
