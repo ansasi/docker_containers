@@ -11,8 +11,8 @@ services:
       # - ${WORKDIR}/mnt/docker-aio-config # TODO: Review if this works
       - /var/run/docker.sock:/var/run/docker.sock:ro # May be changed on macOS, Windows or docker rootless. See the applicable documentation. If adjusting, don't forget to also set 'WATCHTOWER_DOCKER_SOCKET_PATH'!
     network_mode: bridge # add to the same network as docker run would do
-    # ports:
-    #   - 8080:8080
+    ports:
+      - 8080:8080
     environment: # Is needed when using any of the options below
       # AIO_DISABLE_BACKUP_SECTION: false # Setting this to true allows to hide the backup section in the AIO interface. See https://github.com/nextcloud/all-in-one#how-to-disable-the-backup-section
       # AIO_COMMUNITY_CONTAINERS: # With this variable, you can add community containers very easily. See https://github.com/nextcloud/all-in-one/tree/main/community-containers#community-containers
