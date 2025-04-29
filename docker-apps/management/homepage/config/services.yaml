@@ -60,10 +60,12 @@
         icon: watchtower.svg
         description: Container auto update - rpi-angel-1
         container: watchtower
-        # widget:
-        #     type: watchtower
-        #     url: http://watchtower:8080
-        #     key: {{HOMEPAGE_VAR_WATCHTOWER_KEY}}
+    - Home Assistant:
+        href: https://homeassistant.sheetgenius.app
+        icon: home-assistant.svg
+        description: Automation server - rpi-angel-1
+        container: homeassistant
+
 
 - Monitoring:
     - Grafana:
@@ -105,13 +107,6 @@
         icon: chatgpt.svg
         description: Web UI for AI - rpi-angel-1
         container: openwebui
-
-- Automation:
-    - Home Assistant:
-        href: https://homeassistant.sheetgenius.app
-        icon: home-assistant.svg
-        description: Automation server - rpi-angel-1
-        container: homeassistant
 
 - Media:
     - Plex:
