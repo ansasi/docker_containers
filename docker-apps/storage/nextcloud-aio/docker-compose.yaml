@@ -51,6 +51,16 @@ services:
       - traefik.http.routers.nextcloud-aio-secure.tls.certresolver=cloudflare
       - traefik.http.routers.nextcloud-aio-secure.service=nextcloud-aio
       - traefik.http.services.nextcloud-aio.loadbalancer.server.port=11000
+      - traefik.http.routers.nextcloud-aio-dashboard.entrypoints=web
+      - traefik.http.routers.nextcloud-aio-dashboard.rule=Host(`nextcloud-aio-dashboard.${DOMAIN}`)
+      - traefik.http.middlewares.nextcloud-aio-dashboard-https-redirect.redirectscheme.scheme=https
+      - traefik.http.routers.nextcloud-aio-dashboard.middlewares=nextcloud-aio-dashboard-https-redirect
+      - traefik.http.routers.nextcloud-aio-dashboard-secure.entrypoints=websecure
+      - traefik.http.routers.nextcloud-aio-dashboard-secure.rule=Host(`nextcloud-aio-dashboard.${DOMAIN}`)
+      - traefik.http.routers.nextcloud-aio-dashboard-secure.tls=true
+      - traefik.http.routers.nextcloud-aio-dashboard-secure.tls.certresolver=cloudflare
+      - traefik.http.routers.nextcloud-aio-dashboard-secure.service=nextcloud-aio-dashboard
+      - traefik.http.services.nextcloud-aio-dashboard.loadbalancer.server.port=8080
     restart: unless-stopped
 
 
