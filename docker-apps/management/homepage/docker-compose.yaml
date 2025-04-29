@@ -12,6 +12,7 @@ services:
       # PUID: ${PUID}
       # PGID: ${PGID}
       # LOG_LEVEL: debug
+      HOMEPAGE_VAR_DOMAIN: '${DOMAIN}'
       ###########################
       # Credentials for Widgets #
       ###########################

@@ -9,26 +9,26 @@
             type: fritzbox
             url: http://192.168.178.1
     - PiHole:
-        href: http://pihole.local/admin # https://pihole.sheetgenius.app
+        href: http://pihole.local/admin # https://pihole.{{ HOMEPAGE_VAR_DOMAIN }}
         icon: pi-hole.svg
         description: pihole-prod-1 on rpi-nico-small
         container: pihole
         widget:
             type: pihole
-            url: http://pihole.local # https://pihole.sheetgenius.app
+            url: http://pihole.local # https://pihole.{{ HOMEPAGE_VAR_DOMAIN }}
             version: 6
             key: '{{HOMEPAGE_VAR_PIHOLE_KEY}}'
     # - Wireguard:
-    #     href: https://wireguard.sheetgenius.app
+    #     href: https://wireguard.{{ HOMEPAGE_VAR_DOMAIN }}
     #     icon: wireguard.png
     #     description: wireguard-prod-1 on rpi-angel-1
     #     container: wg-easy
     #     # widget:
     #     #     type: wireguard
-    #     #     url: https://wireguard.sheetgenius.app
+    #     #     url: https://wireguard.{{ HOMEPAGE_VAR_DOMAIN }}
     #     #     key: {{ HOMEPAGE_VAR_WIREGUARD_KEY }}
     # - TailScale:
-    #     href: https://tailscale.sheetgenius.app
+    #     href: https://tailscale.{{ HOMEPAGE_VAR_DOMAIN }}
     #     description: tailscale-prod-1 on rpi-angel-1
     #     icon: tailscale.svg
     #     container: tailscale
@@ -37,7 +37,7 @@
     #     #     deviceid: {{ HOMEPAGE_VAR_TAILSCALE_DEVICEID }}
     #     #     key: {{ HOMEPAGE_VAR_TAILSCALE_KEY }}
     - Traefik:
-        href: https://traefik-dashboard.sheetgenius.app/
+        href: https://traefik-dashboard.{{ HOMEPAGE_VAR_DOMAIN }}/
         icon: traefik.svg
         description: traefik on rpi-angel-1
         container: traefik
@@ -50,40 +50,26 @@
         href: http://192.168.178.48:8080/cgi-bin/ # TODO
         icon: qnap.svg
         description: qnap-462 on rpi-angel-1
-        # widget:
-        #     type: qnap
-        #     url: http://192.168.178.48:8080 # TODO
-        #     username: '{{ HOMEPAGE_VAR_QNAP_USERNAME }}'
-        #     password: '{{ HOMEPAGE_VAR_QNAP_PASSWORD }}'
     - NextCloud:
-        href: https://nextcloud.sheetgenius.app
+        href: https://nextcloud.{{ HOMEPAGE_VAR_DOMAIN }}
         icon: nextcloud.svg
         description: nextcloud-prod-1 on rpi-angel-1
         container: nextcloud
-        # widget:
-        #     type: nextcloud
-        #     url: https://nextcloud.sheetgenius.app
-        #     username: '{{ HOMEPAGE_VAR_NEXTCLOUD_ADMIN_USER }}'
-        #     password: '{{ HOMEPAGE_VAR_NEXTCLOUD_ADMIN_PASSWORD }}'
     - Immich:
-        href: https://immich.sheetgenius.app
+        href: https://immich.{{ HOMEPAGE_VAR_DOMAIN }}
         icon: immich.svg
         description: immich-prod-1 on rpi-angel-1
         container: immich_server
-        # widget:
-        #     type: immich
-        #     url: https://immich.sheetgenius.app
-        #     key: {{ HOMEPAGE_VAR_IMMICH_KEY }}
 
 
 - Management:
     - Portainer:
-        href: https://portainer.sheetgenius.app
+        href: https://portainer.{{ HOMEPAGE_VAR_DOMAIN }}
         icon: portainer.svg
         description: portainer-demo-1 on rpi-angel-1
         container: portainer
     - Watchtower:
-        # href: https://watchtower.sheetgenius.app
+        # href: https://watchtower.{{ HOMEPAGE_VAR_DOMAIN }}
         icon: watchtower.svg
         description: watchtower-prod-1 on rpi-angel-1
         container: watchtower
@@ -94,17 +80,26 @@
 
 - Monitoring:
     - Grafana:
-        href: https://grafana.sheetgenius.app
+        href: https://grafana.{{ HOMEPAGE_VAR_DOMAIN }}
         description: grafana on rpi-angel-1
         icon: grafana.svg
         container: grafana
         # widget:
         #     type: grafana
-        #     url: https://grafana.sheetgenius.app
+        #     url: https://grafana.{{ HOMEPAGE_VAR_DOMAIN }}
         #     username: {{HOMEPAGE_VAR_GRAFANA_USERNAME}}
         #     password: {{HOMEPAGE_VAR_GRAFANA_PASSWORD}}
+    - Uptime Kuma:
+        href: https://uptime-kuma.{{ HOMEPAGE_VAR_DOMAIN }}
+        description: uptime-kuma on rpi-angel-1
+        icon: uptime-kuma.svg
+        container: uptime-kuma
+        # widget:
+        #     type: uptimekuma
+        #     url: https://uptime-kuma.{{ HOMEPAGE_VAR_DOMAIN }}
+        #     key: {{HOMEPAGE_VAR_UPTIMEKUMA_KEY}}
     - Prometheus:
-        href: https://prometheus.sheetgenius.app
+        href: https://prometheus.{{ HOMEPAGE_VAR_DOMAIN }}
         description: prometheus on rpi-angel-1
         icon: prometheus.svg
         container: prometheus
@@ -129,7 +124,7 @@
         container: ollama
         # widget:
         #     type: ollama
-        #     url: https://ollama.sheetgenius.app
+        #     url: https://ollama.{{ HOMEPAGE_VAR_DOMAIN }}
         #     key: {{ HOMEPAGE_VAR_OLLAMA_KEY }}
     - OpenWebUI:
         href: http://openwebui:3003
@@ -138,112 +133,112 @@
         container: openwebui
         # widget:
         #     type: openwebui
-        #     url: https://openwebui.sheetgenius.app
+        #     url: https://openwebui.{{ HOMEPAGE_VAR_DOMAIN }}
         #     key: {{ HOMEPAGE_VAR_OPENWEBUI_KEY }}
 
 - Automation:
     - Home Assistant:
-        href: https://homeassistant.sheetgenius.app
+        href: https://homeassistant.{{ HOMEPAGE_VAR_DOMAIN }}
         icon: home-assistant.svg
         description: homeassistant-prod-1 on rpi-angel-1
         container: homeassistant
         # widget:
         #     type: homeassistant
-        #     url: https://homeassistant.sheetgenius.app
+        #     url: https://homeassistant.{{ HOMEPAGE_VAR_DOMAIN }}
         #     key: {{ HOMEPAGE_VAR_HOMEASSISTANT_KEY }}
         #     custom:
         #         - state: sensor.total_power
 
 - Media:
     - Plex:
-        href: https://plex.sheetgenius.app
+        href: https://plex.{{ HOMEPAGE_VAR_DOMAIN }}
         icon: plex.svg
         description: plex-prod-1 on rpi-angel-1
         container: plex
         # widget:
         #     type: plex
-        #     url: https://plex.sheetgenius.app
+        #     url: https://plex.{{ HOMEPAGE_VAR_DOMAIN }}
         #     key: {{HOMEPAGE_VAR_PLEX_KEY}}
     - Jellyfin:
-        href: https://jellyfin.sheetgenius.app
+        href: https://jellyfin.{{ HOMEPAGE_VAR_DOMAIN }}
         icon: jellyfin.svg
         description: jellyfin-prod-1 on rpi-angel-1
         container: jellyfin
         # widget:
         #     type: jellyfin
-        #     url: https://jellyfin.sheetgenius.app
+        #     url: https://jellyfin.{{ HOMEPAGE_VAR_DOMAIN }}
         #     key: {{HOMEPAGE_VAR_JELLYFIN_KEY}}
 
 - Torrent:
     - Overseerr:
-        href: https://overseerr.sheetgenius.app
+        href: https://overseerr.{{ HOMEPAGE_VAR_DOMAIN }}
         icon: overseerr.svg
         description: overseerr-prod-1 on rpi-angel-1
         container: overseerr
         # widget:
         #     type: overseerr
-        #     url: https://overseerr.sheetgenius.app
+        #     url: https://overseerr.{{ HOMEPAGE_VAR_DOMAIN }}
         #     key: {{HOMEPAGE_VAR_OVERSEERR_KEY}}
     - Sonarr:
-        href: https://sonarr.sheetgenius.app
+        href: https://sonarr.{{ HOMEPAGE_VAR_DOMAIN }}
         icon: sonarr.svg
         description: sonarr-prod-1 on rpi-angel-1
         container: sonarr
         # widget:
         #     type: sonarr
-        #     url: https://sonarr.sheetgenius.app
+        #     url: https://sonarr.{{ HOMEPAGE_VAR_DOMAIN }}
         #     key: {{HOMEPAGE_VAR_SONARR_KEY}}
     - Radarr:
-        href: https://radarr.sheetgenius.app
+        href: https://radarr.{{ HOMEPAGE_VAR_DOMAIN }}
         icon: radarr.svg
         description: radarr-prod-1 on rpi-angel-1
         container: radarr
         # widget:
         #     type: radarr
-        #     url: https://radarr.sheetgenius.app
+        #     url: https://radarr.{{ HOMEPAGE_VAR_DOMAIN }}
         #     key: {{HOMEPAGE_VAR_RADARR_KEY}}
     - Lidarr:
-        href: https://lidarr.sheetgenius.app
+        href: https://lidarr.{{ HOMEPAGE_VAR_DOMAIN }}
         icon: lidarr.svg
         description: lidarr-prod-1 on rpi-angel-1
         container: lidarr
         # widget:
         #     type: lidarr
-        #     url: https://lidarr.sheetgenius.app
+        #     url: https://lidarr.{{ HOMEPAGE_VAR_DOMAIN }}
         #     key: {{HOMEPAGE_VAR_LIDARR_KEY}}
     - Readarr:
-        href: https://readarr.sheetgenius.app
+        href: https://readarr.{{ HOMEPAGE_VAR_DOMAIN }}
         icon: readarr.svg
         description: readarr-prod-1 on rpi-angel-1
         container: readarr
         # widget:
         #     type: readarr
-        #     url: https://readarr.sheetgenius.app
+        #     url: https://readarr.{{ HOMEPAGE_VAR_DOMAIN }}
         #     key: {{HOMEPAGE_VAR_READARR_KEY}}
     - Bazarr:
-        href: https://bazarr.sheetgenius.app
+        href: https://bazarr.{{ HOMEPAGE_VAR_DOMAIN }}
         icon: bazarr.svg
         description: bazarr-prod-1 on rpi-angel-1
         container: bazarr
         # widget:
         #     type: bazarr
-        #     url: https://bazarr.sheetgenius.app
+        #     url: https://bazarr.{{ HOMEPAGE_VAR_DOMAIN }}
         #     key: {{HOMEPAGE_VAR_BAZARR_KEY}}
     - Prowlarr:
-        href: https://prowlarr.sheetgenius.app
+        href: https://prowlarr.{{ HOMEPAGE_VAR_DOMAIN }}
         icon: prowlarr.svg
         description: prowlarr-prod-1 on rpi-angel-1
         container: prowlarr
         # widget:
         #     type: prowlarr
-        #     url: https://prowlarr.sheetgenius.app
+        #     url: https://prowlarr.{{ HOMEPAGE_VAR_DOMAIN }}
         #     key: {{HOMEPAGE_VAR_PROWLARR_KEY}}
     - Bittorrent:
-        href: https://bittorrent.sheetgenius.app
+        href: https://bittorrent.{{ HOMEPAGE_VAR_DOMAIN }}
         icon: si-bittorrent
         description: bittorrent-prod-1 on rpi-angel-1
         container: bittorrent
         # widget:
         #     type: bittorrent
-        #     url: https://bittorrent.sheetgenius.app
+        #     url: https://bittorrent.{{ HOMEPAGE_VAR_DOMAIN }}
         #     key: {{HOMEPAGE_VAR_BITTORRENT_KEY}}
