@@ -4,7 +4,7 @@ networks:
 
 services:
 # --- Uptime Kuma Image
-  uptimekuma:
+  uptime-kuma:
     image: louislam/uptime-kuma:latest
     container_name: uptimekuma
     volumes:
