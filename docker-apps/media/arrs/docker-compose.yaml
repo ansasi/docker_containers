@@ -27,7 +27,7 @@ services:
     depends_on:
       - gluetun
 
-    # Jackett - Torrent and Usenet indexer
+  # Jackett - Torrent and Usenet indexer
   jackett:
     image: lscr.io/linuxserver/jackett:latest
     container_name: jackett

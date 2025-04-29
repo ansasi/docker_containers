@@ -3,7 +3,7 @@
     - FritzBox:
         href: http://192.168.178.1
         icon: fritzbox.svg
-        description: gw-prod-1
+        description: Router
         siteMonitor: http://192.168.178.1
         widget:
             type: fritzbox
@@ -11,7 +11,7 @@
     - PiHole:
         href: http://pihole.local/admin # https://pihole.{{ HOMEPAGE_VAR_DOMAIN }}
         icon: pi-hole.svg
-        description: pihole-prod-1 on rpi-nico-small
+        description: DNS - rpi-nico-small
         container: pihole
         widget:
             type: pihole
@@ -23,23 +23,10 @@
     #     icon: wireguard.png
     #     description: wireguard-prod-1 on rpi-angel-1
     #     container: wg-easy
-    #     # widget:
-    #     #     type: wireguard
-    #     #     url: https://wireguard.{{ HOMEPAGE_VAR_DOMAIN }}
-    #     #     key: {{ HOMEPAGE_VAR_WIREGUARD_KEY }}
-    # - TailScale:
-    #     href: https://tailscale.{{ HOMEPAGE_VAR_DOMAIN }}
-    #     description: tailscale-prod-1 on rpi-angel-1
-    #     icon: tailscale.svg
-    #     container: tailscale
-    #     # widget:
-    #     #     type: tailscale
-    #     #     deviceid: {{ HOMEPAGE_VAR_TAILSCALE_DEVICEID }}
-    #     #     key: {{ HOMEPAGE_VAR_TAILSCALE_KEY }}
     - Traefik:
         href: https://traefik-dashboard.{{ HOMEPAGE_VAR_DOMAIN }}/
         icon: traefik.svg
-        description: traefik on rpi-angel-1
+        description: Traefik - rpi-angel-1
         container: traefik
         widget:
             type: traefik
@@ -49,16 +36,16 @@
     - QNAP 462:
         href: http://192.168.178.48:8080/cgi-bin/ # TODO
         icon: qnap.svg
-        description: qnap-462 on rpi-angel-1
+        description: qnap-462 NAS
     - NextCloud:
-        href: https://nextcloud.{{ HOMEPAGE_VAR_DOMAIN }}
+        href: "https://nextcloud.{{ HOMEPAGE_VAR_DOMAIN }}"
         icon: nextcloud.svg
-        description: nextcloud-prod-1 on rpi-angel-1
+        description: Drive app - rpi-angel-1
         container: nextcloud
     - Immich:
-        href: https://immich.{{ HOMEPAGE_VAR_DOMAIN }}
+        href: "https://immich.{{ HOMEPAGE_VAR_DOMAIN }}"
         icon: immich.svg
-        description: immich-prod-1 on rpi-angel-1
+        description: Photo app - rpi-angel-1
         container: immich_server
 
 
@@ -66,12 +53,12 @@
     - Portainer:
         href: https://portainer.{{ HOMEPAGE_VAR_DOMAIN }}
         icon: portainer.svg
-        description: portainer-demo-1 on rpi-angel-1
+        description: Container management - rpi-angel-1
         container: portainer
     - Watchtower:
         # href: https://watchtower.{{ HOMEPAGE_VAR_DOMAIN }}
         icon: watchtower.svg
-        description: watchtower-prod-1 on rpi-angel-1
+        description: Container auto update - rpi-angel-1
         container: watchtower
         # widget:
         #     type: watchtower
@@ -80,8 +67,8 @@
 
 - Monitoring:
     - Grafana:
-        href: https://grafana.{{ HOMEPAGE_VAR_DOMAIN }}
-        description: grafana on rpi-angel-1
+        href: https://grafana.${HOMEPAGE_VAR_DOMAIN}
+        description: Graphs used for device stats - rpi-angel-1
         icon: grafana.svg
         container: grafana
         # widget:
@@ -91,7 +78,7 @@
         #     password: {{HOMEPAGE_VAR_GRAFANA_PASSWORD}}
     - Uptime Kuma:
         href: https://uptime-kuma.{{ HOMEPAGE_VAR_DOMAIN }}
-        description: uptime-kuma on rpi-angel-1
+        description: Monitoring of apps - rpi-angel-1
         icon: uptime-kuma.svg
         container: uptime-kuma
         # widget:
@@ -100,7 +87,7 @@
         #     key: {{HOMEPAGE_VAR_UPTIMEKUMA_KEY}}
     - Prometheus:
         href: https://prometheus.{{ HOMEPAGE_VAR_DOMAIN }}
-        description: prometheus on rpi-angel-1
+        description: Metric collector - rpi-angel-1
         icon: prometheus.svg
         container: prometheus
 
@@ -108,72 +95,56 @@
     - ChatGPT:
         href: https://chatgpt.com
         icon: chatgpt.svg
-    - Google Gemini:
-        href: https://gemini.google.com
-        icon: google-gemini.svg
-    - Google AI Studio:
-        href: https://aistudio.google.com/
-        icon: google.svg
-    - Claude:
-        href: https://claude.ai
-        icon: claude-ai.svg
     - Ollama:
         href: http://ollama:11434
         icon: si-ollama-#FFFFFF
-        description: ollama-prod-1 on rpi-angel-1
+        description: AI model server - rpi-angel-1
         container: ollama
-        # widget:
-        #     type: ollama
-        #     url: https://ollama.{{ HOMEPAGE_VAR_DOMAIN }}
-        #     key: {{ HOMEPAGE_VAR_OLLAMA_KEY }}
     - OpenWebUI:
         href: http://openwebui:3003
         icon: chatgpt.svg
-        description: openwebui-prod-1 on rpi-angel-1
+        description: Web UI for AI - rpi-angel-1
         container: openwebui
-        # widget:
-        #     type: openwebui
-        #     url: https://openwebui.{{ HOMEPAGE_VAR_DOMAIN }}
-        #     key: {{ HOMEPAGE_VAR_OPENWEBUI_KEY }}
 
 - Automation:
     - Home Assistant:
         href: https://homeassistant.{{ HOMEPAGE_VAR_DOMAIN }}
         icon: home-assistant.svg
-        description: homeassistant-prod-1 on rpi-angel-1
+        description: Automation server - rpi-angel-1
         container: homeassistant
-        # widget:
-        #     type: homeassistant
-        #     url: https://homeassistant.{{ HOMEPAGE_VAR_DOMAIN }}
-        #     key: {{ HOMEPAGE_VAR_HOMEASSISTANT_KEY }}
-        #     custom:
-        #         - state: sensor.total_power
 
 - Media:
     - Plex:
         href: https://plex.{{ HOMEPAGE_VAR_DOMAIN }}
         icon: plex.svg
-        description: plex-prod-1 on rpi-angel-1
+        description: Media server - rpi-angel-1
         container: plex
-        # widget:
-        #     type: plex
-        #     url: https://plex.{{ HOMEPAGE_VAR_DOMAIN }}
-        #     key: {{HOMEPAGE_VAR_PLEX_KEY}}
     - Jellyfin:
         href: https://jellyfin.{{ HOMEPAGE_VAR_DOMAIN }}
         icon: jellyfin.svg
-        description: jellyfin-prod-1 on rpi-angel-1
+        description: Open source media server - rpi-angel-1
         container: jellyfin
-        # widget:
-        #     type: jellyfin
-        #     url: https://jellyfin.{{ HOMEPAGE_VAR_DOMAIN }}
-        #     key: {{HOMEPAGE_VAR_JELLYFIN_KEY}}
+    - AudioBookShelf:
+        href: https://audiobookshelf.{{ HOMEPAGE_VAR_DOMAIN }}
+        icon: audiobookshelf.svg
+        description: Audiobook server - rpi-angel-1
+        container: audiobookshelf
 
 - Torrent:
+    - Prowlarr:
+        href: https://prowlarr.{{ HOMEPAGE_VAR_DOMAIN }}
+        icon: prowlarr.svg
+        description: Indexer manager for all your apps - rpi-angel-1
+        container: prowlarr
+    - Jackett:
+        href: https://jackett.{{ HOMEPAGE_VAR_DOMAIN }}
+        icon: jackett.svg
+        description: Indexer manager for all your apps - rpi-angel-1
+        container: jackett
     - Overseerr:
         href: https://overseerr.{{ HOMEPAGE_VAR_DOMAIN }}
         icon: overseerr.svg
-        description: overseerr-prod-1 on rpi-angel-1
+        description: Media request management tool for Plex and Jellyfin - rpi-angel-1
         container: overseerr
         # widget:
         #     type: overseerr
@@ -182,63 +153,30 @@
     - Sonarr:
         href: https://sonarr.{{ HOMEPAGE_VAR_DOMAIN }}
         icon: sonarr.svg
-        description: sonarr-prod-1 on rpi-angel-1
+        description: Automates the downloading of TV shows - rpi-angel-1
         container: sonarr
-        # widget:
-        #     type: sonarr
-        #     url: https://sonarr.{{ HOMEPAGE_VAR_DOMAIN }}
-        #     key: {{HOMEPAGE_VAR_SONARR_KEY}}
     - Radarr:
         href: https://radarr.{{ HOMEPAGE_VAR_DOMAIN }}
         icon: radarr.svg
-        description: radarr-prod-1 on rpi-angel-1
+        description: Automates the downloading of movies - rpi-angel-1
         container: radarr
-        # widget:
-        #     type: radarr
-        #     url: https://radarr.{{ HOMEPAGE_VAR_DOMAIN }}
-        #     key: {{HOMEPAGE_VAR_RADARR_KEY}}
-    - Lidarr:
-        href: https://lidarr.{{ HOMEPAGE_VAR_DOMAIN }}
-        icon: lidarr.svg
-        description: lidarr-prod-1 on rpi-angel-1
-        container: lidarr
-        # widget:
-        #     type: lidarr
-        #     url: https://lidarr.{{ HOMEPAGE_VAR_DOMAIN }}
-        #     key: {{HOMEPAGE_VAR_LIDARR_KEY}}
-    - Readarr:
-        href: https://readarr.{{ HOMEPAGE_VAR_DOMAIN }}
-        icon: readarr.svg
-        description: readarr-prod-1 on rpi-angel-1
-        container: readarr
-        # widget:
-        #     type: readarr
-        #     url: https://readarr.{{ HOMEPAGE_VAR_DOMAIN }}
-        #     key: {{HOMEPAGE_VAR_READARR_KEY}}
     - Bazarr:
         href: https://bazarr.{{ HOMEPAGE_VAR_DOMAIN }}
         icon: bazarr.svg
-        description: bazarr-prod-1 on rpi-angel-1
+        description: Automates the downloading of subtitles - rpi-angel-1
         container: bazarr
-        # widget:
-        #     type: bazarr
-        #     url: https://bazarr.{{ HOMEPAGE_VAR_DOMAIN }}
-        #     key: {{HOMEPAGE_VAR_BAZARR_KEY}}
-    - Prowlarr:
-        href: https://prowlarr.{{ HOMEPAGE_VAR_DOMAIN }}
-        icon: prowlarr.svg
-        description: prowlarr-prod-1 on rpi-angel-1
-        container: prowlarr
-        # widget:
-        #     type: prowlarr
-        #     url: https://prowlarr.{{ HOMEPAGE_VAR_DOMAIN }}
-        #     key: {{HOMEPAGE_VAR_PROWLARR_KEY}}
+    - Lidarr:
+        href: https://lidarr.{{ HOMEPAGE_VAR_DOMAIN }}
+        icon: lidarr.svg
+        description: Automates the downloading of music - rpi-angel-1
+        container: lidarr
+    - Readarr:
+        href: https://readarr.{{ HOMEPAGE_VAR_DOMAIN }}
+        icon: readarr.svg
+        description: Automates the downloading of books - rpi-angel-1
+        container: readarr
     - Bittorrent:
         href: https://bittorrent.{{ HOMEPAGE_VAR_DOMAIN }}
         icon: si-bittorrent
-        description: bittorrent-prod-1 on rpi-angel-1
+        description: Torrent client - rpi-angel-1
         container: bittorrent
-        # widget:
-        #     type: bittorrent
-        #     url: https://bittorrent.{{ HOMEPAGE_VAR_DOMAIN }}
-        #     key: {{HOMEPAGE_VAR_BITTORRENT_KEY}}
