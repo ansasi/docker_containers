@@ -9,22 +9,22 @@
             type: fritzbox
             url: http://192.168.178.1
     - PiHole:
-        href: http://pihole.local/admin # https://pihole.{{ HOMEPAGE_VAR_DOMAIN }}
+        href: http://pihole.local/admin # https://pihole.sheetgenius.app
         icon: pi-hole.svg
         description: DNS - rpi-nico-small
         container: pihole
         widget:
             type: pihole
-            url: http://pihole.local # https://pihole.{{ HOMEPAGE_VAR_DOMAIN }}
+            url: http://pihole.local # https://pihole.sheetgenius.app
             version: 6
             key: '{{HOMEPAGE_VAR_PIHOLE_KEY}}'
     # - Wireguard:
-    #     href: https://wireguard.{{ HOMEPAGE_VAR_DOMAIN }}
+    #     href: https://wireguard.sheetgenius.app
     #     icon: wireguard.png
     #     description: wireguard-prod-1 on rpi-angel-1
     #     container: wg-easy
     - Traefik:
-        href: https://traefik-dashboard.{{ HOMEPAGE_VAR_DOMAIN }}/
+        href: https://traefik-dashboard.sheetgenius.app/
         icon: traefik.svg
         description: Traefik - rpi-angel-1
         container: traefik
@@ -38,12 +38,12 @@
         icon: qnap.svg
         description: qnap-462 NAS
     - NextCloud:
-        href: "https://nextcloud.{{ HOMEPAGE_VAR_DOMAIN }}"
+        href: "https://nextcloud.sheetgenius.app"
         icon: nextcloud.svg
         description: Drive app - rpi-angel-1
         container: nextcloud
     - Immich:
-        href: "https://immich.{{ HOMEPAGE_VAR_DOMAIN }}"
+        href: "https://immich.sheetgenius.app"
         icon: immich.svg
         description: Photo app - rpi-angel-1
         container: immich_server
@@ -51,12 +51,12 @@
 
 - Management:
     - Portainer:
-        href: https://portainer.{{ HOMEPAGE_VAR_DOMAIN }}
+        href: https://portainer.sheetgenius.app
         icon: portainer.svg
         description: Container management - rpi-angel-1
         container: portainer
     - Watchtower:
-        # href: https://watchtower.{{ HOMEPAGE_VAR_DOMAIN }}
+        # href: https://watchtower.sheetgenius.app
         icon: watchtower.svg
         description: Container auto update - rpi-angel-1
         container: watchtower
@@ -73,20 +73,20 @@
         container: grafana
         # widget:
         #     type: grafana
-        #     url: https://grafana.{{ HOMEPAGE_VAR_DOMAIN }}
+        #     url: https://grafana.sheetgenius.app
         #     username: {{HOMEPAGE_VAR_GRAFANA_USERNAME}}
         #     password: {{HOMEPAGE_VAR_GRAFANA_PASSWORD}}
     - Uptime Kuma:
-        href: https://uptime-kuma.{{ HOMEPAGE_VAR_DOMAIN }}
+        href: https://uptime-kuma.sheetgenius.app
         description: Monitoring of apps - rpi-angel-1
         icon: uptime-kuma.svg
         container: uptime-kuma
         # widget:
         #     type: uptimekuma
-        #     url: https://uptime-kuma.{{ HOMEPAGE_VAR_DOMAIN }}
+        #     url: https://uptime-kuma.sheetgenius.app
         #     key: {{HOMEPAGE_VAR_UPTIMEKUMA_KEY}}
     - Prometheus:
-        href: https://prometheus.{{ HOMEPAGE_VAR_DOMAIN }}
+        href: https://prometheus.sheetgenius.app
         description: Metric collector - rpi-angel-1
         icon: prometheus.svg
         container: prometheus
@@ -108,75 +108,75 @@
 
 - Automation:
     - Home Assistant:
-        href: https://homeassistant.{{ HOMEPAGE_VAR_DOMAIN }}
+        href: https://homeassistant.sheetgenius.app
         icon: home-assistant.svg
         description: Automation server - rpi-angel-1
         container: homeassistant
 
 - Media:
     - Plex:
-        href: https://plex.{{ HOMEPAGE_VAR_DOMAIN }}
+        href: https://plex.sheetgenius.app
         icon: plex.svg
         description: Media server - rpi-angel-1
         container: plex
     - Jellyfin:
-        href: https://jellyfin.{{ HOMEPAGE_VAR_DOMAIN }}
+        href: https://jellyfin.sheetgenius.app
         icon: jellyfin.svg
         description: Open source media server - rpi-angel-1
         container: jellyfin
     - AudioBookShelf:
-        href: https://audiobookshelf.{{ HOMEPAGE_VAR_DOMAIN }}
+        href: https://audiobookshelf.sheetgenius.app
         icon: audiobookshelf.svg
         description: Audiobook server - rpi-angel-1
         container: audiobookshelf
 
 - Torrent:
     - Prowlarr:
-        href: https://prowlarr.{{ HOMEPAGE_VAR_DOMAIN }}
+        href: https://prowlarr.sheetgenius.app
         icon: prowlarr.svg
         description: Indexer manager for all your apps - rpi-angel-1
         container: prowlarr
     - Jackett:
-        href: https://jackett.{{ HOMEPAGE_VAR_DOMAIN }}
+        href: https://jackett.sheetgenius.app
         icon: jackett.svg
         description: Indexer manager for all your apps - rpi-angel-1
         container: jackett
     - Overseerr:
-        href: https://overseerr.{{ HOMEPAGE_VAR_DOMAIN }}
+        href: https://overseerr.sheetgenius.app
         icon: overseerr.svg
         description: Media request management tool for Plex and Jellyfin - rpi-angel-1
         container: overseerr
         # widget:
         #     type: overseerr
-        #     url: https://overseerr.{{ HOMEPAGE_VAR_DOMAIN }}
+        #     url: https://overseerr.sheetgenius.app
         #     key: {{HOMEPAGE_VAR_OVERSEERR_KEY}}
     - Sonarr:
-        href: https://sonarr.{{ HOMEPAGE_VAR_DOMAIN }}
+        href: https://sonarr.sheetgenius.app
         icon: sonarr.svg
         description: Automates the downloading of TV shows - rpi-angel-1
         container: sonarr
     - Radarr:
-        href: https://radarr.{{ HOMEPAGE_VAR_DOMAIN }}
+        href: https://radarr.sheetgenius.app
         icon: radarr.svg
         description: Automates the downloading of movies - rpi-angel-1
         container: radarr
     - Bazarr:
-        href: https://bazarr.{{ HOMEPAGE_VAR_DOMAIN }}
+        href: https://bazarr.sheetgenius.app
         icon: bazarr.svg
         description: Automates the downloading of subtitles - rpi-angel-1
         container: bazarr
     - Lidarr:
-        href: https://lidarr.{{ HOMEPAGE_VAR_DOMAIN }}
+        href: https://lidarr.sheetgenius.app
         icon: lidarr.svg
         description: Automates the downloading of music - rpi-angel-1
         container: lidarr
     - Readarr:
-        href: https://readarr.{{ HOMEPAGE_VAR_DOMAIN }}
+        href: https://readarr.sheetgenius.app
         icon: readarr.svg
         description: Automates the downloading of books - rpi-angel-1
         container: readarr
     - Bittorrent:
-        href: https://bittorrent.{{ HOMEPAGE_VAR_DOMAIN }}
+        href: https://bittorrent.sheetgenius.app
         icon: si-bittorrent
         description: Torrent client - rpi-angel-1
         container: bittorrent
