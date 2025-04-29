@@ -6,7 +6,7 @@ services:
 # --- Uptime Kuma Image
   uptime-kuma:
     image: louislam/uptime-kuma:latest
-    container_name: uptimekuma
+    container_name: uptime-kuma
     volumes:
       - ${WORKDIR}:/app/data
       - /var/run/docker.sock:/var/run/docker.sock
