@@ -13,8 +13,8 @@ services:
     container_name: qbittorrent
     restart: unless-stopped
     environment:
-      PUID: "${PUID:-1000}"
-      PGID: "${PGID:-1000}"
+      PUID: "${PUID}"
+      PGID: "${PGID}"
       UMASK: "002"
       TZ: "Etc/UTC"
       WEBUI_PORT: "8085"
@@ -59,8 +59,8 @@ services:
     container_name: prowlarr
     restart: unless-stopped
     environment:
-      PUID: "${PUID:-1000}"
-      PGID: "${PGID:-1000}"
+      PUID: "${PUID}"
+      PGID: "${PGID}"
       TZ: "Etc/UTC"
     volumes:
       - ${WORKDIR}/prowlarr/config:/config
@@ -77,8 +77,8 @@ services:
     container_name: radarr
     restart: unless-stopped
     environment:
-      PUID: "${PUID:-1000}"
-      PGID: "${PGID:-1000}"
+      PUID: "${PUID}"
+      PGID: "${PGID}"
       TZ: "Etc/UTC"
     volumes:
       - ${WORKDIR}/radarr/config:/config
@@ -100,8 +100,8 @@ services:
     container_name: sonarr
     restart: unless-stopped
     environment:
-      PUID: "${PUID:-1000}"
-      PGID: "${PGID:-1000}"
+      PUID: "${PUID}"
+      PGID: "${PGID}"
       TZ: "Etc/UTC"
     volumes:
       - ${WORKDIR}/sonarr/config:/config
@@ -122,8 +122,8 @@ services:
     container_name: bazarr
     restart: unless-stopped
     environment:
-      PUID: "${PUID:-1000}"
-      PGID: "${PGID:-1000}"
+      PUID: "${PUID}"
+      PGID: "${PGID}"
       TZ: "Etc/UTC"
     volumes:
       - ${WORKDIR}/bazarr/config:/config
@@ -141,8 +141,8 @@ services:
     container_name: lidarr
     restart: unless-stopped
     environment:
-      PUID: "${PUID:-1000}"
-      PGID: "${PGID:-1000}"
+      PUID: "${PUID}"
+      PGID: "${PGID}"
       TZ: "Etc/UTC"
     volumes:
       - ${WORKDIR}/lidarr/config:/config
@@ -160,8 +160,8 @@ services:
     container_name: readarr
     restart: unless-stopped
     environment:
-      PUID: "${PUID:-1000}"
-      PGID: "${PGID:-1000}"
+      PUID: "${PUID}"
+      PGID: "${PGID}"
       TZ: "Etc/UTC"
     volumes:
       - ${WORKDIR}/readarr/config:/config
