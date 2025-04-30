@@ -24,8 +24,6 @@ services:
     # ports:
     #   - 2283:2283
     environment:
-      # PUID: '${PUID}'
-      # PGID: '${PGID}'
       DB_PASSWORD: '${DB_PASSWORD}'
       DB_USERNAME: '${DB_USERNAME}'
       DB_DATABASE_NAME: '${DB_DATABASE_NAME}'
