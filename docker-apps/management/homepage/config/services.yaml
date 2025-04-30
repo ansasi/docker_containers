@@ -26,11 +26,8 @@
     - Traefik:
         href: https://traefik-dashboard.sheetgenius.app/
         icon: traefik.svg
-        description: Traefik - rpi-angel-1
+        description: Reverse Proxy - rpi-angel-1
         container: traefik
-        widget:
-            type: traefik
-            url: http://traefik:8080
 
 - Storage:
     - QNAP 462:

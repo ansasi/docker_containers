@@ -15,6 +15,7 @@ services:
       # - "8160:3001"
     restart: unless-stopped
     labels:
+      # Traefik labels
       - traefik.enable=true
       - traefik.docker.network=proxy
       - traefik.http.routers.uptime-kuma.entrypoints=web
@@ -26,6 +27,8 @@ services:
       - traefik.http.routers.uptime-kuma-websecure.tls=true
       - traefik.http.routers.uptime-kuma-websecure.tls.certresolver=cloudflare
       - traefik.http.routers.uptime-kuma-websecure.service=uptime-kuma
-      - "traefik.http.services.uptime-kuma.loadbalancer.server.port=3001"
+      - traefik.http.services.uptime-kuma.loadbalancer.server.port=3001
+      # Watchtower labels
+      - com.centurylinklabs.watchtower.enable=true
     networks:
       - proxy

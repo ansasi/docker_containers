@@ -28,6 +28,7 @@ services:
       - "8164:3000"
     user: '${PUID}:${PGID}'
     labels:
+      # Traefik labels
       - traefik.enable=true
       - traefik.docker.network=proxy
       - traefik.http.routers.grafana.entrypoints=web
@@ -40,6 +41,8 @@ services:
       - traefik.http.routers.grafana-websecure.tls.certresolver=cloudflare
       - traefik.http.routers.grafana-websecure.service=grafana
       - traefik.http.services.grafana.loadbalancer.server.port=3000
+      # Watchtower labels
+      - com.centurylinklabs.watchtower.enable=true
     restart: unless-stopped
 
 # --- Prometheus Image

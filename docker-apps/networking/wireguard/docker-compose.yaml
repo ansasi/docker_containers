@@ -24,14 +24,15 @@ services:
         - net.ipv4.ip_forward=1
         - net.ipv4.conf.all.src_valid_mark=1
       labels:
-      - "traefik.enable=true"
-      - "traefik.docker.network=proxy"
-      - "traefik.http.routers.wireguard.entrypoints=web"
-      - "traefik.http.routers.wireguard.rule=Host(`wireguard.${DOMAIN}`)"
-      - "traefik.http.middlewares.wireguard-https-redirect.redirectscheme.scheme=https"
-      - "traefik.http.routers.wireguard.middlewares=wireguard-https-redirect"
-      - "traefik.http.routers.wireguard-secure.entrypoints=websecure"
-      - "traefik.http.routers.wireguard-secure.rule=Host(`wireguard.${DOMAIN}`)"
-      - "traefik.http.routers.wireguard-secure.tls=true"
-      - "traefik.http.routers.wireguard-secure.service=wireguard"
-      - "traefik.http.services.wireguard.loadbalancer.server.port=51821"
+        # Traefik labels
+        - traefik.enable=true
+        - traefik.docker.network=proxy
+        - traefik.http.routers.wireguard.entrypoints=web
+        - traefik.http.routers.wireguard.rule=Host(`wireguard.${DOMAIN}`)
+        - traefik.http.middlewares.wireguard-https-redirect.redirectscheme.scheme=https
+        - traefik.http.routers.wireguard.middlewares=wireguard-https-redirect
+        - traefik.http.routers.wireguard-secure.entrypoints=websecure
+        - traefik.http.routers.wireguard-secure.rule=Host(`wireguard.${DOMAIN}`)
+        - traefik.http.routers.wireguard-secure.tls=true
+        - traefik.http.routers.wireguard-secure.service=wireguard
+        - traefik.http.services.wireguard.loadbalancer.server.port=51821

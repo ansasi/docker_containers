@@ -57,19 +57,20 @@ services:
     restart: unless-stopped
     depends_on:
       - cloudflared
-    # # We don't use Traefik for PiHole as it will be used as a DNS server on a separate device
-    # labels:
-    #   - "traefik.enable=true"
-    #   - "traefik.http.routers.pihole.entrypoints=web"
-    #   - "traefik.http.routers.pihole.rule=Host(`pihole.${DOMAIN}`)"
-    #   - "traefik.http.middlewares.pihole-https-redirect.redirectscheme.scheme=https"
-    #   - "traefik.http.routers.pihole.middlewares=pihole-https-redirect"
-    #   - "traefik.http.routers.pihole-secure.entrypoints=websecure"
-    #   - "traefik.http.routers.pihole-secure.rule=Host(`pihole.${DOMAIN}`)"
-    #   - "traefik.http.routers.pihole-secure.tls=true"
-    #   - "traefik.http.routers.pihole-secure.service=pihole"
-    #   - "traefik.http.services.pihole.loadbalancer.server.port=80"
-    #   - "traefik.docker.network=proxy"
+    # We don't use Traefik for PiHole as it will be used as a DNS server on a separate device
+    labels:
+      # Traefik labels
+      - traefik.enable=true
+      - traefik.docker.network=proxy
+      - traefik.http.routers.pihole.entrypoints=web
+      - traefik.http.routers.pihole.rule=Host(`pihole.${DOMAIN}`)
+      - traefik.http.middlewares.pihole-https-redirect.redirectscheme.scheme=https
+      - traefik.http.routers.pihole.middlewares=pihole-https-redirect
+      - traefik.http.routers.pihole-secure.entrypoints=websecure
+      - traefik.http.routers.pihole-secure.rule=Host(`pihole.${DOMAIN}`)
+      - traefik.http.routers.pihole-secure.tls=true
+      - traefik.http.routers.pihole-secure.service=pihole
+      - traefik.http.services.pihole.loadbalancer.server.port=80
 
 # Notes:
 # - Remember to use Teleporter to backup and restore your PiHole settings
