@@ -26,7 +26,7 @@ services:
       - traefik.http.routers.traefik.rule=Host(`traefik-dashboard.${DOMAIN}`)
       - traefik.http.routers.traefik.tls=true
       # TODO: Add authentication
-      # - traefik.http.middlewares.traefik-auth.basicauth.users=admin:$$apr1$$nEtRnmaw$$ZR1MFB6/9sgKpoT7793nb0
+      # - traefik.http.middlewares.traefik-auth.basicauth.users=${TRAEFIK_ADMIN_USER}:${TRAEFIK_ADMIN_PASSWORD}
       # - traefik.http.routers.traefik-secure.middlewares=traefik-auth
       - traefik.http.middlewares.traefik-https-redirect.redirectscheme.scheme=https
       - traefik.http.middlewares.sslheader.headers.customrequestheaders.X-Forwarded-Proto=https
