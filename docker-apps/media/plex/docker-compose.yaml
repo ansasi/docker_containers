@@ -45,7 +45,7 @@ services:
     volumes:
       - ${WORKDIR}/jellyseerr/config:/app/config
     # ports:
-    #   - 8111:5055
+    #   - 8112:5055
     networks:
       - proxy
     labels:

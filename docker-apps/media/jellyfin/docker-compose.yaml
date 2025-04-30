@@ -12,11 +12,11 @@ services:
       PUID: "${PUID}"
       TZ: "Etc/UTC"
     volumes:
-      - "${MEDIA_ARRS_FOLDER:-/media}/library/tv:/media/TV"
-      - "${MEDIA_ARRS_FOLDER:-/media}/library/movies:/media/movies"
-      - "${MEDIA_ARRS_FOLDER:-/media}/library/music:/media/music"
-      - "${MEDIA_ARRS_FOLDER:-/media}/library/pictures:/media/pictures"
-      - "${MEDIA_ARRS_FOLDER:-/media}/library/books:/media/books"
+      - "${MEDIA_ARRS_FOLDER}/library/tv:/media/TV"
+      - "${MEDIA_ARRS_FOLDER}/library/movies:/media/movies"
+      - "${MEDIA_ARRS_FOLDER}/library/music:/media/music"
+      - "${MEDIA_ARRS_FOLDER}/library/pictures:/media/pictures"
+      - "${MEDIA_ARRS_FOLDER}/library/books:/media/books"
       - "${WORKDIR}/config:/config"
       # - /dev/shm:/transcode
     # ports:
