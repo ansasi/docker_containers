@@ -45,6 +45,7 @@ services:
     # ports:
     #   - 8082:80
     labels:
+      # Traefik labels
       - traefik.enable=true
       - traefik.docker.network=proxy
       - traefik.http.routers.nextcloud.entrypoints=web

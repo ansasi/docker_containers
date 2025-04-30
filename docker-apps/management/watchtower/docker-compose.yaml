@@ -11,8 +11,10 @@ services:
       - WATCHTOWER_CLEANUP=true
       # remove old volumes after update (useful for saving space)
       - WATCHTOWER_REMOVE_VOLUMES=true
-      # the below will ignore labels set. It is worth checking out labels as that can be a more scalabe solution (automatic)
-      - WATCHTOWER_DISABLE_CONTAINERS=traefik authentik home-assistant homeassistant-db
+      # labels enabled to Watchtower in specific containers
+      - WATCHTOWER_LABEL_ENABLE=true
+      # # the below will ignore labels set. It is worth checking out labels as that can be a more scalabe solution (automatic)
+      # - WATCHTOWER_DISABLE_CONTAINERS=traefik
       # Run at 4am every day (instead of the default of 24 hours)
       - WATCHTOWER_SCHEDULE=0 0 4 * * *
       # # how frequently to check for images (default is 24 hours = 86400 seconds)
