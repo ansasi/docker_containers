@@ -128,20 +128,6 @@
         icon: prowlarr.svg
         description: Indexer manager for all your apps - rpi-angel-1
         container: prowlarr
-    - Jackett:
-        href: https://jackett.sheetgenius.app
-        icon: jackett.svg
-        description: Indexer manager for all your apps - rpi-angel-1
-        container: jackett
-    - Overseerr:
-        href: https://overseerr.sheetgenius.app
-        icon: overseerr.svg
-        description: Media request management tool for Plex and Jellyfin - rpi-angel-1
-        container: overseerr
-        # widget:
-        #     type: overseerr
-        #     url: https://overseerr.sheetgenius.app
-        #     key: {{HOMEPAGE_VAR_OVERSEERR_KEY}}
     - Sonarr:
         href: https://sonarr.sheetgenius.app
         icon: sonarr.svg
