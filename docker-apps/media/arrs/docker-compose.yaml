@@ -22,64 +22,12 @@ services:
     #   - 8085:8085
     volumes:
       - /home/docker/docker_apps/arrs/qbittorrent/config:/config
-      - "${MEDIA_ARRS_FOLDER:-/media}/qbittorrent/downloads:/downloads"
+      - "${MEDIA_ARRS_FOLDER}/qbittorrent/downloads:/downloads"
     network_mode: "service:gluetun"
     depends_on:
       - gluetun
 
-  # Jackett - Torrent and Usenet indexer
-  jackett:
-    image: lscr.io/linuxserver/jackett:latest
-    container_name: jackett
-    restart: unless-stopped
-    environment:
-      PUID: "${PUID:-1000}"
-      PGID: "${PGID:-1000}"
-      TZ: "Etc/UTC"
-    volumes:
-      - /home/docker/docker_apps/arrs/jackett/config:/config
-      - "${MEDIA_ARRS_FOLDER:-/media}/qbittorrent/downloads:/downloads" # optional
-    # ports:
-    #   - 8112:9117
-    network_mode: "service:gluetun"
-    depends_on:
-      - gluetun
-
-  # ###--- qBitmanage - qBittorrent manager - Used to run automated tasks for qBittorrent ---###
-  # qbitmanage:
-  #   image: ghcr.io/stuffanthings/qbit_manage:latest
-  #   container_name: qbitmanage
-  #   restart: unless-stopped
-  #   environment:
-  #     PUID: ${PUID}
-  #     PGID: ${PGID}
-  #     UMASK: 002
-  #     TZ: Etc/UTC
-  #     QBT_RUN: false
-  #     QBT_SCHEDULE: 1440
-  #     QBT_CONFIG: config.yml
-  #     QBT_LOGFILE: activity.log
-  #     QBT_CROSS_SEED: false
-  #     QBT_RECHECK: false
-  #     QBT_CAT_UPDATE: false
-  #     QBT_TAG_UPDATE: false
-  #     QBT_REM_UNREGISTERED: false
-  #     QBT_REM_ORPHANED: false
-  #     QBT_TAG_TRACKER_ERROR: false
-  #     QBT_TAG_NOHARDLINKS: false
-  #     QBT_SHARE_LIMITS: false
-  #     QBT_SKIP_CLEANUP: false
-  #     QBT_DRY_RUN: false
-  #     QBT_LOG_LEVEL: INFO
-  #     QBT_DIVIDER: =
-  #     QBT_WIDTH: 100
-  #   volumes:
-  #     - ${MEDIA_ARRS_FOLDER:-/media}/torrents:/data/torrents
-  #     - /home/docker/docker_apps/arrs/qbitmanage/config:/config
-  #     - /home/docker/docker_apps/arrs/qbittorrent/data/BT_backup:/torrentdir
-  #   network_mode: "service:gluetun"
-  #   depends_on:
-  #     - gluetun
+  # qBitmanage - qBittorrent manager - Used to run automated tasks for qBittorrent
 
   ###--- SABnzbd - Download client - Used to download NZB from Usenet groups ---###
   ### This container has been disabled since you need a premium Usenet provider subscription to download files. ###
@@ -102,6 +50,8 @@ services:
   #   logging:
   #     driver: json-file
   #   network_mode: "service:gluetun"
+  #   depends_on:
+  #     - gluetun
 
   # Prowlarr - Indexer manager for all your media content
   prowlarr:
@@ -132,8 +82,8 @@ services:
       TZ: "Etc/UTC"
     volumes:
       - /home/docker/docker_apps/arrs/radarr/config:/config
-      - "${MEDIA_ARRS_FOLDER:-/media}/library/movies:/movies" # optional
-      - "${MEDIA_ARRS_FOLDER:-/media}/qbittorrent/downloads:/downloads" # optional
+      - "${MEDIA_ARRS_FOLDER}/library/movies:/movies"
+      - "${MEDIA_ARRS_FOLDER}/qbittorrent/downloads:/downloads"
     # ports:
     #   - 8114:7878
     network_mode: "service:gluetun"
@@ -155,8 +105,8 @@ services:
       TZ: "Etc/UTC"
     volumes:
       - /home/docker/docker_apps/arrs/sonarr/config:/config
-      - "${MEDIA_ARRS_FOLDER:-/media}/library/tv:/tv"              # optional
-      - "${MEDIA_ARRS_FOLDER:-/media}/qbittorrent/downloads:/downloads"  # optional
+      - "${MEDIA_ARRS_FOLDER}/library/tv:/tv"
+      - "${MEDIA_ARRS_FOLDER}/qbittorrent/downloads:/downloads"
     # ports:
     #   - 8115:8989
     network_mode: "service:gluetun"
@@ -177,8 +127,8 @@ services:
       TZ: "Etc/UTC"
     volumes:
       - /home/docker/docker_apps/arrs/bazarr/config:/config
-      - "${MEDIA_ARRS_FOLDER:-/media}/library/movies:/movies"  # optional
-      - "${MEDIA_ARRS_FOLDER:-/media}/library/tv:/tv"          # optional
+      - "${MEDIA_ARRS_FOLDER}/library/movies:/movies"
+      - "${MEDIA_ARRS_FOLDER}/library/tv:/tv"
     # ports:
     #   - 8116:6767
     network_mode: "service:gluetun"
@@ -196,8 +146,8 @@ services:
       TZ: "Etc/UTC"
     volumes:
       - /home/docker/docker_apps/arrs/lidarr/config:/config
-      - "${MEDIA_ARRS_FOLDER:-/media}/library/music:/music"       # optional
-      - "${MEDIA_ARRS_FOLDER:-/media}/qbittorrent/downloads:/downloads" # optional
+      - "${MEDIA_ARRS_FOLDER}/library/music:/music"
+      - "${MEDIA_ARRS_FOLDER}/qbittorrent/downloads:/downloads"
     # ports:
     #   - 8117:8686
     network_mode: "service:gluetun"
@@ -215,44 +165,15 @@ services:
       TZ: "Etc/UTC"
     volumes:
       - /home/docker/docker_apps/arrs/readarr/config:/config
-      - "${MEDIA_ARRS_FOLDER:-/media}/library/books:/books"      # optional
-      - "${MEDIA_ARRS_FOLDER:-/media}/qbittorrent/downloads:/downloads" # optional
+      - "${MEDIA_ARRS_FOLDER}/library/books:/books"
+      - "${MEDIA_ARRS_FOLDER}/qbittorrent/downloads:/downloads"
     # ports:
     #   - 8118:8787
     network_mode: "service:gluetun"
     depends_on:
       - gluetun
 
-#   ###--- Unpackerr - Extracts downloads for Radarr, Sonarr, Lidarr, and Readarr - Deletes extracted files after import. ---###
-#   unpackerr:
-#     image: lscr.io/linuxserver/unpackerr:latest
-#     container_name: unpackerr
-#     restart: unless-stopped
-#     volumes:
-#       - /home/docker/docker_apps/arrs/unpackerr/config:/config
-#       - ${MEDIA_ARRS_FOLDER:-/media}/torrents:/data/torrents
-#     environment:
-#       PUID: ${PUID}
-#       PGID: ${PGID}
-#       TZ: Etc/UTC
-#       UN_LOG_FILE: /data/torrents/unpackerr.log
-#       UN_SONARR_0_URL: http://sonarr:8989/sonarr
-#       UN_SONARR_0_API_KEY: IMPORT_SONARR_API_KEY_HERE
-# #      UN_SONARR_1_URL: http://sonarr4k:8989/sonarr
-# #      UN_SONARR_1_API_KEY: IMPORT_SONARR4k_API_KEY_HERE
-#       UN_RADARR_0_URL: http://radarr:7878/radarr
-#       UN_RADARR_0_API_KEY: IMPORT_RADARR_API_KEY_HERE
-# #      UN_RADARR_1_URL: http://radarr4k:7878/radarr
-# #      UN_RADARR_1_API_KEY: IMPORT_RADARR4k_API_KEY_HERE
-#       UN_LIDARR_0_URL: http://lidarr:8686/lidarr
-#       UN_LIDARR_0_API_KEY: IMPORT_LIDARR_API_KEY_HERE
-#       UN_READARR_0_URL: http://readarr:8787/readarr
-#       UN_READARR_0_API_KEY: IMPORT_READARR_API_KEY_HERE
-#     security_opt:
-#       - no-new-privileges:true
-#     network_mode: "service:gluetun"
-#     depends_on:
-#       - gluetun
+  # Unpackerr - Extracts downloads for Radarr, Sonarr, Lidarr, and Readarr - Deletes extracted files after import.
 
   # Gluetun - VPN Client - Used to connect to VPN services
   gluetun:
@@ -276,7 +197,6 @@ services:
       # - 6767:6767    # Bazarr
       # - 8686:8686    # Lidarr
       # - 8787:8787    # Readarr
-      # - 9117:9117    # Jackett
     volumes:
       - gluetun-data:/gluetun
     environment:
@@ -363,13 +283,3 @@ services:
       - traefik.http.routers.readarr-websecure.tls.certresolver=cloudflare
       - traefik.http.routers.readarr-websecure.service=readarr
       - traefik.http.services.readarr.loadbalancer.server.port=8787
-
-      # Jackett
-      - traefik.http.routers.jackett.entrypoints=web
-      - traefik.http.routers.jackett.rule=Host(`jackett.${DOMAIN}`)
-      - traefik.http.routers.jackett-websecure.entrypoints=websecure
-      - traefik.http.routers.jackett-websecure.rule=Host(`jackett.${DOMAIN}`)
-      - traefik.http.routers.jackett-websecure.tls=true
-      - traefik.http.routers.jackett-websecure.tls.certresolver=cloudflare
-      - traefik.http.routers.jackett-websecure.service=jackett
-      - traefik.http.services.jackett.loadbalancer.server.port=9117
