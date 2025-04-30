@@ -153,8 +153,8 @@
         icon: readarr.svg
         description: Automates the downloading of books - rpi-angel-1
         container: readarr
-    - Bittorrent:
-        href: https://bittorrent.sheetgenius.app
-        icon: si-bittorrent
+    - Qbittorrent:
+        href: https://qbittorrent.sheetgenius.app
+        icon: si-qbittorrent
         description: Torrent client - rpi-angel-1
-        container: bittorrent
+        container: qbittorrent

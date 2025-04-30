@@ -17,7 +17,7 @@ services:
       PGID: "${PGID:-1000}"
       UMASK: "002"
       TZ: "Etc/UTC"
-      WEBUI_PORTS: "8085"
+      WEBUI_PORT: "8085"
     # ports:
     #   - 8085:8085
     volumes:
