@@ -21,7 +21,7 @@ services:
     # ports:
     #   - 8085:8085
     volumes:
-      - /home/docker/docker_apps/arrs/qbittorrent/config:/config
+      - ${WORKDIR}/qbittorrent/config:/config
       - "${MEDIA_ARRS_FOLDER}/qbittorrent/downloads:/downloads"
     network_mode: "service:gluetun"
     depends_on:
@@ -42,7 +42,7 @@ services:
   #     TZ: Etc/UTC
   #   volumes:
   #     - /etc/localtime:/etc/localtime:ro
-  #     - /home/docker/docker_apps/arrs/sabnzbd/config:/config
+  #     - ${WORKDIR}/sabnzbd/config:/config
   #     - ${MEDIA_ARRS_FOLDER:-/media}/usenet:/data/usenet:rw
   #   ports:
   #     - 8085:8080
@@ -63,7 +63,7 @@ services:
       PGID: "${PGID:-1000}"
       TZ: "Etc/UTC"
     volumes:
-      - /home/docker/docker_apps/arrs/prowlarr/config:/config
+      - ${WORKDIR}/prowlarr/config:/config
     # ports:
     #   - "8113:9696"
     network_mode: "service:gluetun"
@@ -81,7 +81,7 @@ services:
       PGID: "${PGID:-1000}"
       TZ: "Etc/UTC"
     volumes:
-      - /home/docker/docker_apps/arrs/radarr/config:/config
+      - ${WORKDIR}/radarr/config:/config
       - "${MEDIA_ARRS_FOLDER}/library/movies:/movies"
       - "${MEDIA_ARRS_FOLDER}/qbittorrent/downloads:/downloads"
     # ports:
@@ -104,7 +104,7 @@ services:
       PGID: "${PGID:-1000}"
       TZ: "Etc/UTC"
     volumes:
-      - /home/docker/docker_apps/arrs/sonarr/config:/config
+      - ${WORKDIR}/sonarr/config:/config
       - "${MEDIA_ARRS_FOLDER}/library/tv:/tv"
       - "${MEDIA_ARRS_FOLDER}/qbittorrent/downloads:/downloads"
     # ports:
@@ -126,7 +126,7 @@ services:
       PGID: "${PGID:-1000}"
       TZ: "Etc/UTC"
     volumes:
-      - /home/docker/docker_apps/arrs/bazarr/config:/config
+      - ${WORKDIR}/bazarr/config:/config
       - "${MEDIA_ARRS_FOLDER}/library/movies:/movies"
       - "${MEDIA_ARRS_FOLDER}/library/tv:/tv"
     # ports:
@@ -145,7 +145,7 @@ services:
       PGID: "${PGID:-1000}"
       TZ: "Etc/UTC"
     volumes:
-      - /home/docker/docker_apps/arrs/lidarr/config:/config
+      - ${WORKDIR}/lidarr/config:/config
       - "${MEDIA_ARRS_FOLDER}/library/music:/music"
       - "${MEDIA_ARRS_FOLDER}/qbittorrent/downloads:/downloads"
     # ports:
@@ -164,7 +164,7 @@ services:
       PGID: "${PGID:-1000}"
       TZ: "Etc/UTC"
     volumes:
-      - /home/docker/docker_apps/arrs/readarr/config:/config
+      - ${WORKDIR}/readarr/config:/config
       - "${MEDIA_ARRS_FOLDER}/library/books:/books"
       - "${MEDIA_ARRS_FOLDER}/qbittorrent/downloads:/downloads"
     # ports:
