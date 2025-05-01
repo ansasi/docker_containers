@@ -22,7 +22,7 @@ services:
     #   - 8085:8085
     volumes:
       - ${WORKDIR}/qbittorrent/config:/config
-      - "${MEDIA_ARRS_FOLDER}/qbittorrent/downloads:/downloads"
+      - "${MEDIA_ARRS_FOLDER}/downloads/torrents:/downloads"
     network_mode: "service:gluetun"
     depends_on:
       - gluetun
@@ -43,7 +43,7 @@ services:
   #   volumes:
   #     - /etc/localtime:/etc/localtime:ro
   #     - ${WORKDIR}/sabnzbd/config:/config
-  #     - ${MEDIA_ARRS_FOLDER:-/media}/usenet:/data/usenet:rw
+  #     - ${MEDIA_ARRS_FOLDER}/download/usenet/:/data/usenet:rw
   #   ports:
   #     - 8085:8080
   #     - 9091:9090
@@ -61,6 +61,7 @@ services:
     environment:
       PUID: "${PUID}"
       PGID: "${PGID}"
+      UMASK: "002"
       TZ: "Etc/UTC"
     volumes:
       - ${WORKDIR}/prowlarr/config:/config
@@ -79,11 +80,12 @@ services:
     environment:
       PUID: "${PUID}"
       PGID: "${PGID}"
+      UMASK: "002"
       TZ: "Etc/UTC"
     volumes:
       - ${WORKDIR}/radarr/config:/config
       - "${MEDIA_ARRS_FOLDER}/library/movies:/movies"
-      - "${MEDIA_ARRS_FOLDER}/qbittorrent/downloads:/downloads"
+      - "${MEDIA_ARRS_FOLDER}/downloads/torrents:/downloads"
     # ports:
     #   - 8114:7878
     network_mode: "service:gluetun"
@@ -102,11 +104,12 @@ services:
     environment:
       PUID: "${PUID}"
       PGID: "${PGID}"
+      UMASK: "002"
       TZ: "Etc/UTC"
     volumes:
       - ${WORKDIR}/sonarr/config:/config
       - "${MEDIA_ARRS_FOLDER}/library/tv:/tv"
-      - "${MEDIA_ARRS_FOLDER}/qbittorrent/downloads:/downloads"
+      - "${MEDIA_ARRS_FOLDER}/downloads/torrents:/downloads"
     # ports:
     #   - 8115:8989
     network_mode: "service:gluetun"
@@ -124,6 +127,7 @@ services:
     environment:
       PUID: "${PUID}"
       PGID: "${PGID}"
+      UMASK: "002"
       TZ: "Etc/UTC"
     volumes:
       - ${WORKDIR}/bazarr/config:/config
@@ -143,11 +147,12 @@ services:
     environment:
       PUID: "${PUID}"
       PGID: "${PGID}"
+      UMASK: "002"
       TZ: "Etc/UTC"
     volumes:
       - ${WORKDIR}/lidarr/config:/config
       - "${MEDIA_ARRS_FOLDER}/library/music:/music"
-      - "${MEDIA_ARRS_FOLDER}/qbittorrent/downloads:/downloads"
+      - "${MEDIA_ARRS_FOLDER}/downloads/torrents:/downloads"
     # ports:
     #   - 8117:8686
     network_mode: "service:gluetun"
@@ -162,11 +167,12 @@ services:
     environment:
       PUID: "${PUID}"
       PGID: "${PGID}"
+      UMASK: "002"
       TZ: "Etc/UTC"
     volumes:
       - ${WORKDIR}/readarr/config:/config
       - "${MEDIA_ARRS_FOLDER}/library/books:/books"
-      - "${MEDIA_ARRS_FOLDER}/qbittorrent/downloads:/downloads"
+      - "${MEDIA_ARRS_FOLDER}/downloads/torrents:/downloads"
     # ports:
     #   - 8118:8787
     network_mode: "service:gluetun"
