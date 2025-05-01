@@ -212,7 +212,7 @@ services:
       - VPN_TYPE=wireguard
       - WIREGUARD_PRIVATE_KEY=${WIREGUARD_PRIVATE_KEY}
       - SERVER_COUNTRIES=Switzerland
-      - STREAM_ONLY=on
+      # - STREAM_ONLY=on
       - TZ=Europe/Madrid
       - UPDATER_PERIOD=24h
     networks:
