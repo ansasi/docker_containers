@@ -10,9 +10,6 @@ services:
   speedtest:
     restart: unless-stopped
     container_name: openspeedtest
-    ports:
-        - '3005:3000'
-        - '3006:3001'
     image: openspeedtest/latest
     network_mode: "service:gluetun"
 
@@ -202,6 +199,9 @@ services:
     ports:
       - 6881:6881
       - 6881:6881/udp
+      # Speed test
+      - '3005:3000'
+      - '3006:3001'
       # Ports to apps:
       - 8096:8096    # Jellyfin
       - 5055:5055    # Jellyseerr
