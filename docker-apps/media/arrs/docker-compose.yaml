@@ -7,6 +7,15 @@ networks:
     external: true
 
 services:
+  speedtest:
+    restart: unless-stopped
+    container_name: openspeedtest
+    ports:
+        - '3005:3000'
+        - '3006:3001'
+    image: openspeedtest/latest
+    network_mode: "service:gluetun"
+
   # qBittorrent - Download Client
   qbittorrent:
     image: lscr.io/linuxserver/qbittorrent
