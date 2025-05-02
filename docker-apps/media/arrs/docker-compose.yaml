@@ -26,25 +26,6 @@ services:
     network_mode: "service:gluetun"
     depends_on:
       - gluetun
-  
-    # qBittorrent - Download Client
-  qbittorrent-no-vpn:
-    image: lscr.io/linuxserver/qbittorrent
-    container_name: qbittorrent-no-vpn
-    restart: unless-stopped
-    environment:
-      PUID: "${PUID}"
-      PGID: "${PGID}"
-      UMASK: "002"
-      TZ: "Etc/UTC"
-      WEBUI_PORT: "8086"
-    ports:
-      - 8086:8086
-    volumes:
-      - ${WORKDIR}/qbittorrent-no-vpn/config:/config
-      - "${MEDIA_ARRS_FOLDER}/downloads/torrents:/downloads"
-    networks:
-      - proxy
 
   # qBitmanage - qBittorrent manager - Used to run automated tasks for qBittorrent
 
