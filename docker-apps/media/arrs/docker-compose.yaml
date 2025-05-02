@@ -139,25 +139,25 @@ services:
     depends_on:
       - gluetun
 
-  # Lidarr - Library Manager for Music content management
-  lidarr:
-    image: lscr.io/linuxserver/lidarr:latest
-    container_name: lidarr
-    restart: unless-stopped
-    environment:
-      PUID: "${PUID}"
-      PGID: "${PGID}"
-      UMASK: "002"
-      TZ: "Etc/UTC"
-    volumes:
-      - ${WORKDIR}/lidarr/config:/config
-      - "${MEDIA_ARRS_FOLDER}/library/music:/music"
-      - "${MEDIA_ARRS_FOLDER}/downloads/torrents:/downloads"
-    # ports:
-    #   - 8117:8686
-    network_mode: "service:gluetun"
-    depends_on:
-      - gluetun
+  # # Lidarr - Library Manager for Music content management
+  # lidarr:
+  #   image: lscr.io/linuxserver/lidarr:latest
+  #   container_name: lidarr
+  #   restart: unless-stopped
+  #   environment:
+  #     PUID: "${PUID}"
+  #     PGID: "${PGID}"
+  #     UMASK: "002"
+  #     TZ: "Etc/UTC"
+  #   volumes:
+  #     - ${WORKDIR}/lidarr/config:/config
+  #     - "${MEDIA_ARRS_FOLDER}/library/music:/music"
+  #     - "${MEDIA_ARRS_FOLDER}/downloads/torrents:/downloads"
+  #   # ports:
+  #   #   - 8117:8686
+  #   network_mode: "service:gluetun"
+  #   depends_on:
+  #     - gluetun
 
   # Readarr - Library Manager for Books / Epubs content management
   readarr:
@@ -179,8 +179,6 @@ services:
     depends_on:
       - gluetun
 
-  # Unpackerr - Extracts downloads for Radarr, Sonarr, Lidarr, and Readarr - Deletes extracted files after import.
-
   # Gluetun - VPN Client - Used to connect to VPN services
   gluetun:
     image: qmcgaw/gluetun
@@ -201,7 +199,7 @@ services:
       - 7878:7878    # Radarr
       - 8989:8989    # Sonarr
       - 6767:6767    # Bazarr
-      - 8686:8686    # Lidarr
+      # - 8686:8686    # Lidarr
       - 8787:8787    # Readarr
       # Note: This is uncommented as Proton VPN uses its own DNS servers, so it is not possible to resolve to mydomain.com INSIDE the containers that use gluetun as network mode
     volumes:
@@ -270,15 +268,15 @@ services:
       - traefik.http.routers.bazarr-websecure.service=bazarr
       - traefik.http.services.bazarr.loadbalancer.server.port=6767
 
-      # Lidarr
-      - traefik.http.routers.lidarr.entrypoints=web
-      - traefik.http.routers.lidarr.rule=Host(`lidarr.${DOMAIN}`)
-      - traefik.http.routers.lidarr-websecure.entrypoints=websecure
-      - traefik.http.routers.lidarr-websecure.rule=Host(`lidarr.${DOMAIN}`)
-      - traefik.http.routers.lidarr-websecure.tls=true
-      - traefik.http.routers.lidarr-websecure.tls.certresolver=cloudflare
-      - traefik.http.routers.lidarr-websecure.service=lidarr
-      - traefik.http.services.lidarr.loadbalancer.server.port=8686
+      # # Lidarr
+      # - traefik.http.routers.lidarr.entrypoints=web
+      # - traefik.http.routers.lidarr.rule=Host(`lidarr.${DOMAIN}`)
+      # - traefik.http.routers.lidarr-websecure.entrypoints=websecure
+      # - traefik.http.routers.lidarr-websecure.rule=Host(`lidarr.${DOMAIN}`)
+      # - traefik.http.routers.lidarr-websecure.tls=true
+      # - traefik.http.routers.lidarr-websecure.tls.certresolver=cloudflare
+      # - traefik.http.routers.lidarr-websecure.service=lidarr
+      # - traefik.http.services.lidarr.loadbalancer.server.port=8686
 
       # Readarr
       - traefik.http.routers.readarr.entrypoints=web
