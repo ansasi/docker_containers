@@ -7,12 +7,6 @@ networks:
     external: true
 
 services:
-  speedtest:
-    restart: unless-stopped
-    container_name: openspeedtest
-    image: openspeedtest/latest
-    network_mode: "service:gluetun"
-
   # qBittorrent - Download Client
   qbittorrent:
     image: lscr.io/linuxserver/qbittorrent
@@ -32,6 +26,25 @@ services:
     network_mode: "service:gluetun"
     depends_on:
       - gluetun
+  
+    # qBittorrent - Download Client
+  qbittorrent-no-vpn:
+    image: lscr.io/linuxserver/qbittorrent
+    container_name: qbittorrent-no-vpn
+    restart: unless-stopped
+    environment:
+      PUID: "${PUID}"
+      PGID: "${PGID}"
+      UMASK: "002"
+      TZ: "Etc/UTC"
+      WEBUI_PORT: "8085"
+    ports:
+      - 8086:8085
+    volumes:
+      - ${WORKDIR}/qbittorrent-no-vpn/config:/config
+      - "${MEDIA_ARRS_FOLDER}/downloads/torrents:/downloads"
+    networks:
+      - proxy
 
   # qBitmanage - qBittorrent manager - Used to run automated tasks for qBittorrent
 
@@ -199,9 +212,6 @@ services:
     ports:
       - 6881:6881
       - 6881:6881/udp
-      # Speed test
-      - '3005:3000'
-      - '3006:3001'
       # Ports to apps:
       - 8096:8096    # Jellyfin
       - 5055:5055    # Jellyseerr
