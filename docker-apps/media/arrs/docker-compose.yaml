@@ -196,6 +196,7 @@ services:
       - 5055:5055    # Jellyseerr
       - 8085:8085    # qBittorrent
       - 9696:9696    # Prowlarr
+      - 8191:8191    # FlareSolverr - used by Prowlarr
       - 7878:7878    # Radarr
       - 8989:8989    # Sonarr
       - 6767:6767    # Bazarr
