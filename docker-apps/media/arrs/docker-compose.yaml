@@ -16,7 +16,7 @@ services:
       PUID: "${PUID}"
       PGID: "${PGID}"
       UMASK: "002"
-      TZ: "Etc/UTC"
+      TZ: "Etc/Zurich"
       WEBUI_PORT: "8085"
     # ports:
     #   - 8085:8085
@@ -24,6 +24,8 @@ services:
       - ${WORKDIR}/qbittorrent/config:/config
       - "${MEDIA_ARRS_FOLDER}/downloads/torrents:/downloads"
     network_mode: "service:gluetun"
+    security_opt:
+      - no-new-privileges:true
     depends_on:
       - gluetun
 
@@ -39,7 +41,7 @@ services:
   #   environment:
   #     PUID: ${PUID}
   #     PGID: ${PGID}
-  #     TZ: Etc/UTC
+  #     TZ: Etc/Zurich
   #   volumes:
   #     - /etc/localtime:/etc/localtime:ro
   #     - ${WORKDIR}/sabnzbd/config:/config
@@ -62,12 +64,14 @@ services:
       PUID: "${PUID}"
       PGID: "${PGID}"
       UMASK: "002"
-      TZ: "Etc/UTC"
+      TZ: "Etc/Zurich"
     volumes:
       - ${WORKDIR}/prowlarr/config:/config
     # ports:
     #   - "8113:9696"
     network_mode: "service:gluetun"
+    security_opt:
+      - no-new-privileges:true
     depends_on:
       - gluetun
 
@@ -81,7 +85,7 @@ services:
       PUID: "${PUID}"
       PGID: "${PGID}"
       UMASK: "002"
-      TZ: "Etc/UTC"
+      TZ: "Etc/Zurich"
     volumes:
       - ${WORKDIR}/radarr/config:/config
       - "${MEDIA_ARRS_FOLDER}/library/movies:/movies"
@@ -89,6 +93,8 @@ services:
     # ports:
     #   - 8114:7878
     network_mode: "service:gluetun"
+    security_opt:
+      - no-new-privileges:true
     depends_on:
       - gluetun
 
@@ -105,7 +111,7 @@ services:
       PUID: "${PUID}"
       PGID: "${PGID}"
       UMASK: "002"
-      TZ: "Etc/UTC"
+      TZ: "Etc/Zurich"
     volumes:
       - ${WORKDIR}/sonarr/config:/config
       - "${MEDIA_ARRS_FOLDER}/library/tv:/tv"
@@ -113,6 +119,8 @@ services:
     # ports:
     #   - 8115:8989
     network_mode: "service:gluetun"
+    security_opt:
+      - no-new-privileges:true
     depends_on:
       - gluetun
 
@@ -128,7 +136,7 @@ services:
       PUID: "${PUID}"
       PGID: "${PGID}"
       UMASK: "002"
-      TZ: "Etc/UTC"
+      TZ: "Etc/Zurich"
     volumes:
       - ${WORKDIR}/bazarr/config:/config
       - "${MEDIA_ARRS_FOLDER}/library/movies:/movies"
@@ -136,6 +144,8 @@ services:
     # ports:
     #   - 8116:6767
     network_mode: "service:gluetun"
+    security_opt:
+      - no-new-privileges:true
     depends_on:
       - gluetun
 
@@ -148,7 +158,7 @@ services:
   #     PUID: "${PUID}"
   #     PGID: "${PGID}"
   #     UMASK: "002"
-  #     TZ: "Etc/UTC"
+  #     TZ: "Etc/Zurich"
   #   volumes:
   #     - ${WORKDIR}/lidarr/config:/config
   #     - "${MEDIA_ARRS_FOLDER}/library/music:/music"
@@ -156,6 +166,8 @@ services:
   #   # ports:
   #   #   - 8117:8686
   #   network_mode: "service:gluetun"
+  #   security_opt:
+  #     - no-new-privileges:true
   #   depends_on:
   #     - gluetun
 
@@ -168,7 +180,7 @@ services:
       PUID: "${PUID}"
       PGID: "${PGID}"
       UMASK: "002"
-      TZ: "Etc/UTC"
+      TZ: "Etc/Zurich"
     volumes:
       - ${WORKDIR}/readarr/config:/config
       - "${MEDIA_ARRS_FOLDER}/library/books:/books"
@@ -176,6 +188,25 @@ services:
     # ports:
     #   - 8118:8787
     network_mode: "service:gluetun"
+    security_opt:
+      - no-new-privileges:true
+    depends_on:
+      - gluetun
+    
+  # FlareSolverr - Proxy for bypassing Cloudflare protection
+  flaresolverr:
+    image: flaresolverr/flaresolverr:latest
+    container_name: flaresolverr
+    restart: unless-stopped
+    environment:
+      TZ: "Etc/Zurich"
+    volumes:
+      - ${WORKDIR}/flaresolverr/config:/config
+    # ports:
+    #   - 8119:8191
+    network_mode: "service:gluetun"
+    security_opt:
+      - no-new-privileges:true
     depends_on:
       - gluetun
 
@@ -196,7 +227,7 @@ services:
       - 5055:5055    # Jellyseerr
       - 8085:8085    # qBittorrent
       - 9696:9696    # Prowlarr
-      - 8191:8191    # FlareSolverr - used by Prowlarr
+      - 8191:8191    # FlareSolverr - used by Prowlarr to bypass Cloudflare
       - 7878:7878    # Radarr
       - 8989:8989    # Sonarr
       - 6767:6767    # Bazarr
