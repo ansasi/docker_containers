@@ -111,6 +111,11 @@
         icon: jellyfin.svg
         description: Open source media server - rpi-angel-1
         container: jellyfin
+    - Jellyfin Jellyseerr:
+        href: https://jellyseerr-jellyfin.sheetgenius.app
+        icon: jellyseerr.svg
+        description: Movie and TV show request management - rpi-angel-1
+        container: jellyseerr
     # - AudioBookShelf:
     #     href: https://audiobookshelf.sheetgenius.app
     #     icon: audiobookshelf.svg
