@@ -43,7 +43,7 @@ layout:
     icon: home-assistant.svg
     columns: 4
   Media:
-    icon: plex.svg
+    icon: jellyfin.svg
     columns: 4
   Torrent:
     icon: si-bittorrent

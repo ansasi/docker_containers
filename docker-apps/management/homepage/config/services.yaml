@@ -40,12 +40,6 @@
         icon: nextcloud.svg
         description: Drive app - rpi-angel-1
         container: nextcloud
-    - Immich:
-        href: "https://immich.sheetgenius.app"
-        icon: immich.svg
-        description: Photo app - rpi-angel-1
-        container: immich_server
-
 
 - Management:
     - Portainer:
@@ -91,20 +85,20 @@
         icon: prometheus.svg
         container: prometheus
 
-- AI:
-    - ChatGPT:
-        href: https://chatgpt.com
-        icon: chatgpt.svg
-    - Ollama:
-        href: http://ollama:11434
-        icon: si-ollama-#FFFFFF
-        description: AI model server - rpi-angel-1
-        container: ollama
-    - OpenWebUI:
-        href: http://openwebui:3003
-        icon: chatgpt.svg
-        description: Web UI for AI - rpi-angel-1
-        container: openwebui
+# - AI:
+#     - ChatGPT:
+#         href: https://chatgpt.com
+#         icon: chatgpt.svg
+#     - Ollama:
+#         href: http://ollama:11434
+#         icon: si-ollama-#FFFFFF
+#         description: AI model server - rpi-angel-1
+#         container: ollama
+#     - OpenWebUI:
+#         href: http://openwebui:3003
+#         icon: chatgpt.svg
+#         description: Web UI for AI - rpi-angel-1
+#         container: openwebui
 
 - Media:
     # - Plex:
@@ -122,8 +116,19 @@
     #     icon: audiobookshelf.svg
     #     description: Audiobook server - rpi-angel-1
     #     container: audiobookshelf
+    - Immich:
+        href: "https://immich.sheetgenius.app"
+        icon: immich.svg
+        description: Photo app - rpi-angel-1
+        container: immich_server
+
 
 - Torrent:
+    - Qbittorrent:
+        href: https://qbittorrent.sheetgenius.app
+        icon: si-qbittorrent
+        description: Torrent client - rpi-angel-1
+        container: qbittorrent
     - Prowlarr:
         href: https://prowlarr.sheetgenius.app
         icon: prowlarr.svg
@@ -144,18 +149,13 @@
         icon: bazarr.svg
         description: Automates the downloading of subtitles - rpi-angel-1
         container: bazarr
-    # - Lidarr:
-    #     href: https://lidarr.sheetgenius.app
-    #     icon: lidarr.svg
-    #     description: Automates the downloading of music - rpi-angel-1
-    #     container: lidarr
     - Readarr:
         href: https://readarr.sheetgenius.app
         icon: readarr.svg
         description: Automates the downloading of books - rpi-angel-1
         container: readarr
-    - Qbittorrent:
-        href: https://qbittorrent.sheetgenius.app
-        icon: si-qbittorrent
-        description: Torrent client - rpi-angel-1
-        container: qbittorrent
+    # - Lidarr:
+    #     href: https://lidarr.sheetgenius.app
+    #     icon: lidarr.svg
+    #     description: Automates the downloading of music - rpi-angel-1
+    #     container: lidarr
