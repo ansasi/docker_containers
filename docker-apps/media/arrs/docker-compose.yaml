@@ -98,28 +98,28 @@ services:
     depends_on:
       - gluetun
   
-  ###--- Radarr Anime - Library Manager for Anime Movie content management ---###
-  ### Enable this container to get seperate instance for Anime Movie content ###
-  radarr-anime:
-    image: lscr.io/linuxserver/radarr:latest
-    container_name: radarr-anime
-    restart: unless-stopped
-    environment:
-      PUID: "${PUID}"
-      PGID: "${PGID}"
-      UMASK: "002"
-      TZ: "Etc/Zurich"
-    volumes:
-      - ${WORKDIR}/radarr-anime/config:/config
-      - "${MEDIA_ARRS_FOLDER}/library/movies:/movies"
-      - "${MEDIA_ARRS_FOLDER}/downloads/torrents:/downloads"
-    # ports:
-    #   - 8114:7878
-    network_mode: "service:gluetun-anime"
-    security_opt:
-      - no-new-privileges:true
-    depends_on:
-      - gluetun-anime
+  # ###--- Radarr Anime - Library Manager for Anime Movie content management ---###
+  # ### Enable this container to get seperate instance for Anime Movie content ###
+  # radarr-anime:
+  #   image: lscr.io/linuxserver/radarr:latest
+  #   container_name: radarr-anime
+  #   restart: unless-stopped
+  #   environment:
+  #     PUID: "${PUID}"
+  #     PGID: "${PGID}"
+  #     UMASK: "002"
+  #     TZ: "Etc/Zurich"
+  #   volumes:
+  #     - ${WORKDIR}/radarr-anime/config:/config
+  #     - "${MEDIA_ARRS_FOLDER}/library/movies:/movies"
+  #     - "${MEDIA_ARRS_FOLDER}/downloads/torrents:/downloads"
+  #   # ports:
+  #   #   - 8114:7878
+  #   network_mode: "service:gluetun-anime"
+  #   security_opt:
+  #     - no-new-privileges:true
+  #   depends_on:
+  #     - gluetun-anime
 
   ###--- Radarr 4K - Library Manager for Movie 4K content management ---###
   ### Enable this container to get seperate instance for 4K Movie content ###
@@ -147,28 +147,28 @@ services:
     depends_on:
       - gluetun
   
-  ###--- Sonarr Anime - Library Manager for Anime TV content management ---###
-  ### Enable this container to get seperate instance for Anime TV content ###
-  sonarr-anime:
-    image: lscr.io/linuxserver/sonarr:latest
-    container_name: sonarr-anime
-    restart: unless-stopped
-    environment:
-      PUID: "${PUID}"
-      PGID: "${PGID}"
-      UMASK: "002"
-      TZ: "Etc/Zurich"
-    volumes:
-      - ${WORKDIR}/sonarr-anime/config:/config
-      - "${MEDIA_ARRS_FOLDER}/library/tv:/tv"
-      - "${MEDIA_ARRS_FOLDER}/downloads/torrents:/downloads"
-    # ports:
-    #   - 8115:8989
-    network_mode: "service:gluetun-anime"
-    security_opt:
-      - no-new-privileges:true
-    depends_on:
-      - gluetun-anime
+  # ###--- Sonarr Anime - Library Manager for Anime TV content management ---###
+  # ### Enable this container to get seperate instance for Anime TV content ###
+  # sonarr-anime:
+  #   image: lscr.io/linuxserver/sonarr:latest
+  #   container_name: sonarr-anime
+  #   restart: unless-stopped
+  #   environment:
+  #     PUID: "${PUID}"
+  #     PGID: "${PGID}"
+  #     UMASK: "002"
+  #     TZ: "Etc/Zurich"
+  #   volumes:
+  #     - ${WORKDIR}/sonarr-anime/config:/config
+  #     - "${MEDIA_ARRS_FOLDER}/library/tv:/tv"
+  #     - "${MEDIA_ARRS_FOLDER}/downloads/torrents:/downloads"
+  #   # ports:
+  #   #   - 8115:8989
+  #   network_mode: "service:gluetun-anime"
+  #   security_opt:
+  #     - no-new-privileges:true
+  #   depends_on:
+  #     - gluetun-anime
 
   ###--- Sonarr 4K - Library Manager for TV 4K content management ---###
   ### Enable this container to get seperate instance for 4K TV content ###
@@ -334,53 +334,53 @@ services:
       - traefik.http.routers.readarr-websecure.service=readarr
       - traefik.http.services.readarr.loadbalancer.server.port=8787
   
-  gluetun-anime:
-    image: qmcgaw/gluetun
-    container_name: gluetun-anime
-    hostname: gluetun-anime
-    cap_add:
-      - NET_ADMIN
-    devices:
-      - /dev/net/tun:/dev/net/tun
-    ports:
-      - 6881:6881
-      - 6881:6881/udp
-      # Ports to apps:
-      - 7878:7878    # Radarr Anime
-      - 8989:8989    # Sonarr Anime
-      # Note: This is uncommented as Proton VPN uses its own DNS servers, so it is not possible to resolve to mydomain.com INSIDE the containers that use gluetun as network mode
-    volumes:
-      - gluetun-data:/gluetun
-    environment:
-      # VPN Configuration (see https://github.com/qdm12/gluetun-wiki for details)
-      - VPN_SERVICE_PROVIDER=protonvpn
-      - VPN_TYPE=wireguard
-      - WIREGUARD_PRIVATE_KEY=${WIREGUARD_PRIVATE_KEY}
-      - SERVER_COUNTRIES=Switzerland
-      - TZ=Europe/Madrid
-      - UPDATER_PERIOD=24h
-    networks:
-      - proxy
-    labels:
-      - "traefik.enable=true"
-      - "traefik.docker.network=proxy"
+  # gluetun-anime:
+  #   image: qmcgaw/gluetun
+  #   container_name: gluetun-anime
+  #   hostname: gluetun-anime
+  #   cap_add:
+  #     - NET_ADMIN
+  #   devices:
+  #     - /dev/net/tun:/dev/net/tun
+  #   ports:
+  #     - 6882:6881
+  #     - 6882:6881/udp
+  #     # Ports to apps:
+  #     - 7878:7878    # Radarr Anime
+  #     - 8989:8989    # Sonarr Anime
+  #     # Note: This is uncommented as Proton VPN uses its own DNS servers, so it is not possible to resolve to mydomain.com INSIDE the containers that use gluetun as network mode
+  #   volumes:
+  #     - gluetun-data:/gluetun
+  #   environment:
+  #     # VPN Configuration (see https://github.com/qdm12/gluetun-wiki for details)
+  #     - VPN_SERVICE_PROVIDER=protonvpn
+  #     - VPN_TYPE=wireguard
+  #     - WIREGUARD_PRIVATE_KEY=${WIREGUARD_PRIVATE_KEY}
+  #     - SERVER_COUNTRIES=Switzerland
+  #     - TZ=Europe/Madrid
+  #     - UPDATER_PERIOD=24h
+  #   networks:
+  #     - proxy
+  #   labels:
+  #     - "traefik.enable=true"
+  #     - "traefik.docker.network=proxy"
 
-      # Radarr Anime
-      - traefik.http.routers.radarr-anime.entrypoints=web
-      - traefik.http.routers.radarr-anime.rule=Host(`radarr-anime.${DOMAIN}`)
-      - traefik.http.routers.radarr-anime-websecure.entrypoints=websecure
-      - traefik.http.routers.radarr-anime-websecure.rule=Host(`radarr-anime.${DOMAIN}`)
-      - traefik.http.routers.radarr-anime-websecure.tls=true
-      - traefik.http.routers.radarr-anime-websecure.tls.certresolver=cloudflare
-      - traefik.http.routers.radarr-anime-websecure.service=radarr-anime
-      - traefik.http.services.radarr-anime.loadbalancer.server.port=7878
+  #     # Radarr Anime
+  #     - traefik.http.routers.radarr-anime.entrypoints=web
+  #     - traefik.http.routers.radarr-anime.rule=Host(`radarr-anime.${DOMAIN}`)
+  #     - traefik.http.routers.radarr-anime-websecure.entrypoints=websecure
+  #     - traefik.http.routers.radarr-anime-websecure.rule=Host(`radarr-anime.${DOMAIN}`)
+  #     - traefik.http.routers.radarr-anime-websecure.tls=true
+  #     - traefik.http.routers.radarr-anime-websecure.tls.certresolver=cloudflare
+  #     - traefik.http.routers.radarr-anime-websecure.service=radarr-anime
+  #     - traefik.http.services.radarr-anime.loadbalancer.server.port=7878
 
-      # Sonarr Anime
-      - traefik.http.routers.sonarr-anime.entrypoints=web
-      - traefik.http.routers.sonarr-anime.rule=Host(`sonarr-anime.${DOMAIN}`)
-      - traefik.http.routers.sonarr-anime-websecure.entrypoints=websecure
-      - traefik.http.routers.sonarr-anime-websecure.rule=Host(`sonarr-anime.${DOMAIN}`)
-      - traefik.http.routers.sonarr-anime-websecure.tls=true
-      - traefik.http.routers.sonarr-anime-websecure.tls.certresolver=cloudflare
-      - traefik.http.routers.sonarr-anime-websecure.service=sonarr-anime
-      - traefik.http.services.sonarr-anime.loadbalancer.server.port=8989
+  #     # Sonarr Anime
+  #     - traefik.http.routers.sonarr-anime.entrypoints=web
+  #     - traefik.http.routers.sonarr-anime.rule=Host(`sonarr-anime.${DOMAIN}`)
+  #     - traefik.http.routers.sonarr-anime-websecure.entrypoints=websecure
+  #     - traefik.http.routers.sonarr-anime-websecure.rule=Host(`sonarr-anime.${DOMAIN}`)
+  #     - traefik.http.routers.sonarr-anime-websecure.tls=true
+  #     - traefik.http.routers.sonarr-anime-websecure.tls.certresolver=cloudflare
+  #     - traefik.http.routers.sonarr-anime-websecure.service=sonarr-anime
+  #     - traefik.http.services.sonarr-anime.loadbalancer.server.port=8989
