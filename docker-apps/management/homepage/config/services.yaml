@@ -12,7 +12,7 @@
         href: http://pihole.local/admin # https://pihole.sheetgenius.app
         icon: pi-hole.svg
         description: DNS - rpi-nico-small
-        container: pihole
+        ping: http://pihole.local/admin
         widget:
             type: pihole
             url: http://pihole.local # https://pihole.sheetgenius.app
@@ -34,6 +34,7 @@
         href: http://192.168.178.48:8080/cgi-bin/ # TODO
         icon: qnap.svg
         description: qnap-462 NAS
+        ping: http://192.168.178.48:8080/cgi-bin/ # TODO
     - NextCloud:
         href: "https://nextcloud.sheetgenius.app"
         icon: nextcloud.svg
@@ -57,11 +58,11 @@
         icon: watchtower.svg
         description: Container auto update - rpi-angel-1
         container: watchtower
-    - Home Assistant:
-        href: https://homeassistant.sheetgenius.app
-        icon: home-assistant.svg
-        description: Automation server - rpi-angel-1
-        container: homeassistant
+    # - Home Assistant:
+    #     href: https://homeassistant.sheetgenius.app
+    #     icon: home-assistant.svg
+    #     description: Automation server - rpi-angel-1
+    #     container: homeassistant
 
 
 - Monitoring:
@@ -106,21 +107,21 @@
         container: openwebui
 
 - Media:
-    - Plex:
-        href: https://plex.sheetgenius.app
-        icon: plex.svg
-        description: Media server - rpi-angel-1
-        container: plex
+    # - Plex:
+    #     href: https://plex.sheetgenius.app
+    #     icon: plex.svg
+    #     description: Media server - rpi-angel-1
+    #     container: plex
     - Jellyfin:
         href: https://jellyfin.sheetgenius.app
         icon: jellyfin.svg
         description: Open source media server - rpi-angel-1
         container: jellyfin
-    - AudioBookShelf:
-        href: https://audiobookshelf.sheetgenius.app
-        icon: audiobookshelf.svg
-        description: Audiobook server - rpi-angel-1
-        container: audiobookshelf
+    # - AudioBookShelf:
+    #     href: https://audiobookshelf.sheetgenius.app
+    #     icon: audiobookshelf.svg
+    #     description: Audiobook server - rpi-angel-1
+    #     container: audiobookshelf
 
 - Torrent:
     - Prowlarr:
