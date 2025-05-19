@@ -6,7 +6,7 @@ networks:
 services:
   openwebui:
     container_name: openwebui
-    image: ghcr.io/open-webui/open-webui:v0.6.9 # Use ghcr.io/open-webui/open-webui:cuda for NVIDIA GPUs
+    image: ghcr.io/open-webui/open-webui:v0.6.10 # Use ghcr.io/open-webui/open-webui:cuda for NVIDIA GPUs
     # # Use this for NVIDIA GPUs
     # deploy:
     #   resources:
