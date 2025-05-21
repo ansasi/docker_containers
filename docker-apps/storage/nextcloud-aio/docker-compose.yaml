@@ -12,7 +12,7 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock:ro # May be changed on macOS, Windows or docker rootless. See the applicable documentation. If adjusting, don't forget to also set 'WATCHTOWER_DOCKER_SOCKET_PATH'!
     network_mode: bridge # add to the same network as docker run would do
     ports:
-      - 8080:8080
+      - 8081:8080
     environment: # Is needed when using any of the options below
       # AIO_DISABLE_BACKUP_SECTION: false # Setting this to true allows to hide the backup section in the AIO interface. See https://github.com/nextcloud/all-in-one#how-to-disable-the-backup-section
       # AIO_COMMUNITY_CONTAINERS: # With this variable, you can add community containers very easily. See https://github.com/nextcloud/all-in-one/tree/main/community-containers#community-containers
@@ -51,16 +51,6 @@ services:
       - traefik.http.routers.nextcloud-aio-secure.tls.certresolver=cloudflare
       - traefik.http.routers.nextcloud-aio-secure.service=nextcloud-aio
       - traefik.http.services.nextcloud-aio.loadbalancer.server.port=11000
-      - traefik.http.routers.nextcloud-aio-dashboard.entrypoints=web
-      - traefik.http.routers.nextcloud-aio-dashboard.rule=Host(`nextcloud-aio-dashboard.${DOMAIN}`)
-      - traefik.http.middlewares.nextcloud-aio-dashboard-https-redirect.redirectscheme.scheme=https
-      - traefik.http.routers.nextcloud-aio-dashboard.middlewares=nextcloud-aio-dashboard-https-redirect
-      - traefik.http.routers.nextcloud-aio-dashboard-secure.entrypoints=websecure
-      - traefik.http.routers.nextcloud-aio-dashboard-secure.rule=Host(`nextcloud-aio-dashboard.${DOMAIN}`)
-      - traefik.http.routers.nextcloud-aio-dashboard-secure.tls=true
-      - traefik.http.routers.nextcloud-aio-dashboard-secure.tls.certresolver=cloudflare
-      - traefik.http.routers.nextcloud-aio-dashboard-secure.service=nextcloud-aio-dashboard
-      - traefik.http.services.nextcloud-aio-dashboard.loadbalancer.server.port=8080
     restart: unless-stopped
 
 

@@ -1,5 +1,5 @@
 volumes:
-  gluetun-data:
+  gluetun-4k-data:
     driver: local
 
 networks:
@@ -8,9 +8,9 @@ networks:
 
 services:
   # qBittorrent - Download Client
-  qbittorrent:
+  qbittorrent-4k:
     image: lscr.io/linuxserver/qbittorrent
-    container_name: qbittorrent
+    container_name: qbittorrent-4k
     restart: unless-stopped
     environment:
       PUID: "${PUID}"
@@ -23,15 +23,13 @@ services:
     volumes:
       - ${WORKDIR}/qbittorrent/config:/config
       - "${MEDIA_ARRS_FOLDER}/downloads/torrents:/downloads"
-    network_mode: "service:gluetun"
+    network_mode: "service:gluetun-4k"
     security_opt:
       - no-new-privileges:true
     depends_on:
       gluetun:
         condition: service_healthy
         restart: true
-
-  # qBitmanage - qBittorrent manager - Used to run automated tasks for qBittorrent
 
   ###--- SABnzbd - Download client - Used to download NZB from Usenet groups ---###
   ### This container has been disabled since you need a premium Usenet provider subscription to download files. ###
@@ -53,16 +51,16 @@ services:
   #     - 9091:9090
   #   logging:
   #     driver: json-file
-  #   network_mode: "service:gluetun"
+  #   network_mode: "service:gluetun-4k"
   #   depends_on:
   #     gluetun:
   #       condition: service_healthy
   #     restart: true
 
   # Prowlarr - Indexer manager for all your media content
-  prowlarr:
+  prowlarr-4k:
     image: lscr.io/linuxserver/prowlarr:latest
-    container_name: prowlarr
+    container_name: prowlarr-4k
     restart: unless-stopped
     environment:
       PUID: "${PUID}"
@@ -73,7 +71,7 @@ services:
       - ${WORKDIR}/prowlarr/config:/config
     # ports:
     #   - "8113:9696"
-    network_mode: "service:gluetun"
+    network_mode: "service:gluetun-4k"
     security_opt:
       - no-new-privileges:true
     depends_on:
@@ -83,9 +81,9 @@ services:
 
   ###--- Radarr - Library Manager for Movie content management ---###
   ### Do not use this container to download 4K Movie content. Enable container below to have seperate instance just for 4K Movie content ###
-  radarr:
+  radarr-4k:
     image: lscr.io/linuxserver/radarr:latest
-    container_name: radarr
+    container_name: radarr-4k
     restart: unless-stopped
     environment:
       PUID: "${PUID}"
@@ -98,7 +96,7 @@ services:
       - "${MEDIA_ARRS_FOLDER}/downloads/torrents:/downloads"
     # ports:
     #   - 8114:7878
-    network_mode: "service:gluetun"
+    network_mode: "service:gluetun-4k"
     security_opt:
       - no-new-privileges:true
     depends_on:
@@ -108,9 +106,9 @@ services:
 
   ###--- Sonarr - Library Manager for TV Show / Series / Anime content management ---###
   ### Do not use this container to download 4K TV content. Enable container below to have seperate instance just for 4K TV content ###
-  sonarr:
+  sonarr-4k:
     image: lscr.io/linuxserver/sonarr:latest
-    container_name: sonarr
+    container_name: sonarr-4k
     restart: unless-stopped
     environment:
       PUID: "${PUID}"
@@ -123,7 +121,7 @@ services:
       - "${MEDIA_ARRS_FOLDER}/downloads/torrents:/downloads"
     # ports:
     #   - 8115:8989
-    network_mode: "service:gluetun"
+    network_mode: "service:gluetun-4k"
     security_opt:
       - no-new-privileges:true
     depends_on:
@@ -135,9 +133,9 @@ services:
   ### Enable this container to get seperate instance for 4K TV content ###
 
   # Bazarr - Library Manager for Subtitle management
-  bazarr:
+  bazarr-4k:
     image: lscr.io/linuxserver/bazarr:latest
-    container_name: bazarr
+    container_name: bazarr-4k
     restart: unless-stopped
     environment:
       PUID: "${PUID}"
@@ -150,32 +148,7 @@ services:
       - "${MEDIA_ARRS_FOLDER}/library/tv:/tv"
     # ports:
     #   - 8116:6767
-    network_mode: "service:gluetun"
-    security_opt:
-      - no-new-privileges:true
-    depends_on:
-      gluetun:
-        condition: service_healthy
-        restart: true
-
-
-  # Readarr - Library Manager for Books / Epubs content management
-  readarr:
-    image: lscr.io/linuxserver/readarr:develop
-    container_name: readarr
-    restart: unless-stopped
-    environment:
-      PUID: "${PUID}"
-      PGID: "${PGID}"
-      UMASK: "002"
-      TZ: "Etc/Zurich"
-    volumes:
-      - ${WORKDIR}/readarr/config:/config
-      - "${MEDIA_ARRS_FOLDER}/library/books:/books"
-      - "${MEDIA_ARRS_FOLDER}/downloads/torrents:/downloads"
-    # ports:
-    #   - 8118:8787
-    network_mode: "service:gluetun"
+    network_mode: "service:gluetun-4k"
     security_opt:
       - no-new-privileges:true
     depends_on:
@@ -184,9 +157,9 @@ services:
         restart: true
     
   # FlareSolverr - Proxy for bypassing Cloudflare protection
-  flaresolverr:
+  flaresolverr-4k:
     image: flaresolverr/flaresolverr:latest
-    container_name: flaresolverr
+    container_name: flaresolverr-4k
     restart: unless-stopped
     environment:
       TZ: "Etc/Zurich"
@@ -194,7 +167,7 @@ services:
       - ${WORKDIR}/flaresolverr/config:/config
     # ports:
     #   - 8119:8191
-    network_mode: "service:gluetun"
+    network_mode: "service:gluetun-4k"
     security_opt:
       - no-new-privileges:true
     depends_on:
@@ -203,10 +176,10 @@ services:
         restart: true
 
   # Gluetun - VPN Client - Used to connect to VPN services
-  gluetun:
+  gluetun-4k:
     image: qmcgaw/gluetun
-    container_name: gluetun
-    hostname: gluetun
+    container_name: gluetun-4k
+    hostname: gluetun-4k
     cap_add:
       - NET_ADMIN
     devices:
@@ -222,7 +195,6 @@ services:
       - 7878:7878    # Radarr
       - 8989:8989    # Sonarr
       - 6767:6767    # Bazarr
-      - 8787:8787    # Readarr
       # Note: This is uncommented as Proton VPN uses its own DNS servers, so it is not possible to resolve to mydomain.com INSIDE the containers that use gluetun as network mode
     volumes:
       - gluetun-data:/gluetun
@@ -294,14 +266,4 @@ services:
       - traefik.http.routers.bazarr-websecure.tls.certresolver=cloudflare
       - traefik.http.routers.bazarr-websecure.service=bazarr
       - traefik.http.services.bazarr.loadbalancer.server.port=6767
-
-      # Readarr
-      - traefik.http.routers.readarr.entrypoints=web
-      - traefik.http.routers.readarr.rule=Host(`readarr.${DOMAIN}`)
-      - traefik.http.routers.readarr-websecure.entrypoints=websecure
-      - traefik.http.routers.readarr-websecure.rule=Host(`readarr.${DOMAIN}`)
-      - traefik.http.routers.readarr-websecure.tls=true
-      - traefik.http.routers.readarr-websecure.tls.certresolver=cloudflare
-      - traefik.http.routers.readarr-websecure.service=readarr
-      - traefik.http.services.readarr.loadbalancer.server.port=8787
   
