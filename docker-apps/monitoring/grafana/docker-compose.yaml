@@ -19,7 +19,7 @@ services:
     image: grafana/grafana
     container_name: grafana
     volumes:
-      - ${WORKDIR}:/var/lib/grafana
+      - ${WORKDIR}/data:/var/lib/grafana
     networks:
       - grafana-monitoring
       - proxy

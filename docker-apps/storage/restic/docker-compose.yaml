@@ -27,7 +27,7 @@ services:
       - ${NAS_DRIVE}/restic_backup/restic:/restic # change the left hand side to where you want to store the backups
       - ${NAS_DRIVE}/restic_backup/tmp-for-restore:/tmp-for-restore # USE THIS FOLDER FOR RESTORE - CAN VIEW EACH CONTAINER
     # The data of your existing containers (i.e., all of the containers in here /docker)
-      - ${WORKDIR_TO_BACKUP}:/mnt/volumes:ro
+      - ${WORKDIR_TO_BACKUP:-/home/ubuntu/}:/mnt/volumes:ro
     security_opt:
       - no-new-privileges:true
 
