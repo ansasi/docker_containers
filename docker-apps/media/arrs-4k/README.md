@@ -429,7 +429,7 @@ All services connect to a custom Docker network named `media` with the following
 
 1. **Start the Stack:**
 
-  From the directory containing the `docker-compose.yml` file, run:
+  From the directory containing the `docker-compose.yaml` file, run:
 
   ```bash
   docker-compose up -d
