@@ -14,6 +14,8 @@ jobs:
         run: |
           set -euo pipefail
           for file in $(find docker-apps -name docker-compose.yaml); do
+            echo "################"
             echo "Validating $file"
-            docker compose --log-level ERROR -f "$file" config > /dev/null
+            echo "################"
+            docker compose -f "$file" config > /dev/null
           done
