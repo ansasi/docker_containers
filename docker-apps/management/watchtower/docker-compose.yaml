@@ -1,0 +1,51 @@
+networks:
+  watchtower:
+
+services:
+  watchtower:
+    image: containrrr/watchtower
+    container_name: watchtower
+    environment:
+      - TZ=Europe/Madrid
+      # remove old images after update (useful for saving space)
+      - WATCHTOWER_CLEANUP=true
+      # remove old volumes after update (useful for saving space)
+      - WATCHTOWER_REMOVE_VOLUMES=true
+      # labels enabled to Watchtower in specific containers
+      - WATCHTOWER_LABEL_ENABLE=true
+      # # the below will ignore labels set. It is worth checking out labels as that can be a more scalabe solution (automatic)
+      # - WATCHTOWER_DISABLE_CONTAINERS=traefik
+      # Run at 4am every day (instead of the default of 24 hours)
+      - WATCHTOWER_SCHEDULE=0 0 4 * * *
+      # # how frequently to check for images (default is 24 hours = 86400 seconds)
+      # - WATCHTOWER_POLL_INTERVAL=30
+      # choose whether to restart the containers after updates
+      # - WATCHTOWER_INCLUDE_RESTARTING=true
+      # you can tell watchtower to do updates and restarts one by one - can be helpful
+      - WATCHTOWER_ROLLING_RESTART=true
+
+      # watchtower can behave like DIUN by only notifying, and not updating
+      # - WATCHTOWER_MONITOR_ONLY=true
+      # # TODO: Add a token for the HTTP API
+      # - WATCHTOWER_HTTP_API_METRICS=true
+      # - WATCHTOWER_HTTP_API_TOKEN='${WATCHTOWER_HTTP_API_TOKEN:-mytoken}'
+    # env_file:
+    #   - .env
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    # ports:
+    #   - 8080:8080
+    networks:
+      - watchtower
+    # labels:
+    #   - traefik.enable=true
+    #   - traefik.docker.network=proxy
+    #   - traefik.http.routers.watchtower.entrypoints=web
+    #   - traefik.http.routers.watchtower.rule=Host(`watchtower.${DOMAIN}`)
+    #   - traefik.http.routers.watchtower-secure.entrypoints=websecure
+    #   - traefik.http.routers.watchtower-secure.rule=Host(`watchtower.${DOMAIN}`)
+    #   - traefik.http.routers.watchtower-secure.tls=true
+    #   - traefik.http.routers.watchtower-secure.tls.certresolver=cloudflare
+    #   - traefik.http.routers.watchtower-secure.service=watchtower
+    #   - "traefik.http.services.watchtower.loadbalancer.server.port=8080"
+    restart: unless-stopped

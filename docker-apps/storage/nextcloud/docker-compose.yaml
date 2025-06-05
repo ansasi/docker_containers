@@ -1,0 +1,67 @@
+networks:
+  proxy:
+    external: true
+  nextcloud:
+
+volumes:
+  nextcloud:
+
+services:
+  nextcloud-mariadb:
+    image: mariadb:10.11
+    container_name: nextcloud-mariadb
+    command: --transaction-isolation=READ-COMMITTED
+    volumes:
+      - ${WORKDIR}/nextcloud-mariadb:/var/lib/mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: '${NEXTCLOUD_DB_ROOT_PASSWORD}'
+      MYSQL_PASSWORD: '${NEXTCLOUD_DB_PASSWORD}'
+      MYSQL_DATABASE: '${NEXTCLOUD_DB_NAME}'
+      MYSQL_USER: '${NEXTCLOUD_DB_USER}'
+    networks:
+      - nextcloud
+    restart: unless-stopped
+  
+  nextcloud-redis:
+    image: redis:alpine
+    container_name: nextcloud-redis
+    networks:
+      - nextcloud
+    restart: unless-stopped
+
+  nextcloud:
+    image: nextcloud
+    container_name: nextcloud
+    environment:
+      MYSQL_PASSWORD: '${NEXTCLOUD_DB_PASSWORD}'
+      MYSQL_DATABASE: '${NEXTCLOUD_DB_NAME}'
+      MYSQL_USER: '${NEXTCLOUD_DB_USER}'
+      MYSQL_HOST: nextcloud-mariadb # This is the name of the service in the docker-compose file
+      NEXTCLOUD_ADMIN_USER: '${NEXTCLOUD_ADMIN_USER}'
+      NEXTCLOUD_ADMIN_PASSWORD: '${NEXTCLOUD_ADMIN_PASSWORD}'
+      NEXTCLOUD_TRUSTED_DOMAINS: '${DOMAIN}'
+    volumes:
+      - nextcloud:/var/www/html
+    # ports:
+    #   - 8082:80
+    labels:
+      # Traefik labels
+      - traefik.enable=true
+      - traefik.docker.network=proxy
+      - traefik.http.routers.nextcloud.entrypoints=web
+      - traefik.http.routers.nextcloud.rule=Host(`nextcloud.${DOMAIN}`)
+      - traefik.http.middlewares.nextcloud-https-redirect.redirectscheme.scheme=https
+      - traefik.http.routers.nextcloud.middlewares=nextcloud-https-redirect
+      - traefik.http.routers.nextcloud-secure.entrypoints=websecure
+      - traefik.http.routers.nextcloud-secure.rule=Host(`nextcloud.${DOMAIN}`)
+      - traefik.http.routers.nextcloud-secure.tls=true
+      - traefik.http.routers.nextcloud-secure.tls.certresolver=cloudflare
+      - traefik.http.routers.nextcloud-secure.service=nextcloud
+      - traefik.http.services.nextcloud.loadbalancer.server.port=80
+    networks:
+      - proxy
+      - nextcloud
+    restart: unless-stopped
+    depends_on:
+      - nextcloud-mariadb
+      - nextcloud-redis

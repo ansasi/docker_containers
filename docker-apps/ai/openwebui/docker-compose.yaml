@@ -2,48 +2,11 @@
 networks:
   proxy:
     external: true
-  ai:
-
-volumes:
-  ollama:
-  open-webui:
 
 services:
-  ollama:
-    container_name: ollama
-    image: ollama/ollama
-  #   ports:
-  #     - "11434:11434"
-    volumes:
-      - ollama:/root/.ollama
-    # # Use this for NVIDIA GPUs
-    # deploy:
-    #   resources:
-    #     reservations:
-    #       devices:
-    #         - driver: nvidia
-    #           count: all
-    #           capabilities: [gpu]
-    labels:
-      - traefik.enable=true
-      - traefik.http.routers.ollama.entrypoints=web
-      - traefik.http.routers.ollama.rule=Host(`ollama.${DOMAIN}`)
-      - traefik.http.routers.ollama-secure.entrypoints=websecure
-      - traefik.http.routers.ollama-secure.rule=Host(`ollama.${DOMAIN}`)
-      - traefik.http.routers.ollama-secure.tls=true
-      - traefik.http.routers.ollama-secure.tls.certresolver=cloudflare
-      - traefik.http.routers.ollama-secure.service=ollama
-      - traefik.http.services.ollama.loadbalancer.server.port=11434
-    networks:
-      - proxy
-      - ai
-    restart: unless-stopped
-    security_opt:
-      - no-new-privileges:true
-
   openwebui:
     container_name: openwebui
-    image: ghcr.io/open-webui/open-webui:main # Use ghcr.io/open-webui/open-webui:cuda for NVIDIA GPUs
+    image: ghcr.io/open-webui/open-webui:0.6.13 # Use ghcr.io/open-webui/open-webui:cuda for NVIDIA GPUs
     # # Use this for NVIDIA GPUs
     # deploy:
     #   resources:
@@ -53,14 +16,15 @@ services:
     #           count: all
     #           capabilities: [gpu]
     environment:
-      OLLAMA_BASE_URL: ${OLLAMA_DOMAIN-http://ollama:11434}
-      WEBUI_URL: ${DOMAIN-http://localhost:3003}
+      OLLAMA_BASE_URL: ${OLLAMA_DOMAIN:-http://ollama:11434}
+      WEBUI_URL: http://localhost:3003 # openwebui.${DOMAIN}
     volumes:
-      - open-webui:/app/backend/data
+      - ${WORKDIR}/data:/app/backend/data
     ports:
-      - ${OPEN_WEBUI_PORT-3003}:8080
+      - ${OPEN_WEBUI_PORT:-3003}:8080
     labels:
       - traefik.enable=true
+      - traefik.docker.network=proxy
       - traefik.http.routers.openwebui.entrypoints=web
       - traefik.http.routers.openwebui.rule=Host(`openwebui.${DOMAIN}`)
       - traefik.http.routers.openwebui-secure.entrypoints=websecure
@@ -71,10 +35,6 @@ services:
       - traefik.http.services.openwebui.loadbalancer.server.port=8080
     networks:
       - proxy
-      - ai
-    # network_mode: host
     restart: unless-stopped
-    depends_on:
-      - ollama
     security_opt:
       - no-new-privileges:true

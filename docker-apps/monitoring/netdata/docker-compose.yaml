@@ -1,0 +1,35 @@
+---
+networks:
+  proxy:
+    external: true
+
+services:
+# --- Netdata Image
+  netdata:
+    image: netdata/netdata
+    container_name: netdata
+    cap_add:
+      - SYS_PTRACE
+    security_opt:
+      - apparmor:unconfined
+    volumes:
+      - /proc:/host/proc:ro
+      - /sys:/host/sys:ro
+      - /etc/os-release:/host/etc/os-release:ro
+      - /etc/passwd:/host/etc/passwd:ro
+      - /etc/group:/host/etc/group:ro
+    # ports:
+    #   - 19999:19999
+    networks:
+      - proxy
+    labels:
+      - traefik.enable=true
+      - traefik.docker.network=proxy
+      - traefik.http.routers.netdata.entrypoints=web
+      - traefik.http.routers.netdata.rule=Host(`netdata.${DOMAIN}`)
+      - traefik.http.routers.netdata-secure.entrypoints=websecure
+      - traefik.http.routers.netdata-secure.rule=Host(`netdata.${DOMAIN}`)
+      - traefik.http.routers.netdata-secure.tls=true
+      - traefik.http.routers.netdata-secure.tls.certresolver=cloudflare
+      - traefik.http.services.netdata.loadbalancer.server.port=19999
+    restart: unless-stopped

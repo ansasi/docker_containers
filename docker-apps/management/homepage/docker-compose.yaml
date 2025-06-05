@@ -1,0 +1,38 @@
+networks:
+  proxy:
+    external: true
+
+services:
+  homepage:
+    image: ghcr.io/gethomepage/homepage # v1.0.4
+    container_name: homepage
+    environment:
+      HOMEPAGE_ALLOWED_HOSTS: 'homepage.${DOMAIN},localhost:3001'
+      # # Run as non-root user
+      # PUID: ${PUID}
+      # PGID: ${PGID}
+      # LOG_LEVEL: debug
+      HOMEPAGE_VAR_DOMAIN: '${DOMAIN}'
+      ###########################
+      # Credentials for Widgets #
+      ###########################
+      HOMEPAGE_VAR_PIHOLE_KEY: '${HOMEPAGE_VAR_PIHOLE_KEY}'
+    volumes:
+      - ./config:/app/config
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    ports:
+      - "3001:3000"
+    labels:
+      - traefik.enable=true
+      - traefik.docker.network=proxy
+      - traefik.http.routers.homepage.entrypoints=web
+      - traefik.http.routers.homepage.rule=Host(`homepage.${DOMAIN}`)
+      - traefik.http.routers.homepage-secure.entrypoints=websecure
+      - traefik.http.routers.homepage-secure.rule=Host(`homepage.${DOMAIN}`)
+      - traefik.http.routers.homepage-secure.tls=true
+      - traefik.http.routers.homepage-secure.tls.certresolver=cloudflare
+      - traefik.http.routers.homepage-secure.service=homepage
+      - traefik.http.services.homepage.loadbalancer.server.port=3000
+    networks:
+      - proxy
+    restart: unless-stopped

@@ -1,0 +1,21 @@
+name: Lint Compose Files
+
+on:
+  pull_request:
+
+jobs:
+  compose-lint:
+    runs-on: ubuntu-latest
+    container:
+      image: docker:24.0-cli
+    steps:
+      - uses: actions/checkout@v3
+      - name: Validate Compose files
+        run: |
+          set -euo pipefail
+          for file in $(find docker-apps -name docker-compose.yaml); do
+            echo "################"
+            echo "Validating $file"
+            echo "################"
+            docker compose -f "$file" config > /dev/null
+          done

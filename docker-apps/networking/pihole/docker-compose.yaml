@@ -1,0 +1,76 @@
+networks:
+  pihole_internal:
+    ipam:
+      config:
+        - subnet: 172.70.9.0/29
+    name: pihole_internal
+  proxy:
+    external: true
+
+services:
+  # Cloudflared DNS-over-HTTPS proxy so ISP can't see your DNS queries
+  cloudflared:
+    container_name: cloudflared
+    # Restart on crashes and on reboots
+    restart: unless-stopped
+    image: cloudflare/cloudflared:latest
+    command: proxy-dns
+    environment:
+      - "TUNNEL_DNS_UPSTREAM=https://1.1.1.1/dns-query,https://1.0.0.1/dns-query,https://9.9.9.9/dns-query,https://149.112.112.9/dns-query"
+      # Listen on an unprivileged port
+      - "TUNNEL_DNS_PORT=5053"
+      # Listen on all interfaces
+      - "TUNNEL_DNS_ADDRESS=0.0.0.0"
+    # Attach cloudflared only to the private network
+    networks:
+      pihole_internal:
+        ipv4_address: 172.70.9.2
+    security_opt:
+      - no-new-privileges:true
+
+  pihole:
+    container_name: pihole
+    image: pihole/pihole:latest
+    ports:
+      - "53:53/tcp"
+      - "53:53/udp"
+      # - "67:67/udp" DHCP - uncomment if using it
+      - "80:80/tcp" # TODO: Comment it if Traefik is used
+    networks:
+      pihole_internal:
+        ipv4_address: 172.70.9.3
+      proxy:
+    environment:
+      TZ: 'Europe/Madrid'
+      # TODO: Set a password to access the web interface
+      FTLCONF_webserver_api_password: '${PIHOLE_WEB_PASSWORD}'
+      # If using Docker's default `bridge` network, the DNS listening mode should be set to 'all'
+      FTLCONF_dns_listeningMode: 'all'
+      FTLCONF_dns_upstreams: '172.70.9.2#5053'
+    volumes:
+      - ${WORKDIR}/etc-pihole:/etc/pihole
+      - ${WORKDIR}/etc-dnsmasq.d:/etc/dnsmasq.d
+    # cap_add:
+    #   # Required if you are using Pi-hole as your DHCP server, else not needed
+    #   # See Note On Capabilities below
+    #   - NET_ADMIN
+    restart: unless-stopped
+    depends_on:
+      - cloudflared
+    # We don't use Traefik for PiHole as it will be used as a DNS server on a separate device
+    labels:
+      # Traefik labels
+      - traefik.enable=true
+      - traefik.docker.network=proxy
+      - traefik.http.routers.pihole.entrypoints=web
+      - traefik.http.routers.pihole.rule=Host(`pihole.${DOMAIN}`)
+      - traefik.http.middlewares.pihole-https-redirect.redirectscheme.scheme=https
+      - traefik.http.routers.pihole.middlewares=pihole-https-redirect
+      - traefik.http.routers.pihole-secure.entrypoints=websecure
+      - traefik.http.routers.pihole-secure.rule=Host(`pihole.${DOMAIN}`)
+      - traefik.http.routers.pihole-secure.tls=true
+      - traefik.http.routers.pihole-secure.service=pihole
+      - traefik.http.services.pihole.loadbalancer.server.port=80
+
+# Notes:
+# - Remember to use Teleporter to backup and restore your PiHole settings

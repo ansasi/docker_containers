@@ -1,0 +1,40 @@
+---
+networks:
+  proxy:
+    external: true
+
+volumes:
+  ollama:
+
+services:
+  ollama:
+    container_name: ollama
+    image: ollama/ollama:0.8.0
+  #   ports:
+  #     - "11434:11434"
+    volumes:
+      - ollama:/root/.ollama
+    # # Use this for NVIDIA GPUs
+    # deploy:
+    #   resources:
+    #     reservations:
+    #       devices:
+    #         - driver: nvidia
+    #           count: all
+    #           capabilities: [gpu]
+    labels:
+      - traefik.enable=true
+      - traefik.docker.network=proxy
+      - traefik.http.routers.ollama.entrypoints=web
+      - traefik.http.routers.ollama.rule=Host(`ollama.${DOMAIN}`)
+      - traefik.http.routers.ollama-secure.entrypoints=websecure
+      - traefik.http.routers.ollama-secure.rule=Host(`ollama.${DOMAIN}`)
+      - traefik.http.routers.ollama-secure.tls=true
+      - traefik.http.routers.ollama-secure.tls.certresolver=cloudflare
+      - traefik.http.routers.ollama-secure.service=ollama
+      - traefik.http.services.ollama.loadbalancer.server.port=11434
+    networks:
+      - proxy
+    restart: unless-stopped
+    security_opt:
+      - no-new-privileges:true

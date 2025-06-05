@@ -1,0 +1,21 @@
+---
+- Repositories:
+  - Docker-Home-Server:
+    - icon: si-github-#FFFFFF
+      href: https://github.com/ansasi/docker_home_server
+  # - Homelab:
+  #   - icon: si-github-#FFFFFF
+  #     href: https://github.com/ansasi/homelab
+  - Cheat-Sheets:
+    - icon: si-github-#FFFFFF
+      href: https://github.com/christianlempa/cheat-sheets
+
+- Cloud Services:
+  - Cloudflare:
+    - icon: cloudflare.png
+      href: https://dash.cloudflare.com
+
+- Cloud Platforms:
+  - AWS:
+    - icon: aws.png
+      href: https://aws.amazon.com

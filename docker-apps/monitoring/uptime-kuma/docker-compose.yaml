@@ -1,0 +1,34 @@
+networks:
+  proxy:
+    external: true
+
+services:
+# --- Uptime Kuma Image
+  uptime-kuma:
+    image: louislam/uptime-kuma:latest
+    container_name: uptime-kuma
+    volumes:
+      - ${WORKDIR}/data:/app/data
+      - /var/run/docker.sock:/var/run/docker.sock
+    # ports:
+      # # Web Interface (using traefik)
+      # - "8160:3001"
+    restart: unless-stopped
+    labels:
+      # Traefik labels
+      - traefik.enable=true
+      - traefik.docker.network=proxy
+      - traefik.http.routers.uptime-kuma.entrypoints=web
+      - traefik.http.routers.uptime-kuma.rule=Host(`uptime-kuma.${DOMAIN}`)
+      - traefik.http.middlewares.uptime-kuma-https-redirect.redirectscheme.scheme=https
+      - traefik.http.routers.uptime-kuma.middlewares=uptime-kuma-https-redirect
+      - traefik.http.routers.uptime-kuma-websecure.entrypoints=websecure
+      - traefik.http.routers.uptime-kuma-websecure.rule=Host(`uptime-kuma.${DOMAIN}`)
+      - traefik.http.routers.uptime-kuma-websecure.tls=true
+      - traefik.http.routers.uptime-kuma-websecure.tls.certresolver=cloudflare
+      - traefik.http.routers.uptime-kuma-websecure.service=uptime-kuma
+      - traefik.http.services.uptime-kuma.loadbalancer.server.port=3001
+      # Watchtower labels
+      - com.centurylinklabs.watchtower.enable=true
+    networks:
+      - proxy

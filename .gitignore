@@ -13,9 +13,8 @@ docker-apps/automation/homeassistant/config/*
 !docker-apps/automation/homeassistant/config/switches.yaml
 
 # Pihole
-docker-apps/networking/pihole/pihole/etc-pihole/*
-docker-apps/networking/pihole/pihole/etc-dnsmasq.d/*
-!docker-apps/networking/pihole/pihole/etc-pihole/pihole.toml
+docker-apps/networking/pihole/etc-pihole/*
+docker-apps/networking/pihole/etc-dnsmasq.d/*
 
 # Authentik
 docker-apps/security/authentik/*
@@ -25,6 +24,3 @@ docker-apps/monitoring/monitoring/*
 
 .vscode
 *.log
-
-# TODO: Remove this line later
-ansible/inventory/group_vars/all.yml

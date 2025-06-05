@@ -1,0 +1,29 @@
+networks:
+  proxy:
+    external: true
+
+services:
+# --- Portainer Image
+  portainer:
+    image: portainer/portainer-ce
+    container_name: portainer
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ${WORKDIR}/data:/data
+    networks:
+      - proxy
+    ports:
+      - "9000:9000"
+    labels:
+      - traefik.enable=true
+      - traefik.docker.network=proxy
+      - traefik.http.routers.portainer.entrypoints=web
+      - traefik.http.routers.portainer.rule=Host(`portainer.${DOMAIN}`)
+      # - traefik.http.routers.portainer.middlewares=default-whitelist@file
+      - traefik.http.routers.portainer-secure.entrypoints=websecure
+      - traefik.http.routers.portainer-secure.rule=Host(`portainer.${DOMAIN}`)
+      - traefik.http.routers.portainer-secure.tls=true
+      - traefik.http.routers.portainer-secure.tls.certresolver=cloudflare
+      - traefik.http.routers.portainer-secure.service=portainer
+      - "traefik.http.services.portainer.loadbalancer.server.port=9000"
+    restart: unless-stopped

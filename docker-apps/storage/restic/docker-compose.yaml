@@ -1,0 +1,60 @@
+services:
+  restic-backup:
+    image: mazzolino/restic
+    container_name: restic
+    # hostname: ${HOSTNAME}
+    environment:
+      RUN_ON_STARTUP: "true" # optional
+      BACKUP_CRON: "0 */12 * * *" # this is twice daily, i.e., every 12 hours
+      RESTIC_REPOSITORY: /restic
+      RESTIC_PASSWORD: ${RESTIC_PASSWORD}
+      RESTIC_BACKUP_SOURCES: /mnt/volumes
+      RESTIC_COMPRESSION: auto 
+      RESTIC_BACKUP_ARGS: >-
+        --tag restic-qnap
+        --verbose
+      RESTIC_FORGET_ARGS: >-
+        --keep-last 10
+        --keep-daily 7
+        --keep-weekly 5
+        --keep-monthly 12
+      TZ: Europe/Zurich
+    volumes:
+    # For local storage - uncomment below
+      # - ${WORKING_DIR}/restic:/restic
+      # - ${WORKING_DIR}/restic-restore:/tmp-for-restore
+    # For NAS storage
+      - ${NAS_DRIVE}/restic_backup/restic:/restic # change the left hand side to where you want to store the backups
+      - ${NAS_DRIVE}/restic_backup/tmp-for-restore:/tmp-for-restore # USE THIS FOLDER FOR RESTORE - CAN VIEW EACH CONTAINER
+    # The data of your existing containers (i.e., all of the containers in here /docker)
+      - ${WORKDIR_TO_BACKUP:-/home/ubuntu/}:/mnt/volumes:ro
+    security_opt:
+      - no-new-privileges:true
+
+  restic-prune:
+    image: mazzolino/restic
+    container_name: restic-prune
+    # hostname: ${HOSTNAME}
+    environment:
+      RUN_ON_STARTUP: "true"
+      PRUNE_CRON: "0 0 4 * * *"
+      RESTIC_REPOSITORY: /restic
+      RESTIC_PASSWORD: ${RESTIC_PASSWORD}
+      TZ: Europe/London
+    security_opt:
+      - no-new-privileges:true
+
+  restic-check:
+    image: mazzolino/restic
+    container_name: restic-check
+    # hostname: ${HOSTNAME}
+    environment:
+      RUN_ON_STARTUP: "false"
+      CHECK_CRON: "0 15 5 * * *"
+      RESTIC_CHECK_ARGS: >-
+        --read-data-subset=10%
+      RESTIC_REPOSITORY: /restic
+      RESTIC_PASSWORD: ${RESTIC_PASSWORD}
+      TZ: Europe/London
+    security_opt:
+      - no-new-privileges:true
