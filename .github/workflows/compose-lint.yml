@@ -1,7 +1,6 @@
 name: Lint Compose Files
 
 on:
-  push:
   pull_request:
 
 jobs:
