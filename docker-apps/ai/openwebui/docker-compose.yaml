@@ -19,7 +19,7 @@ services:
       OLLAMA_BASE_URL: ${OLLAMA_DOMAIN:-http://ollama:11434}
       WEBUI_URL: http://localhost:3003 # openwebui.${DOMAIN}
     volumes:
-      - ${WORKDIR}:/app/backend/data
+      - ${WORKDIR}/data:/app/backend/data
     ports:
       - ${OPEN_WEBUI_PORT-3003}:8080
     labels:
