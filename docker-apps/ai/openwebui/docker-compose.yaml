@@ -21,7 +21,7 @@ services:
     volumes:
       - ${WORKDIR}/data:/app/backend/data
     ports:
-      - ${OPEN_WEBUI_PORT-3003}:8080
+      - ${OPEN_WEBUI_PORT:-3003}:8080
     labels:
       - traefik.enable=true
       - traefik.docker.network=proxy
