@@ -65,8 +65,8 @@ services:
     volumes:
       - ${WORKDIR}/data:/usr/src/paperless/data
       - ${WORKDIR}/media:/usr/src/paperless/media
-      - ${WORKDIR}//export:/usr/src/paperless/export
-      - ${WORKDIR}//consume:/usr/src/paperless/consume
+      - ${NAS_STORAGE_LOCATION}/export:/usr/src/paperless/export
+      - ${NAS_STORAGE_LOCATION}/consume:/usr/src/paperless/consume
     environment:
       PAPERLESS_REDIS: redis://paperless-broker:6379
       PAPERLESS_DBHOST: paperless-db
