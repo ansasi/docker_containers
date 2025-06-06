@@ -40,6 +40,11 @@
         icon: nextcloud.svg
         description: Drive app - rpi-angel-1
         container: nextcloud
+    - Paperless-ngx:
+        href: "https://paperless.sheetgenius.app"
+        icon: paperless-ngx.svg
+        description: Document management - rpi-angel-1
+        container: paperless-ngx
 
 - Management:
     - Portainer:
