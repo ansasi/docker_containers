@@ -88,7 +88,7 @@ services:
       - "traefik.docker.network=proxy"
       - "traefik.http.routers.paperless.entrypoints=web"
       - "traefik.http.routers.paperless.rule=Host(`paperless.${DOMAIN}`)"
-      - "traefik.http.middlewares.paperless-https-redirect.redirectscheme.scheme=https"
+      - "traefik.http.middlewares.paperless-https-redirect.redirectscheme.scheme=websecure"
       - "traefik.http.routers.paperless.middlewares=paperless-https-redirect"
       - "traefik.http.routers.paperless-secure.entrypoints=websecure"
       - "traefik.http.routers.paperless-secure.rule=Host(`paperless.${DOMAIN}`)"
