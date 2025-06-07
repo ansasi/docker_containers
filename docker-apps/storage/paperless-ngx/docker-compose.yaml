@@ -64,7 +64,7 @@ services:
     #   - "8005:8000"
     volumes:
       - ${WORKDIR}/data:/usr/src/paperless/data
-      - ${WORKDIR}/media:/usr/src/paperless/media
+      - ${NAS_STORAGE_LOCATION}/media:/usr/src/paperless/media
       - ${NAS_STORAGE_LOCATION}/export:/usr/src/paperless/export
       - ${NAS_STORAGE_LOCATION}/consume:/usr/src/paperless/consume
     environment:
