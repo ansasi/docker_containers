@@ -24,6 +24,7 @@ services:
     networks:
       - proxy
     labels:
+      # Traefik labels
       - traefik.enable=true
       - traefik.docker.network=proxy
       - traefik.http.routers.jellyfin.entrypoints=http
@@ -33,6 +34,8 @@ services:
       - traefik.http.routers.jellyfin-secure.tls=true
       - traefik.http.routers.jellyfin-secure.tls.certresolver=cloudflare
       - traefik.http.services.jellyfin.loadbalancer.server.port=8096
+      # Watchtower labels
+      - com.centurylinklabs.watchtower.enable=true
     restart: unless-stopped
 
   # Jellyseerr Image - Request management and media discovery tool
@@ -50,6 +53,7 @@ services:
     networks:
       - proxy
     labels:
+      # Traefik labels
       - traefik.enable=true
       - traefik.docker.network=proxy
       - traefik.http.routers.jellyseerr-jellyfin.entrypoints=http
@@ -59,4 +63,6 @@ services:
       - traefik.http.routers.jellyseerr-jellyfin-secure.tls=true
       - traefik.http.routers.jellyseerr-jellyfin-secure.tls.certresolver=cloudflare
       - traefik.http.services.jellyseerr-jellyfin.loadbalancer.server.port=5055
+      # Watchtower labels
+      - com.centurylinklabs.watchtower.enable=true
     restart: unless-stopped

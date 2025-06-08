@@ -23,6 +23,7 @@ services:
     ports:
       - "3001:3000"
     labels:
+      # Traefik labels
       - traefik.enable=true
       - traefik.docker.network=proxy
       - traefik.http.routers.homepage.entrypoints=http
@@ -33,6 +34,8 @@ services:
       - traefik.http.routers.homepage-secure.tls.certresolver=cloudflare
       - traefik.http.routers.homepage-secure.service=homepage
       - traefik.http.services.homepage.loadbalancer.server.port=3000
+      # Watchtower labels
+      - com.centurylinklabs.watchtower.enable=true
     networks:
       - proxy
     restart: unless-stopped

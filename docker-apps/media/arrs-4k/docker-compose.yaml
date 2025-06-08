@@ -30,6 +30,9 @@ services:
       gluetun-4k:
         condition: service_healthy
         restart: true
+    labels:
+      # Watchtower labels
+      - com.centurylinklabs.watchtower.enable=true
 
   ###--- SABnzbd - Download client - Used to download NZB from Usenet groups ---###
   ### This container has been disabled since you need a premium Usenet provider subscription to download files. ###
@@ -78,6 +81,9 @@ services:
       gluetun-4k:
         condition: service_healthy
         restart: true
+    labels:
+      # Watchtower labels
+      - com.centurylinklabs.watchtower.enable=true
 
   ###--- Radarr - Library Manager for Movie content management ---###
   ### Do not use this container to download 4K Movie content. Enable container below to have seperate instance just for 4K Movie content ###
@@ -103,6 +109,9 @@ services:
       gluetun-4k:
         condition: service_healthy
         restart: true
+    labels:
+      # Watchtower labels
+      - com.centurylinklabs.watchtower.enable=true
 
   ###--- Sonarr - Library Manager for TV Show / Series / Anime content management ---###
   ### Do not use this container to download 4K TV content. Enable container below to have seperate instance just for 4K TV content ###
@@ -128,6 +137,9 @@ services:
       gluetun-4k:
         condition: service_healthy
         restart: true
+    labels:
+      # Watchtower labels
+      - com.centurylinklabs.watchtower.enable=true
 
   ###--- Sonarr 4K - Library Manager for TV 4K content management ---###
   ### Enable this container to get seperate instance for 4K TV content ###
@@ -155,6 +167,9 @@ services:
       gluetun-4k:
         condition: service_healthy
         restart: true
+    labels:
+      # Watchtower labels
+      - com.centurylinklabs.watchtower.enable=true
     
   # FlareSolverr - Proxy for bypassing Cloudflare protection
   flaresolverr-4k:
@@ -174,6 +189,9 @@ services:
       gluetun-4k:
         condition: service_healthy
         restart: true
+    labels:
+      # Watchtower labels
+      - com.centurylinklabs.watchtower.enable=true
 
   # Gluetun - VPN Client - Used to connect to VPN services
   gluetun-4k:
@@ -214,6 +232,10 @@ services:
     networks:
       - proxy
     labels:
+      # Watchtower labels
+      - com.centurylinklabs.watchtower.enable=true
+
+      # Traefik labels
       - "traefik.enable=true"
       - "traefik.docker.network=proxy"
 

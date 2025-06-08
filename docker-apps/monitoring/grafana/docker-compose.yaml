@@ -61,6 +61,9 @@ services:
       - grafana-monitoring
       - proxy
     labels:
+      # Watchtower labels
+      - com.centurylinklabs.watchtower.enable=true
+      # Traefik labels
       - traefik.enable=true
       - traefik.docker.network=proxy
       - traefik.http.routers.prometheus.entrypoints=http
