@@ -1,3 +1,4 @@
+# Traefik configuration for Nextcloud AIO with secure headers and HTTPS redirection
 http:
   routers:
     nextcloud:
