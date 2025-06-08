@@ -1,3 +1,5 @@
+# Important!
+# This is the old way to deploy Nextcloud, now we use Nextcloud AIO defined in docker-apps/storage/nextcloud-aio/docker-compose.yaml
 networks:
   proxy:
     external: true
