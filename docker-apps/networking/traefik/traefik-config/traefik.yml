@@ -49,5 +49,5 @@ providers:
     exposedByDefault: false
     watch: true
   file:
-    directory: /etc/traefik
+    directory: /etc/traefik/config
     watch: true
