@@ -32,9 +32,9 @@ services:
     labels:
       - traefik.enable=true
       - traefik.docker.network=proxy
-      - traefik.http.routers.immich.entrypoints=web
+      - traefik.http.routers.immich.entrypoints=http
       - traefik.http.routers.immich.rule=Host(`immich.${DOMAIN}`)
-      - traefik.http.routers.immich-secure.entrypoints=websecure
+      - traefik.http.routers.immich-secure.entrypoints=https
       - traefik.http.routers.immich-secure.rule=Host(`immich.${DOMAIN}`)
       - traefik.http.routers.immich-secure.tls=true
       - traefik.http.routers.immich-secure.tls.certresolver=cloudflare

@@ -29,11 +29,11 @@ services:
     labels:
       - traefik.enable=true
       - traefik.docker.network=proxy
-      - traefik.http.routers.nextcloud-aio.entrypoints=web
+      - traefik.http.routers.nextcloud-aio.entrypoints=http
       - traefik.http.routers.nextcloud-aio.rule=Host(`nextcloud-aio.${DOMAIN}`)
       - traefik.http.middlewares.nextcloud-aio-https-redirect.redirectscheme.scheme=https
       - traefik.http.routers.nextcloud-aio.middlewares=nextcloud-aio-https-redirect
-      - traefik.http.routers.nextcloud-aio-secure.entrypoints=websecure
+      - traefik.http.routers.nextcloud-aio-secure.entrypoints=https
       - traefik.http.routers.nextcloud-aio-secure.rule=Host(`nextcloud-aio.${DOMAIN}`)
       - traefik.http.routers.nextcloud-aio-secure.tls=true
       - traefik.http.routers.nextcloud-aio-secure.tls.certresolver=cloudflare

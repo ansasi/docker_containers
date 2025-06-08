@@ -24,9 +24,9 @@ services:
     labels:
       - traefik.enable=true
       - traefik.docker.network=proxy
-      - traefik.http.routers.plex.entrypoints=web
+      - traefik.http.routers.plex.entrypoints=http
       - traefik.http.routers.plex.rule=Host(`plex.${DOMAIN}`)
-      - traefik.http.routers.plex-secure.entrypoints=websecure
+      - traefik.http.routers.plex-secure.entrypoints=https
       - traefik.http.routers.plex-secure.rule=Host(`plex.${DOMAIN}`)
       - traefik.http.routers.plex-secure.tls=true
       - traefik.http.routers.plex-secure.tls.certresolver=cloudflare
@@ -51,9 +51,9 @@ services:
     labels:
       - traefik.enable=true
       - traefik.docker.network=proxy
-      - traefik.http.routers.jellyseerr-plex.entrypoints=web
+      - traefik.http.routers.jellyseerr-plex.entrypoints=http
       - traefik.http.routers.jellyseerr-plex.rule=Host(`jellyseerr-plex.${DOMAIN}`)
-      - traefik.http.routers.jellyseerr-plex-secure.entrypoints=websecure
+      - traefik.http.routers.jellyseerr-plex-secure.entrypoints=https
       - traefik.http.routers.jellyseerr-plex-secure.rule=Host(`jellyseerr-plex.${DOMAIN}`)
       - traefik.http.routers.jellyseerr-plex-secure.tls=true
       - traefik.http.routers.jellyseerr-plex-secure.tls.certresolver=cloudflare

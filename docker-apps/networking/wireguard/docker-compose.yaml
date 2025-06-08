@@ -27,11 +27,11 @@ services:
         # Traefik labels
         - traefik.enable=true
         - traefik.docker.network=proxy
-        - traefik.http.routers.wireguard.entrypoints=web
+        - traefik.http.routers.wireguard.entrypoints=http
         - traefik.http.routers.wireguard.rule=Host(`wireguard.${DOMAIN}`)
         - traefik.http.middlewares.wireguard-https-redirect.redirectscheme.scheme=https
         - traefik.http.routers.wireguard.middlewares=wireguard-https-redirect
-        - traefik.http.routers.wireguard-secure.entrypoints=websecure
+        - traefik.http.routers.wireguard-secure.entrypoints=https
         - traefik.http.routers.wireguard-secure.rule=Host(`wireguard.${DOMAIN}`)
         - traefik.http.routers.wireguard-secure.tls=true
         - traefik.http.routers.wireguard-secure.service=wireguard

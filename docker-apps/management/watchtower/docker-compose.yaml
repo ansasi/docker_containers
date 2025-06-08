@@ -40,9 +40,9 @@ services:
     # labels:
     #   - traefik.enable=true
     #   - traefik.docker.network=proxy
-    #   - traefik.http.routers.watchtower.entrypoints=web
+    #   - traefik.http.routers.watchtower.entrypoints=http
     #   - traefik.http.routers.watchtower.rule=Host(`watchtower.${DOMAIN}`)
-    #   - traefik.http.routers.watchtower-secure.entrypoints=websecure
+    #   - traefik.http.routers.watchtower-secure.entrypoints=https
     #   - traefik.http.routers.watchtower-secure.rule=Host(`watchtower.${DOMAIN}`)
     #   - traefik.http.routers.watchtower-secure.tls=true
     #   - traefik.http.routers.watchtower-secure.tls.certresolver=cloudflare

@@ -22,7 +22,7 @@ services:
       - proxy
     labels:
       - traefik.enable=true
-      - traefik.http.routers.traefik.entrypoints=web # restricts dashboard to internal entrypoint
+      - traefik.http.routers.traefik.entrypoints=http # restricts dashboard to internal entrypoint
       - traefik.http.routers.traefik.rule=Host(`traefik-dashboard.${DOMAIN}`)
       - traefik.http.routers.traefik.tls=true
       # TODO: Add authentication
@@ -31,7 +31,7 @@ services:
       - traefik.http.middlewares.traefik-https-redirect.redirectscheme.scheme=https
       - traefik.http.middlewares.sslheader.headers.customrequestheaders.X-Forwarded-Proto=https
       - traefik.http.routers.traefik.middlewares=traefik-https-redirect
-      - traefik.http.routers.traefik-secure.entrypoints=websecure
+      - traefik.http.routers.traefik-secure.entrypoints=https
       - traefik.http.routers.traefik-secure.rule=Host(`traefik-dashboard.${DOMAIN}`)
       - traefik.http.routers.traefik-secure.tls=true
       - traefik.http.routers.traefik-secure.tls.certresolver=cloudflare

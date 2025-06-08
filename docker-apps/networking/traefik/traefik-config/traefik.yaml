@@ -12,7 +12,7 @@ api:
   debug: true
 
 entryPoints:
-  web:
+  http:
     address: ":80"
     http:
       # middlewares:
@@ -21,7 +21,7 @@ entryPoints:
         entryPoint:
           to: https
           scheme: https
-  websecure:
+  https:
     address: ":443"
     # http:
     #   middlewares:

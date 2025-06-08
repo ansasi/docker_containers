@@ -48,11 +48,11 @@ services:
       # Traefik labels
       - traefik.enable=true
       - traefik.docker.network=proxy
-      - traefik.http.routers.nextcloud.entrypoints=web
+      - traefik.http.routers.nextcloud.entrypoints=http
       - traefik.http.routers.nextcloud.rule=Host(`nextcloud.${DOMAIN}`)
       - traefik.http.middlewares.nextcloud-https-redirect.redirectscheme.scheme=https
       - traefik.http.routers.nextcloud.middlewares=nextcloud-https-redirect
-      - traefik.http.routers.nextcloud-secure.entrypoints=websecure
+      - traefik.http.routers.nextcloud-secure.entrypoints=https
       - traefik.http.routers.nextcloud-secure.rule=Host(`nextcloud.${DOMAIN}`)
       - traefik.http.routers.nextcloud-secure.tls=true
       - traefik.http.routers.nextcloud-secure.tls.certresolver=cloudflare

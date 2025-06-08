@@ -25,9 +25,9 @@ services:
     labels:
       - traefik.enable=true
       - traefik.docker.network=proxy
-      - traefik.http.routers.ollama.entrypoints=web
+      - traefik.http.routers.ollama.entrypoints=http
       - traefik.http.routers.ollama.rule=Host(`ollama.${DOMAIN}`)
-      - traefik.http.routers.ollama-secure.entrypoints=websecure
+      - traefik.http.routers.ollama-secure.entrypoints=https
       - traefik.http.routers.ollama-secure.rule=Host(`ollama.${DOMAIN}`)
       - traefik.http.routers.ollama-secure.tls=true
       - traefik.http.routers.ollama-secure.tls.certresolver=cloudflare

@@ -25,9 +25,9 @@ services:
     labels:
       - traefik.enable=true
       - traefik.docker.network=proxy
-      - traefik.http.routers.netdata.entrypoints=web
+      - traefik.http.routers.netdata.entrypoints=http
       - traefik.http.routers.netdata.rule=Host(`netdata.${DOMAIN}`)
-      - traefik.http.routers.netdata-secure.entrypoints=websecure
+      - traefik.http.routers.netdata-secure.entrypoints=httos
       - traefik.http.routers.netdata-secure.rule=Host(`netdata.${DOMAIN}`)
       - traefik.http.routers.netdata-secure.tls=true
       - traefik.http.routers.netdata-secure.tls.certresolver=cloudflare

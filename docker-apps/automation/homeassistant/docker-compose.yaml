@@ -19,7 +19,7 @@ services:
     labels:
       - traefik.enable=true
       - traefik.docker.network=proxy
-      - traefik.http.routers.home-assistant-https.entrypoints=websecure
+      - traefik.http.routers.home-assistant-https.entrypoints=https
       - traefik.http.routers.home-assistant-https.rule=Host(`home-assistant.${DOMAIN}`)
       - traefik.http.routers.home-assistant-https.tls=true
       - traefik.http.routers.home-assistant-https.tls.certresolver=cloudflare
