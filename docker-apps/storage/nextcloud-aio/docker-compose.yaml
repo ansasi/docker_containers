@@ -29,16 +29,16 @@ services:
     labels:
       - traefik.enable=true
       - traefik.docker.network=proxy
-      - traefik.http.routers.nextcloud-aio.entrypoints=http
-      - traefik.http.routers.nextcloud-aio.rule=Host(`nextcloud-aio.${DOMAIN}`)
-      - traefik.http.middlewares.nextcloud-aio-https-redirect.redirectscheme.scheme=https
-      - traefik.http.routers.nextcloud-aio.middlewares=nextcloud-aio-https-redirect
-      - traefik.http.routers.nextcloud-aio-secure.entrypoints=https
-      - traefik.http.routers.nextcloud-aio-secure.rule=Host(`nextcloud-aio.${DOMAIN}`)
-      - traefik.http.routers.nextcloud-aio-secure.tls=true
-      - traefik.http.routers.nextcloud-aio-secure.tls.certresolver=cloudflare
-      - traefik.http.routers.nextcloud-aio-secure.service=nextcloud-aio
-      - traefik.http.services.nextcloud-aio.loadbalancer.server.port=11000
+      - traefik.http.routers.nextcloud-aio-mc.entrypoints=http
+      - traefik.http.routers.nextcloud-aio-mc.rule=Host(`nc-aio-mc.${DOMAIN}`)
+      - traefik.http.middlewares.nextcloud-aio-mc-https-redirect.redirectscheme.scheme=https
+      - traefik.http.routers.nextcloud-aio-mc.middlewares=nextcloud-aio-mc-https-redirect
+      - traefik.http.routers.nextcloud-aio-mc-secure.entrypoints=https
+      - traefik.http.routers.nextcloud-aio-mc-secure.rule=Host(`nc-aio-mc.${DOMAIN}`)
+      - traefik.http.routers.nextcloud-aio-mc-secure.tls=true
+      - traefik.http.routers.nextcloud-aio-mc-secure.tls.certresolver=cloudflare
+      - traefik.http.routers.nextcloud-aio-mc-secure.service=nextcloud-aio-mc
+      - traefik.http.services.nextcloud-aio-mc.loadbalancer.server.port=8080
     restart: unless-stopped
 
 
