@@ -29,10 +29,6 @@ services:
     labels:
       - traefik.enable=true
       - traefik.docker.network=proxy
-      - traefik.http.routers.nextcloud-aio-mc.entrypoints=http
-      - traefik.http.routers.nextcloud-aio-mc.rule=Host(`nc-aio-mc.${DOMAIN}`)
-      - traefik.http.middlewares.nextcloud-aio-mc-https-redirect.redirectscheme.scheme=https
-      - traefik.http.routers.nextcloud-aio-mc.middlewares=nextcloud-aio-mc-https-redirect
       - traefik.http.routers.nextcloud-aio-mc-secure.entrypoints=https
       - traefik.http.routers.nextcloud-aio-mc-secure.rule=Host(`nc-aio-mc.${DOMAIN}`)
       - traefik.http.routers.nextcloud-aio-mc-secure.tls=true
