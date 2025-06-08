@@ -22,7 +22,7 @@ services:
     #   - 8085:8085
     volumes:
       - ${WORKDIR}/qbittorrent/config:/config
-      - "${MEDIA_ARRS_FOLDER}/downloads/torrents:/downloads"
+      - "${NAS_STORAGE_LOCATION}/downloads/torrents:/downloads"
     network_mode: "service:gluetun"
     security_opt:
       - no-new-privileges:true
@@ -47,7 +47,7 @@ services:
   #   volumes:
   #     - /etc/localtime:/etc/localtime:ro
   #     - ${WORKDIR}/sabnzbd/config:/config
-  #     - ${MEDIA_ARRS_FOLDER}/download/usenet/:/data/usenet:rw
+  #     - ${NAS_STORAGE_LOCATION}/download/usenet/:/data/usenet:rw
   #   ports:
   #     - 8085:8080
   #     - 9091:9090
@@ -94,8 +94,8 @@ services:
       TZ: "Etc/Zurich"
     volumes:
       - ${WORKDIR}/radarr/config:/config
-      - "${MEDIA_ARRS_FOLDER}/library/movies:/movies"
-      - "${MEDIA_ARRS_FOLDER}/downloads/torrents:/downloads"
+      - "${NAS_STORAGE_LOCATION}/library/movies:/movies"
+      - "${NAS_STORAGE_LOCATION}/downloads/torrents:/downloads"
     # ports:
     #   - 8114:7878
     network_mode: "service:gluetun"
@@ -119,8 +119,8 @@ services:
       TZ: "Etc/Zurich"
     volumes:
       - ${WORKDIR}/sonarr/config:/config
-      - "${MEDIA_ARRS_FOLDER}/library/tv:/tv"
-      - "${MEDIA_ARRS_FOLDER}/downloads/torrents:/downloads"
+      - "${NAS_STORAGE_LOCATION}/library/tv:/tv"
+      - "${NAS_STORAGE_LOCATION}/downloads/torrents:/downloads"
     # ports:
     #   - 8115:8989
     network_mode: "service:gluetun"
@@ -146,8 +146,8 @@ services:
       TZ: "Etc/Zurich"
     volumes:
       - ${WORKDIR}/bazarr/config:/config
-      - "${MEDIA_ARRS_FOLDER}/library/movies:/movies"
-      - "${MEDIA_ARRS_FOLDER}/library/tv:/tv"
+      - "${NAS_STORAGE_LOCATION}/library/movies:/movies"
+      - "${NAS_STORAGE_LOCATION}/library/tv:/tv"
     # ports:
     #   - 8116:6767
     network_mode: "service:gluetun"
@@ -171,8 +171,8 @@ services:
       TZ: "Etc/Zurich"
     volumes:
       - ${WORKDIR}/readarr/config:/config
-      - "${MEDIA_ARRS_FOLDER}/library/books:/books"
-      - "${MEDIA_ARRS_FOLDER}/downloads/torrents:/downloads"
+      - "${NAS_STORAGE_LOCATION}/library/books:/books"
+      - "${NAS_STORAGE_LOCATION}/downloads/torrents:/downloads"
     # ports:
     #   - 8118:8787
     network_mode: "service:gluetun"
