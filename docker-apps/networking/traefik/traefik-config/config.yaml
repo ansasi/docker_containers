@@ -3,13 +3,13 @@ http:
     nextcloud:
       entrypoints:
         - "https"
-      rule: "Host(``)"
+      rule: "Host(`nc.sheetgenius.app`)"
       middlewares:
         - https-redirect
         - nextcloud-secure-headers
       tls:
         domains:
-          - main: ""
+          - main: "nc.sheetgenius.app"
       service: nextcloud
   services:
     nextcloud:
