@@ -16,8 +16,8 @@ services:
     volumes:
       - /etc/localtime:/etc/localtime:ro
       - /var/run/docker.sock:/var/run/docker.sock:ro
-      - ./traefik-config/traefik.yaml:/etc/traefik/traefik.yaml:ro
-      - ./traefik-config/config.yaml:/config.yaml
+      - ./traefik-config/traefik.yml:/etc/traefik/traefik.yml:ro
+      - ./traefik-config/config.yml:/etc/traefik/config.yml
       - ./certs:/etc/traefik/certs/
     networks:
       - proxy

@@ -49,4 +49,5 @@ providers:
     exposedByDefault: false
     watch: true
   file:
-    filename: /config.yaml
+    directory: /etc/traefik
+    watch: true
