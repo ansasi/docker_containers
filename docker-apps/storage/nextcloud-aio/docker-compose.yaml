@@ -27,6 +27,7 @@ services:
       TALK_PORT: 3478 # This allows to adjust the port that the talk container is using which is exposed on the host. See https://github.com/nextcloud/all-in-one#how-to-adjust-the-talk-port
       # WATCHTOWER_DOCKER_SOCKET_PATH: /var/run/docker.sock # Needs to be specified if the docker socket on the host is not located in the default '/var/run/docker.sock'. Otherwise mastercontainer updates will fail. For macos it needs to be '/var/run/docker.sock'
     labels:
+      # NC AIO MC
       - traefik.enable=true
       - traefik.docker.network=proxy
       - traefik.http.routers.nextcloud-aio-mc-secure.entrypoints=https
@@ -35,6 +36,18 @@ services:
       - traefik.http.routers.nextcloud-aio-mc-secure.tls.certresolver=cloudflare
       - traefik.http.routers.nextcloud-aio-mc-secure.service=nextcloud-aio-mc
       - traefik.http.services.nextcloud-aio-mc.loadbalancer.server.port=8080
+      # NC AIO Apache
+      - traefik.http.routers.nc-https.entrypoints=https 
+      - traefik.http.routers.nc-https.rule=Host(`nc.${DOMAIN}`) 
+      - traefik.http.routers.nc-https.tls=true 
+      - traefik.http.routers.nc-https.tls.certresolver=cloudflare 
+      - traefik.http.routers.nextcloud-aio-mc-secure.service=nc-https
+      - traefik.http.services.nc-https.loadbalancer.server.url=http://nextcloud-aio-apache:11000
+      - traefik.http.middlewares.nc-redirect.redirectscheme.scheme=https 
+      - traefik.http.middlewares.nc-secure-headers.headers.hostsProxyHeaders=X-Forwarded-Host 
+      - traefik.http.middlewares.nc-secure-headers.headers.referrerPolicy=same-origin 
+      - traefik.http.middlewares.nc-chain.chain.middlewares=nc-redirect,nc-secure-headers 
+      - traefik.http.routers.nc-https.middlewares=nc-chain
     restart: unless-stopped
 
 
