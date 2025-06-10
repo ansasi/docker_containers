@@ -32,34 +32,23 @@ services:
       # NC AIO MC
       - traefik.enable=true
       - traefik.docker.network=proxy
-      - traefik.http.routers.nextcloud-aio-mc-secure.entrypoints=https
-      - traefik.http.routers.nextcloud-aio-mc-secure.rule=Host(`nc-aio-mc.${DOMAIN}`)
-      - traefik.http.routers.nextcloud-aio-mc-secure.tls=true
-      - traefik.http.routers.nextcloud-aio-mc-secure.tls.certresolver=cloudflare
-      - traefik.http.routers.nextcloud-aio-mc-secure.service=nextcloud-aio-mc
-      - traefik.http.services.nextcloud-aio-mc.loadbalancer.server.port=8080
+      # - traefik.http.routers.nextcloud-aio-mc-secure.entrypoints=https
+      # - traefik.http.routers.nextcloud-aio-mc-secure.rule=Host(`nc-aio-mc.${DOMAIN}`)
+      # - traefik.http.routers.nextcloud-aio-mc-secure.tls=true
+      # - traefik.http.routers.nextcloud-aio-mc-secure.tls.certresolver=cloudflare
+      # - traefik.http.routers.nextcloud-aio-mc-secure.service=nextcloud-aio-mc
+      # - traefik.http.services.nextcloud-aio-mc.loadbalancer.server.port=8080
       # NC AIO Apache
-      - traefik.http.routers.nc-https.tls=true
-      - traefik.http.routers.nc-https.tls.certresolver=cloudflare
       - traefik.http.routers.nc-https.entrypoints=https
       - traefik.http.routers.nc-https.rule=Host(`nc.${DOMAIN}`)
+      - traefik.http.routers.nc-https.tls=true
+      - traefik.http.routers.nc-https.tls.certresolver=cloudflare
       - traefik.http.services.nc-https.loadbalancer.server.url=http://nextcloud-aio-apache:11000
       - traefik.http.middlewares.nc-redirect.redirectscheme.scheme=https
       - traefik.http.middlewares.nc-secure-headers.headers.hostsProxyHeaders=X-Forwarded-Host
       - traefik.http.middlewares.nc-secure-headers.headers.referrerPolicy=same-origin
       - traefik.http.middlewares.nc-chain.chain.middlewares=nc-redirect,nc-secure-headers
       - traefik.http.routers.nc-https.middlewares=nc-chain
-
-      # - traefik.http.routers.nc-https.entrypoints=https
-      # - traefik.http.routers.nc-https.rule=Host(`nc.${DOMAIN}`)
-      # - traefik.http.routers.nc-https.tls=true
-      # - traefik.http.routers.nc-https.tls.certresolver=cloudflare
-      # - traefik.http.services.nc-https.loadbalancer.server.url=http://nextcloud-aio-apache:11000
-      # - traefik.http.middlewares.nc-redirect.redirectscheme.scheme=https
-      # - traefik.http.middlewares.nc-secure-headers.headers.hostsProxyHeaders=X-Forwarded-Host
-      # - traefik.http.middlewares.nc-secure-headers.headers.referrerPolicy=same-origin
-      # - traefik.http.middlewares.nc-chain.chain.middlewares=nc-redirect,nc-secure-headers
-      # - traefik.http.routers.nc-https.middlewares=nc-chain
     restart: unless-stopped
 
 
