@@ -23,9 +23,9 @@ services:
     networks:
       - grafana-monitoring
       - proxy
-    ports:
-      # Web Interface (using traefik)
-      - "8164:3000"
+    # ports:
+    #   # Web Interface (using traefik)
+    #   - "8164:3000"
     user: '${PUID}:${PGID}'
     labels:
       # Traefik labels
@@ -52,8 +52,8 @@ services:
     command:
       - '--config.file=/etc/config/prometheus.yml'
       - '--storage.tsdb.retention.time=7d'
-    ports:
-      - "9090:9090"
+    # ports:
+    #   - "9090:9090"
     volumes:
       - ./config/prometheus.yml:/etc/config/prometheus.yml:ro
       - prometheus:/prometheus
