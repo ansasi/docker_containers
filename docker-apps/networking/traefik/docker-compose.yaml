@@ -17,7 +17,7 @@ services:
       - /etc/localtime:/etc/localtime:ro
       - /var/run/docker.sock:/var/run/docker.sock:ro
       - ./traefik-config/traefik.yml:/etc/traefik/traefik.yml:ro
-      # - ./traefik-config/config.yml:/etc/traefik/config/config.yml # TOSO: Uncomment or remove
+      # - ./traefik-config/config.yml:/etc/traefik/config/config.yml # In case we need some pre-configuration that we cannot create with labels.
       - ./certs:/etc/traefik/certs/
     networks:
       - proxy

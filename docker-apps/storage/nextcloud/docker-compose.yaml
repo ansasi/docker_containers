@@ -1,5 +1,3 @@
-# Important!
-# This is the old way to deploy Nextcloud, now we use Nextcloud AIO defined in docker-apps/storage/nextcloud-aio/docker-compose.yaml
 networks:
   proxy:
     external: true
@@ -9,21 +7,20 @@ volumes:
   nextcloud:
 
 services:
-  nextcloud-mariadb:
-    image: mariadb:10.11
-    container_name: nextcloud-mariadb
-    command: --transaction-isolation=READ-COMMITTED
-    volumes:
-      - ${WORKDIR}/nextcloud-mariadb:/var/lib/mysql
-    environment:
-      MYSQL_ROOT_PASSWORD: '${NEXTCLOUD_DB_ROOT_PASSWORD}'
-      MYSQL_PASSWORD: '${NEXTCLOUD_DB_PASSWORD}'
-      MYSQL_DATABASE: '${NEXTCLOUD_DB_NAME}'
-      MYSQL_USER: '${NEXTCLOUD_DB_USER}'
+  nextcloud-postgres:
+    # Note: Check the recommend version here: https://docs.nextcloud.com/server/latest/admin_manual/installation/system_requirements.html#server
+    image: postgres:alpine
+    container_name: nextcloud-postgres
     networks:
       - nextcloud
+    volumes:
+      - ${WORKDIR}/nextcloud-pg:/var/lib/postgresql/data
+    environment:
+      POSTGRES_DB: nextcloud-db
+      POSTGRES_USER: nextcloud-user
+      POSTGRES_PASSWORD: '${NEXTCLOUD_DB_PASSWORD}'
     restart: unless-stopped
-  
+
   nextcloud-redis:
     image: redis:alpine
     container_name: nextcloud-redis
@@ -35,10 +32,10 @@ services:
     image: nextcloud
     container_name: nextcloud
     environment:
-      MYSQL_PASSWORD: '${NEXTCLOUD_DB_PASSWORD}'
-      MYSQL_DATABASE: '${NEXTCLOUD_DB_NAME}'
-      MYSQL_USER: '${NEXTCLOUD_DB_USER}'
-      MYSQL_HOST: nextcloud-mariadb # This is the name of the service in the docker-compose file
+      POSTGRES_PASSWORD: '${NEXTCLOUD_DB_PASSWORD}'
+      POSTGRES_DATABASE: nextcloud-db
+      POSTGRES_USER: nextcloud-user
+      POSTGRES_HOST: nextcloud-postgres # This is the name of the service in the docker-compose file
       NEXTCLOUD_ADMIN_USER: '${NEXTCLOUD_ADMIN_USER}'
       NEXTCLOUD_ADMIN_PASSWORD: '${NEXTCLOUD_ADMIN_PASSWORD}'
       NEXTCLOUD_TRUSTED_DOMAINS: '${DOMAIN}'
@@ -65,5 +62,5 @@ services:
       - nextcloud
     restart: unless-stopped
     depends_on:
-      - nextcloud-mariadb
+      - nextcloud-postgres
       - nextcloud-redis

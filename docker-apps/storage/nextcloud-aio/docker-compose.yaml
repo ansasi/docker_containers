@@ -32,12 +32,14 @@ services:
       # NC AIO MC
       - traefik.enable=true
       - traefik.docker.network=proxy
+      # TODO: not working fine with the master container
       # - traefik.http.routers.nextcloud-aio-mc-secure.entrypoints=https
       # - traefik.http.routers.nextcloud-aio-mc-secure.rule=Host(`nc-aio-mc.${DOMAIN}`)
       # - traefik.http.routers.nextcloud-aio-mc-secure.tls=true
       # - traefik.http.routers.nextcloud-aio-mc-secure.tls.certresolver=cloudflare
       # - traefik.http.routers.nextcloud-aio-mc-secure.service=nextcloud-aio-mc
       # - traefik.http.services.nextcloud-aio-mc.loadbalancer.server.port=8080
+      # TODO: Not adding the url but the port for some reason, Need to be tested and fixed
       # NC AIO Apache
       - traefik.http.routers.nc-https.entrypoints=https
       - traefik.http.routers.nc-https.rule=Host(`nc.${DOMAIN}`)
