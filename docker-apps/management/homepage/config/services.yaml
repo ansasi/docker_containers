@@ -36,10 +36,10 @@
         description: qnap-462 NAS
         ping: http://192.168.178.48:8080/cgi-bin/ # TODO
     - NextCloud:
-        href: "https://nc.sheetgenius.app"
+        href: "https://nextcloud.sheetgenius.app"
         icon: nextcloud.svg
         description: Drive app - rpi-angel-1
-        container: nextcloud-aio-apache
+        container: nextcloud
     - Paperless-ngx:
         href: "https://paperless.sheetgenius.app"
         icon: paperless-ngx.svg
