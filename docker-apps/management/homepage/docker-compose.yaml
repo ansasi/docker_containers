@@ -20,8 +20,8 @@ services:
     volumes:
       - ./config:/app/config
       - /var/run/docker.sock:/var/run/docker.sock:ro
-    ports:
-      - "3001:3000"
+    # ports:
+    #   - "3001:3000"
     labels:
       # Traefik labels
       - traefik.enable=true
