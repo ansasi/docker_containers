@@ -28,10 +28,6 @@
         icon: traefik.svg
         description: Reverse Proxy - rpi-angel-1
         container: traefik
-    - Gluetun:
-        icon: gluetun.svg
-        description: VPN client - rpi-angel-1
-        container: gluetun
 
 - Storage:
     - QNAP 462:
@@ -128,6 +124,10 @@
 
 
 - Torrent:
+    - Gluetun:
+        icon: gluetun.svg
+        description: VPN client - rpi-angel-1
+        container: gluetun
     - Qbittorrent:
         href: https://qbittorrent.sheetgenius.app
         icon: si-qbittorrent
