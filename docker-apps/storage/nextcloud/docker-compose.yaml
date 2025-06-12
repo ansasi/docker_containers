@@ -33,7 +33,7 @@ services:
     container_name: nextcloud
     environment:
       POSTGRES_PASSWORD: '${NEXTCLOUD_DB_PASSWORD}'
-      POSTGRES_DATABASE: nextcloud_db
+      POSTGRES_DB: nextcloud_db
       POSTGRES_USER: nextcloud_user
       POSTGRES_HOST: nextcloud-postgres # This is the name of the service in the docker-compose file
       NEXTCLOUD_ADMIN_USER: '${NEXTCLOUD_ADMIN_USER}'
