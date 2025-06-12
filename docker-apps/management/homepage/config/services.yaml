@@ -28,6 +28,10 @@
         icon: traefik.svg
         description: Reverse Proxy - rpi-angel-1
         container: traefik
+    - Gluetun:
+        icon: gluetun.svg
+        description: VPN client - rpi-angel-1
+        container: gluetun
 
 - Storage:
     - QNAP 462:
@@ -53,7 +57,6 @@
         description: Container management - rpi-angel-1
         container: portainer
     - Watchtower:
-        # href: https://watchtower.sheetgenius.app
         icon: watchtower.svg
         description: Container auto update - rpi-angel-1
         container: watchtower
@@ -70,20 +73,11 @@
         description: Graphs used for device stats - rpi-angel-1
         icon: grafana.svg
         container: grafana
-        # widget:
-        #     type: grafana
-        #     url: https://grafana.sheetgenius.app
-        #     username: {{HOMEPAGE_VAR_GRAFANA_USERNAME}}
-        #     password: {{HOMEPAGE_VAR_GRAFANA_PASSWORD}}
     - Uptime Kuma:
         href: https://uptime-kuma.sheetgenius.app
         description: Monitoring of apps - rpi-angel-1
         icon: uptime-kuma.svg
         container: uptime-kuma
-        # widget:
-        #     type: uptimekuma
-        #     url: https://uptime-kuma.sheetgenius.app
-        #     key: {{HOMEPAGE_VAR_UPTIMEKUMA_KEY}}
     - Prometheus:
         href: https://prometheus.sheetgenius.app
         description: Metric collector - rpi-angel-1
