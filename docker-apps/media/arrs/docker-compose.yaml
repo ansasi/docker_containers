@@ -18,8 +18,8 @@ services:
       UMASK: "002"
       TZ: "Etc/Zurich"
       WEBUI_PORT: "8085"
-    ports:
-      - 8085:8085
+    # ports:
+    #   - 8085:8085
     volumes:
       - ${WORKDIR}/qbittorrent/config:/config
       - "${NAS_STORAGE_LOCATION}/downloads/torrents:/downloads"
@@ -33,6 +33,17 @@ services:
         condition: service_healthy
         restart: true
     labels:
+      # Traefik labels
+      - traefik.enable=true
+      - traefik.docker.network=proxy
+      - traefik.http.routers.qbittorrent.entrypoints=http
+      - traefik.http.routers.qbittorrent.rule=Host(`qbittorrent.${DOMAIN}`)
+      - traefik.http.routers.qbittorrent-secure.entrypoints=https
+      - traefik.http.routers.qbittorrent-secure.rule=Host(`qbittorrent.${DOMAIN}`)
+      - traefik.http.routers.qbittorrent-secure.tls=true
+      - traefik.http.routers.qbittorrent-secure.tls.certresolver=cloudflare
+      - traefik.http.routers.qbittorrent-secure.service=qbittorrent
+      - traefik.http.services.qbittorrent.loadbalancer.server.port=8085
       # Watchtower labels
       - com.centurylinklabs.watchtower.enable=true
 
