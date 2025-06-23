@@ -64,7 +64,7 @@ services:
   #       condition: service_healthy
   #     restart: true
 
-    # Jellyseerr Image - Request management and media discovery tool
+  # Jellyseerr Image - Request management and media discovery tool
   jellyseerr-jellyfin:
     image: fallenbagel/jellyseerr:latest
     container_name: jellyseerr-jellyfin

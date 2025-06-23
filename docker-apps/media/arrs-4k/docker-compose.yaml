@@ -60,6 +60,35 @@ services:
   #       condition: service_healthy
   #     restart: true
 
+  # Jellyseerr Image - Request management and media discovery tool
+  jellyseerr-jellyfin-4k:
+    image: fallenbagel/jellyseerr:latest
+    container_name: jellyseerr-jellyfin-4k
+    environment:
+      PGID: "${PGID}"
+      PUID: "${PUID}"
+      TZ: "Etc/UTC"
+    volumes:
+      - ${WORKDIR}/jellyseerr/config:/app/config
+    # ports:
+    #   - 8111:5055
+    networks:
+      - proxy
+    labels:
+      # Traefik labels
+      - traefik.enable=true
+      - traefik.docker.network=proxy
+      - traefik.http.routers.jellyseerr-jellyfin-4k.entrypoints=http
+      - traefik.http.routers.jellyseerr-jellyfin-4k.rule=Host(`jellyseerr-jellyfin-4k.${DOMAIN}`)
+      - traefik.http.routers.jellyseerr-jellyfin-4k-secure.entrypoints=https
+      - traefik.http.routers.jellyseerr-jellyfin-4k-secure.rule=Host(`jellyseerr-jellyfin-4k.${DOMAIN}`)
+      - traefik.http.routers.jellyseerr-jellyfin-4k-secure.tls=true
+      - traefik.http.routers.jellyseerr-jellyfin-4k-secure.tls.certresolver=cloudflare
+      - traefik.http.services.jellyseerr-jellyfin-4k.loadbalancer.server.port=5055
+      # Watchtower labels
+      - com.centurylinklabs.watchtower.enable=true
+    restart: unless-stopped
+
   # Prowlarr - Indexer manager for all your media content
   prowlarr-4k:
     image: lscr.io/linuxserver/prowlarr:latest
