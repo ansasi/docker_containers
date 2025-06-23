@@ -23,9 +23,9 @@ services:
     volumes:
       - ${WORKDIR}/qbittorrent/config:/config
       - "${NAS_STORAGE_LOCATION}/downloads/torrents:/downloads"
-    # network_mode: "service:gluetun"
-    networks:
-      - proxy
+    network_mode: "service:gluetun"
+    # networks:
+    #   - proxy
     security_opt:
       - no-new-privileges:true
     depends_on:
@@ -33,17 +33,6 @@ services:
         condition: service_healthy
         restart: true
     labels:
-      # Traefik labels
-      - traefik.enable=true
-      - traefik.docker.network=proxy
-      - traefik.http.routers.qbittorrent.entrypoints=http
-      - traefik.http.routers.qbittorrent.rule=Host(`qbittorrent.${DOMAIN}`)
-      - traefik.http.routers.qbittorrent-secure.entrypoints=https
-      - traefik.http.routers.qbittorrent-secure.rule=Host(`qbittorrent.${DOMAIN}`)
-      - traefik.http.routers.qbittorrent-secure.tls=true
-      - traefik.http.routers.qbittorrent-secure.tls.certresolver=cloudflare
-      - traefik.http.routers.qbittorrent-secure.service=qbittorrent
-      - traefik.http.services.qbittorrent.loadbalancer.server.port=8085
       # Watchtower labels
       - com.centurylinklabs.watchtower.enable=true
 
