@@ -40,6 +40,11 @@
         icon: nextcloud.svg
         description: Drive app - rpi-angel-1
         container: nextcloud
+    - Immich:
+        href: "https://immich.sheetgenius.app"
+        icon: immich.svg
+        description: Photo app - rpi-angel-1
+        container: immich_server
     - Paperless-ngx:
         href: "https://paperless.sheetgenius.app"
         icon: paperless-ngx.svg
@@ -106,24 +111,18 @@
         icon: jellyfin.svg
         description: Open source media server - rpi-angel-1
         container: jellyfin
-    - Jellyfin Jellyseerr:
-        href: https://jellyseerr-jellyfin.sheetgenius.app
-        icon: jellyseerr.svg
-        description: Movie and TV show request management - rpi-angel-1
-        container: jellyseerr-jellyfin
     # - AudioBookShelf:
     #     href: https://audiobookshelf.sheetgenius.app
     #     icon: audiobookshelf.svg
     #     description: Audiobook server - rpi-angel-1
     #     container: audiobookshelf
-    - Immich:
-        href: "https://immich.sheetgenius.app"
-        icon: immich.svg
-        description: Photo app - rpi-angel-1
-        container: immich_server
-
 
 - Torrent:
+    - Jellyseerr (Jellyfin):
+        href: https://jellyseerr-jellyfin.sheetgenius.app
+        icon: jellyseerr.svg
+        description: Movie and TV show request management - rpi-angel-1
+        container: jellyseerr-jellyfin
     - Gluetun:
         icon: gluetun.svg
         description: VPN client - rpi-angel-1
