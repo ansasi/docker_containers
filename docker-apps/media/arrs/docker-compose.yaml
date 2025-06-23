@@ -18,12 +18,14 @@ services:
       UMASK: "002"
       TZ: "Etc/Zurich"
       WEBUI_PORT: "8085"
-    # ports:
-    #   - 8085:8085
+    ports:
+      - 8085:8085
     volumes:
       - ${WORKDIR}/qbittorrent/config:/config
       - "${NAS_STORAGE_LOCATION}/downloads/torrents:/downloads"
-    network_mode: "service:gluetun"
+    # network_mode: "service:gluetun"
+    networks:
+      - proxy
     security_opt:
       - no-new-privileges:true
     depends_on:
@@ -61,6 +63,35 @@ services:
   #     gluetun:
   #       condition: service_healthy
   #     restart: true
+
+    # Jellyseerr Image - Request management and media discovery tool
+  jellyseerr-jellyfin:
+    image: fallenbagel/jellyseerr:latest
+    container_name: jellyseerr-jellyfin
+    environment:
+      PGID: "${PGID}"
+      PUID: "${PUID}"
+      TZ: "Etc/UTC"
+    volumes:
+      - ${WORKDIR}/jellyseerr/config:/app/config
+    # ports:
+    #   - 8111:5055
+    networks:
+      - proxy
+    labels:
+      # Traefik labels
+      - traefik.enable=true
+      - traefik.docker.network=proxy
+      - traefik.http.routers.jellyseerr-jellyfin.entrypoints=http
+      - traefik.http.routers.jellyseerr-jellyfin.rule=Host(`jellyseerr-jellyfin.${DOMAIN}`)
+      - traefik.http.routers.jellyseerr-jellyfin-secure.entrypoints=https
+      - traefik.http.routers.jellyseerr-jellyfin-secure.rule=Host(`jellyseerr-jellyfin.${DOMAIN}`)
+      - traefik.http.routers.jellyseerr-jellyfin-secure.tls=true
+      - traefik.http.routers.jellyseerr-jellyfin-secure.tls.certresolver=cloudflare
+      - traefik.http.services.jellyseerr-jellyfin.loadbalancer.server.port=5055
+      # Watchtower labels
+      - com.centurylinklabs.watchtower.enable=true
+    restart: unless-stopped
 
   # Prowlarr - Indexer manager for all your media content
   prowlarr:
@@ -236,7 +267,6 @@ services:
       - 6881:6881
       - 6881:6881/udp
       # Ports to apps:
-      - 5055:5055    # Jellyseerr
       - 8085:8085    # qBittorrent
       - 9696:9696    # Prowlarr
       - 8191:8191    # FlareSolverr - used by Prowlarr to bypass Cloudflare
