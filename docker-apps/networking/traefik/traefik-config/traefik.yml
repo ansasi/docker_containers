@@ -21,11 +21,19 @@ entryPoints:
         entryPoint:
           to: https
           scheme: https
+    transport:
+      respondingTimeouts:
+        readTimeout: 240s
+        idleTimeout: 240s
   https:
     address: ":443"
     # http:
     #   middlewares:
     #     - ip-allowlist@file
+    transport:
+      respondingTimeouts:
+        readTimeout: 240s
+        idleTimeout: 240s
 
 certificatesResolvers:
   cloudflare:
