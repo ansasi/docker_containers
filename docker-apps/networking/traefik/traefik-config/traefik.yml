@@ -23,8 +23,7 @@ entryPoints:
           scheme: https
     transport:
       respondingTimeouts:
-        readTimeout: 240s
-        idleTimeout: 240s
+        readTimeout: 0s
   https:
     address: ":443"
     # http:
@@ -32,8 +31,7 @@ entryPoints:
     #     - ip-allowlist@file
     transport:
       respondingTimeouts:
-        readTimeout: 240s
-        idleTimeout: 240s
+        readTimeout: 0s
 
 certificatesResolvers:
   cloudflare:
