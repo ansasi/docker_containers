@@ -209,7 +209,7 @@ services:
     
   # FlareSolverr - Proxy for bypassing Cloudflare protection
   flaresolverr:
-    image: flaresolverr/flaresolverr:latest
+    image: flaresolverr/flaresolverr:v3.3.25
     container_name: flaresolverr
     restart: unless-stopped
     environment:
@@ -231,7 +231,7 @@ services:
 
   # Gluetun - VPN Client - Used to connect to VPN services
   gluetun:
-    image: qmcgaw/gluetun
+    image: qmcgaw/gluetun:v3.40
     container_name: gluetun
     hostname: gluetun
     cap_add:
@@ -248,7 +248,6 @@ services:
       - 7878:7878    # Radarr
       - 8989:8989    # Sonarr
       - 6767:6767    # Bazarr
-      - 8787:8787    # Readarr
       # Note: This is uncommented as Proton VPN uses its own DNS servers, so it is not possible to resolve to mydomain.com INSIDE the containers that use gluetun as network mode
     volumes:
       - gluetun-data:/gluetun
@@ -324,14 +323,4 @@ services:
       - traefik.http.routers.bazarr-secure.tls.certresolver=cloudflare
       - traefik.http.routers.bazarr-secure.service=bazarr
       - traefik.http.services.bazarr.loadbalancer.server.port=6767
-
-      # Readarr
-      - traefik.http.routers.readarr.entrypoints=http
-      - traefik.http.routers.readarr.rule=Host(`readarr.${DOMAIN}`)
-      - traefik.http.routers.readarr-secure.entrypoints=https
-      - traefik.http.routers.readarr-secure.rule=Host(`readarr.${DOMAIN}`)
-      - traefik.http.routers.readarr-secure.tls=true
-      - traefik.http.routers.readarr-secure.tls.certresolver=cloudflare
-      - traefik.http.routers.readarr-secure.service=readarr
-      - traefik.http.services.readarr.loadbalancer.server.port=8787
   
