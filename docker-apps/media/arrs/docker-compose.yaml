@@ -34,7 +34,7 @@ services:
         restart: true
     labels:
       # Watchtower labels
-      - com.centurylinklabs.watchtower.enable=true
+      - com.centurylinklabs.watchtower.enable=false
 
   # qBitmanage - qBittorrent manager - Used to run automated tasks for qBittorrent
 
@@ -90,7 +90,7 @@ services:
       - traefik.http.routers.jellyseerr-jellyfin-secure.tls.certresolver=cloudflare
       - traefik.http.services.jellyseerr-jellyfin.loadbalancer.server.port=5055
       # Watchtower labels
-      - com.centurylinklabs.watchtower.enable=true
+      - com.centurylinklabs.watchtower.enable=false
     restart: unless-stopped
 
   # Prowlarr - Indexer manager for all your media content
@@ -116,7 +116,7 @@ services:
         restart: true
     labels:
       # Watchtower labels
-      - com.centurylinklabs.watchtower.enable=true
+      - com.centurylinklabs.watchtower.enable=false
 
   ###--- Radarr - Library Manager for Movie content management ---###
   ### Do not use this container to download 4K Movie content. Enable container below to have separate instance just for 4K Movie content ###
@@ -144,7 +144,7 @@ services:
         restart: true
     labels:
       # Watchtower labels
-      - com.centurylinklabs.watchtower.enable=true
+      - com.centurylinklabs.watchtower.enable=false
 
   ###--- Sonarr - Library Manager for TV Show / Series / Anime content management ---###
   ### Do not use this container to download 4K TV content. Enable container below to have separate instance just for 4K TV content ###
@@ -172,7 +172,7 @@ services:
         restart: true
     labels:
       # Watchtower labels
-      - com.centurylinklabs.watchtower.enable=true
+      - com.centurylinklabs.watchtower.enable=false
 
   ###--- Sonarr 4K - Library Manager for TV 4K content management ---###
   ### Enable this container to get separate instance for 4K TV content ###
@@ -202,7 +202,7 @@ services:
         restart: true
     labels:
       # Watchtower labels
-      - com.centurylinklabs.watchtower.enable=true
+      - com.centurylinklabs.watchtower.enable=false
 
 
   # Readarr - Library Manager for Books / Epubs content management
@@ -230,7 +230,7 @@ services:
         restart: true
     labels:
       # Watchtower labels
-      - com.centurylinklabs.watchtower.enable=true
+      - com.centurylinklabs.watchtower.enable=false
     
   # FlareSolverr - Proxy for bypassing Cloudflare protection
   flaresolverr:
@@ -252,7 +252,7 @@ services:
         restart: true
     labels:
       # Watchtower labels
-      - com.centurylinklabs.watchtower.enable=true
+      - com.centurylinklabs.watchtower.enable=false
 
   # Gluetun - VPN Client - Used to connect to VPN services
   gluetun:
@@ -294,7 +294,7 @@ services:
       - proxy
     labels:
       # Watchtower labels
-      - com.centurylinklabs.watchtower.enable=true
+      - com.centurylinklabs.watchtower.enable=false
 
       # Traefik labels
       - "traefik.enable=true"
