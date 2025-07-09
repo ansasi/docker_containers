@@ -42,7 +42,7 @@ services:
   ### This container has been disabled since you need a premium Usenet provider subscription to download files. ###
   ### Enable this container if you found a free provider or want to pay for usenet ###
   # sabnzbd:
-  #   image: lscr.io/linuxserver/sabnzbd:latest
+  #   image: lscr.io/linuxserver/sabnzbd:latest # TODO: Pin the version
   #   container_name: sabnzbd
   #   restart: unless-stopped
   #   environment:
@@ -95,7 +95,7 @@ services:
 
   # Prowlarr - Indexer manager for all your media content
   prowlarr:
-    image: lscr.io/linuxserver/prowlarr:1.37.0
+    image: linuxserver/prowlarr:1.37.0
     container_name: prowlarr
     restart: unless-stopped
     environment:
@@ -179,7 +179,7 @@ services:
 
   # Bazarr - Library Manager for Subtitle management
   bazarr:
-    image: lscr.io/linuxserver/bazarr:1.5.2
+    image: linuxserver/bazarr:1.5.2
     container_name: bazarr
     restart: unless-stopped
     environment:
