@@ -4,7 +4,7 @@ networks:
 
 services:
   plex:
-    image: lscr.io/linuxserver/plex:latest
+    image: linuxserver/plex:1.41.8
     container_name: plex
     environment:
       PGID: "${PGID:-1000}"
@@ -31,31 +31,4 @@ services:
       - traefik.http.routers.plex-secure.tls=true
       - traefik.http.routers.plex-secure.tls.certresolver=cloudflare
       - traefik.http.services.plex.loadbalancer.server.port=32400
-    restart: unless-stopped
-
-  jellyseerr-plex:
-    image: fallenbagel/jellyseerr:latest
-    container_name: jellyseerr-plex
-    environment:
-      PGID: "${PGID:-1000}"
-      PUID: "${PUID:-1000}"
-      UMASK: "002"
-      LOG_LEVEL: "debug"
-      TZ: "Etc/UTC"
-    volumes:
-      - ${WORKDIR}/jellyseerr/config:/app/config
-    # ports:
-    #   - 8112:5055
-    networks:
-      - proxy
-    labels:
-      - traefik.enable=true
-      - traefik.docker.network=proxy
-      - traefik.http.routers.jellyseerr-plex.entrypoints=http
-      - traefik.http.routers.jellyseerr-plex.rule=Host(`jellyseerr-plex.${DOMAIN}`)
-      - traefik.http.routers.jellyseerr-plex-secure.entrypoints=https
-      - traefik.http.routers.jellyseerr-plex-secure.rule=Host(`jellyseerr-plex.${DOMAIN}`)
-      - traefik.http.routers.jellyseerr-plex-secure.tls=true
-      - traefik.http.routers.jellyseerr-plex-secure.tls.certresolver=cloudflare
-      - traefik.http.services.jellyseerr-plex.loadbalancer.server.port=5055
     restart: unless-stopped
