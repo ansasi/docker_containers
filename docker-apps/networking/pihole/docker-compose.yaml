@@ -11,9 +11,7 @@ services:
   # Cloudflared DNS-over-HTTPS proxy so ISP can't see your DNS queries
   cloudflared:
     container_name: cloudflared
-    # Restart on crashes and on reboots
-    restart: unless-stopped
-    image: cloudflare/cloudflared:latest
+    image: cloudflare/cloudflared:latest # TODO: Pin to a specific version
     command: proxy-dns
     environment:
       - "TUNNEL_DNS_UPSTREAM=https://1.1.1.1/dns-query,https://1.0.0.1/dns-query,https://9.9.9.9/dns-query,https://149.112.112.9/dns-query"
@@ -27,10 +25,11 @@ services:
         ipv4_address: 172.70.9.2
     security_opt:
       - no-new-privileges:true
+    restart: unless-stopped
 
   pihole:
     container_name: pihole
-    image: pihole/pihole:latest
+    image: pihole/pihole:2025.06.2
     ports:
       - "53:53/tcp"
       - "53:53/udp"
@@ -54,9 +53,6 @@ services:
     #   # Required if you are using Pi-hole as your DHCP server, else not needed
     #   # See Note On Capabilities below
     #   - NET_ADMIN
-    restart: unless-stopped
-    depends_on:
-      - cloudflared
     # We don't use Traefik for PiHole as it will be used as a DNS server on a separate device
     labels:
       # Traefik labels
@@ -71,6 +67,9 @@ services:
       - traefik.http.routers.pihole-secure.tls=true
       - traefik.http.routers.pihole-secure.service=pihole
       - traefik.http.services.pihole.loadbalancer.server.port=80
+    restart: unless-stopped
+    depends_on:
+      - cloudflared
 
 # Notes:
 # - Remember to use Teleporter to backup and restore your PiHole settings
