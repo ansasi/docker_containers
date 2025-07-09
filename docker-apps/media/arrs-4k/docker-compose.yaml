@@ -9,7 +9,7 @@ networks:
 services:
   # qBittorrent - Download Client
   qbittorrent-4k:
-    image: lscr.io/linuxserver/qbittorrent
+    image: linuxserver/qbittorrent:5.1.2
     container_name: qbittorrent-4k
     restart: unless-stopped
     environment:
@@ -38,7 +38,7 @@ services:
   ### This container has been disabled since you need a premium Usenet provider subscription to download files. ###
   ### Enable this container if you found a free provider or want to pay for usenet ###
   # sabnzbd:
-  #   image: lscr.io/linuxserver/sabnzbd:latest
+  #   image: lscr.io/linuxserver/sabnzbd:latest # TODO: Pin the version
   #   container_name: sabnzbd
   #   restart: unless-stopped
   #   environment:
@@ -62,7 +62,7 @@ services:
 
   # Jellyseerr Image - Request management and media discovery tool
   jellyseerr-jellyfin-4k:
-    image: fallenbagel/jellyseerr:latest
+    image: fallenbagel/jellyseerr:2.7.0
     container_name: jellyseerr-jellyfin-4k
     environment:
       PGID: "${PGID}"
@@ -91,7 +91,7 @@ services:
 
   # Prowlarr - Indexer manager for all your media content
   prowlarr-4k:
-    image: lscr.io/linuxserver/prowlarr:latest
+    image: linuxserver/prowlarr:1.37.0
     container_name: prowlarr-4k
     restart: unless-stopped
     environment:
@@ -117,7 +117,7 @@ services:
   ###--- Radarr - Library Manager for Movie content management ---###
   ### Do not use this container to download 4K Movie content. Enable container below to have separate instance just for 4K Movie content ###
   radarr-4k:
-    image: lscr.io/linuxserver/radarr:latest
+    image: linuxserver/radarr:5.26.2
     container_name: radarr-4k
     restart: unless-stopped
     environment:
@@ -145,7 +145,7 @@ services:
   ###--- Sonarr - Library Manager for TV Show / Series / Anime content management ---###
   ### Do not use this container to download 4K TV content. Enable container below to have separate instance just for 4K TV content ###
   sonarr-4k:
-    image: lscr.io/linuxserver/sonarr:latest
+    image: linuxserver/sonarr:4.0.15
     container_name: sonarr-4k
     restart: unless-stopped
     environment:
@@ -175,7 +175,7 @@ services:
 
   # Bazarr - Library Manager for Subtitle management
   bazarr-4k:
-    image: lscr.io/linuxserver/bazarr:latest
+    image: linuxserver/bazarr:1.5.2
     container_name: bazarr-4k
     restart: unless-stopped
     environment:
@@ -202,7 +202,7 @@ services:
     
   # FlareSolverr - Proxy for bypassing Cloudflare protection
   flaresolverr-4k:
-    image: flaresolverr/flaresolverr:latest
+    image: flaresolverr/flaresolverr:v3.3.25
     container_name: flaresolverr-4k
     restart: unless-stopped
     environment:
@@ -224,7 +224,7 @@ services:
 
   # Gluetun - VPN Client - Used to connect to VPN services
   gluetun-4k:
-    image: qmcgaw/gluetun
+    image: qmcgaw/gluetun:v3.40
     container_name: gluetun-4k
     hostname: gluetun-4k
     cap_add:
