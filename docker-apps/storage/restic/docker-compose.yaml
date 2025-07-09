@@ -1,6 +1,6 @@
 services:
   restic-backup:
-    image: mazzolino/restic
+    image: mazzolino/restic:1.8
     container_name: restic
     # hostname: ${HOSTNAME}
     environment:
@@ -32,7 +32,7 @@ services:
       - no-new-privileges:true
 
   restic-prune:
-    image: mazzolino/restic
+    image: mazzolino/restic:1.8
     container_name: restic-prune
     # hostname: ${HOSTNAME}
     environment:
@@ -45,7 +45,7 @@ services:
       - no-new-privileges:true
 
   restic-check:
-    image: mazzolino/restic
+    image: mazzolino/restic:1.8
     container_name: restic-check
     # hostname: ${HOSTNAME}
     environment:
