@@ -80,7 +80,7 @@ services:
         restart: true
 
   ###--- Radarr - Library Manager for Movie content management ---###
-  ### Do not use this container to download 4K Movie content. Enable container below to have seperate instance just for 4K Movie content ###
+  ### Do not use this container to download 4K Movie content. Enable container below to have separate instance just for 4K Movie content ###
   radarr-4k:
     image: lscr.io/linuxserver/radarr:latest
     container_name: radarr-4k
@@ -105,7 +105,7 @@ services:
         restart: true
 
   ###--- Sonarr - Library Manager for TV Show / Series / Anime content management ---###
-  ### Do not use this container to download 4K TV content. Enable container below to have seperate instance just for 4K TV content ###
+  ### Do not use this container to download 4K TV content. Enable container below to have separate instance just for 4K TV content ###
   sonarr-4k:
     image: lscr.io/linuxserver/sonarr:latest
     container_name: sonarr-4k
@@ -130,7 +130,7 @@ services:
         restart: true
 
   ###--- Sonarr 4K - Library Manager for TV 4K content management ---###
-  ### Enable this container to get seperate instance for 4K TV content ###
+  ### Enable this container to get separate instance for 4K TV content ###
 
   # Bazarr - Library Manager for Subtitle management
   bazarr-4k:
