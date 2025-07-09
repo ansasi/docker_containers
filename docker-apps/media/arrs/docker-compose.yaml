@@ -9,7 +9,7 @@ networks:
 services:
   # qBittorrent - Download Client
   qbittorrent:
-    image: lscr.io/linuxserver/qbittorrent
+    image: linuxserver/qbittorrent:5.1.2
     container_name: qbittorrent
     restart: unless-stopped
     environment:
@@ -66,7 +66,7 @@ services:
 
   # Jellyseerr Image - Request management and media discovery tool
   jellyseerr-jellyfin:
-    image: fallenbagel/jellyseerr:latest
+    image: fallenbagel/jellyseerr:2.7.0
     container_name: jellyseerr-jellyfin
     environment:
       PGID: "${PGID}"
@@ -95,7 +95,7 @@ services:
 
   # Prowlarr - Indexer manager for all your media content
   prowlarr:
-    image: lscr.io/linuxserver/prowlarr:latest
+    image: lscr.io/linuxserver/prowlarr:1.37.0
     container_name: prowlarr
     restart: unless-stopped
     environment:
@@ -121,7 +121,7 @@ services:
   ###--- Radarr - Library Manager for Movie content management ---###
   ### Do not use this container to download 4K Movie content. Enable container below to have separate instance just for 4K Movie content ###
   radarr:
-    image: lscr.io/linuxserver/radarr:latest
+    image: linuxserver/radarr:5.26.2
     container_name: radarr
     restart: unless-stopped
     environment:
@@ -149,7 +149,7 @@ services:
   ###--- Sonarr - Library Manager for TV Show / Series / Anime content management ---###
   ### Do not use this container to download 4K TV content. Enable container below to have separate instance just for 4K TV content ###
   sonarr:
-    image: lscr.io/linuxserver/sonarr:latest
+    image: linuxserver/sonarr:4.0.15
     container_name: sonarr
     restart: unless-stopped
     environment:
@@ -179,7 +179,7 @@ services:
 
   # Bazarr - Library Manager for Subtitle management
   bazarr:
-    image: lscr.io/linuxserver/bazarr:latest
+    image: lscr.io/linuxserver/bazarr:1.5.2
     container_name: bazarr
     restart: unless-stopped
     environment:
