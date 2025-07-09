@@ -152,11 +152,11 @@
         icon: bazarr.svg
         description: Automates the downloading of subtitles - rpi-angel-1
         container: bazarr
-    - Readarr:
-        href: https://readarr.sheetgenius.app
-        icon: readarr.svg
-        description: Automates the downloading of books - rpi-angel-1
-        container: readarr
+    # - Readarr:
+    #     href: https://readarr.sheetgenius.app
+    #     icon: readarr.svg
+    #     description: Automates the downloading of books - rpi-angel-1
+    #     container: readarr
     # - Lidarr:
     #     href: https://lidarr.sheetgenius.app
     #     icon: lidarr.svg

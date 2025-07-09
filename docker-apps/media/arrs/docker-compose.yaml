@@ -206,31 +206,6 @@ services:
 
 
   # Readarr - Library Manager for Books / Epubs content management
-  readarr:
-    image: lscr.io/linuxserver/readarr:develop
-    container_name: readarr
-    restart: unless-stopped
-    environment:
-      PUID: "${PUID}"
-      PGID: "${PGID}"
-      UMASK: "002"
-      TZ: "Etc/Zurich"
-    volumes:
-      - ${WORKDIR}/readarr/config:/config
-      - "${NAS_STORAGE_LOCATION}/library/books:/books"
-      - "${NAS_STORAGE_LOCATION}/downloads/torrents:/downloads"
-    # ports:
-    #   - 8118:8787
-    network_mode: "service:gluetun"
-    security_opt:
-      - no-new-privileges:true
-    depends_on:
-      gluetun:
-        condition: service_healthy
-        restart: true
-    labels:
-      # Watchtower labels
-      - com.centurylinklabs.watchtower.enable=false
     
   # FlareSolverr - Proxy for bypassing Cloudflare protection
   flaresolverr:
