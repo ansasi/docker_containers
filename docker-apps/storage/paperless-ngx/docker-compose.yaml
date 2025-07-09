@@ -52,7 +52,7 @@ services:
       paperless:
 
   paperless-webserver:
-    image: ghcr.io/paperless-ngx/paperless-ngx:latest
+    image: paperlessngx/paperless-ngx:2.17
     restart: unless-stopped
     depends_on:
       - paperless-db
@@ -117,7 +117,7 @@ services:
       paperless:
 
   paperless-tika:
-    image: ghcr.io/paperless-ngx/tika:latest
+    image: ghcr.io/paperless-ngx/tika:2.9.1-minimal
     restart: unless-stopped
     networks:
       paperless:
