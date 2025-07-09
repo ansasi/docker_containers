@@ -6,7 +6,7 @@ services:
   # Jellyfin Image - Media Library / Player - Used to play the media content
   jellyfin:
     container_name: jellyfin
-    image: jellyfin/jellyfin:latest
+    image: linuxserver/jellyfin:10.10.7
     environment:
       PGID: "${PGID}"
       PUID: "${PUID}"
