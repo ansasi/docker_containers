@@ -6,7 +6,7 @@ Traefik is a popular reverse proxy that integrates well with Docker to manage an
 
 ## Installation Steps
 
-1. Update the domain name in the `traefik.toml` file to the desired domain.
+1. Update the domain name in the `traefik.yaml` file to the desired domain.
 2. Enable authentication for the Traefik dashboard by creating a password using `htpasswd` if wanted.
 3. (Optional) Create a password using `htpasswd` for the Traefik dashboard.
    1. Install `apache2-utils` package.
@@ -19,7 +19,7 @@ Traefik is a popular reverse proxy that integrates well with Docker to manage an
    5. Click on `Create Token`.
    6. Select `Edit DNS Zone`.
    7. Select the desired zone.
-5. Add the Cloudflare API token to the environment variables in the `docker-compose.yml` file.
+5. Add the Cloudflare API token to the environment variables in the `docker-compose.yaml` file.
 6. Run `docker-compose up -d` to start the Traefik container.
 
 ## Usage Examples in other Docker Compose Files
