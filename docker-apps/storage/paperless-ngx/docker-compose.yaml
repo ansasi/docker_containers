@@ -106,7 +106,7 @@ services:
       - "com.centurylinklabs.watchtower.enable=false"
 
   paperless-gotenberg:
-    image: docker.io/gotenberg/gotenberg:7.10
+    image: docker.io/gotenberg/gotenberg:8.21
     restart: unless-stopped
     # The gotenberg chromium route is used to convert .eml files. We do not want to allow external content like tracking pixels or even javascript.
     command:
