@@ -40,7 +40,7 @@ services:
       paperless:
 
   paperless-db:
-    image: docker.io/library/postgres:15
+    image: docker.io/library/postgres:17
     restart: unless-stopped
     volumes:
       - ${WORKDIR}/pgdata:/var/lib/postgresql/data
