@@ -9,7 +9,7 @@ networks:
 services:
   # qBittorrent - Download Client
   qbittorrent-4k:
-    image: linuxserver/qbittorrent:5.1.2
+    image: linuxserver/qbittorrent:latest # TODO: Renovate bot does not select the correct version
     container_name: qbittorrent-4k
     restart: unless-stopped
     environment:
