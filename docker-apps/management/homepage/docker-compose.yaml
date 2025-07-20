@@ -4,7 +4,7 @@ networks:
 
 services:
   homepage:
-    image: gethomepage/homepage:v1.3.2
+    image: gethomepage/homepage:v1.4.0
     container_name: homepage
     environment:
       HOMEPAGE_ALLOWED_HOSTS: 'homepage.${DOMAIN},localhost:3001'
