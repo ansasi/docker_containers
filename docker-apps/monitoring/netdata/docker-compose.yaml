@@ -6,7 +6,7 @@ networks:
 services:
 # --- Netdata Image
   netdata:
-    image: netdata/netdata:v2.5
+    image: netdata/netdata:v2.6
     container_name: netdata
     cap_add:
       - SYS_PTRACE
