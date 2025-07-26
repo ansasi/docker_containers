@@ -62,7 +62,7 @@ services:
 
   # Jellyseerr Image - Request management and media discovery tool
   jellyseerr-jellyfin-4k:
-    image: fallenbagel/jellyseerr:2.7.1
+    image: fallenbagel/jellyseerr:2.7.2
     container_name: jellyseerr-jellyfin-4k
     environment:
       PGID: "${PGID}"
