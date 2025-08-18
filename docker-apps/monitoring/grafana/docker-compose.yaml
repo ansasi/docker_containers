@@ -16,7 +16,7 @@ services:
 
 # --- Grafana Image
   grafana:
-    image: grafana/grafana:12.1.0-ubuntu # For a different OS you can simply use grafana/grafana:12.0.2
+    image: grafana/grafana:12.1.1-ubuntu # For a different OS you can simply use grafana/grafana:12.0.2
     container_name: grafana
     volumes:
       - ${WORKDIR}/data:/var/lib/grafana
