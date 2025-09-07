@@ -121,7 +121,7 @@ services:
   ###--- Radarr - Library Manager for Movie content management ---###
   ### Do not use this container to download 4K Movie content. Enable container below to have separate instance just for 4K Movie content ###
   radarr:
-    image: linuxserver/radarr:5.26.2
+    image: linuxserver/radarr:5.27.5
     container_name: radarr
     restart: unless-stopped
     environment:
