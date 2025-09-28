@@ -175,7 +175,7 @@ services:
 
   # Bazarr - Library Manager for Subtitle management
   bazarr-4k:
-    image: linuxserver/bazarr:1.5.2
+    image: linuxserver/bazarr:1.5.3
     container_name: bazarr-4k
     restart: unless-stopped
     environment:
