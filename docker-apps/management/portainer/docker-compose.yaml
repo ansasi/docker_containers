@@ -12,8 +12,8 @@ services:
       - ${WORKDIR}/data:/data
     networks:
       - proxy
-    # ports:
-    #   - "9000:9000"
+    ports:
+      - "9000:9000"
     labels:
       - traefik.enable=true
       - traefik.docker.network=proxy
