@@ -21,12 +21,12 @@
     # - Wireguard:
     #     href: https://wireguard.docker.sheetgenius.app
     #     icon: wireguard.png
-    #     description: wireguard-prod-1 on rpi-angel-1
+    #     description: wireguard-prod-1 on docker
     #     container: wg-easy
     - Traefik:
         href: https://traefik-dashboard.docker.sheetgenius.app/
         icon: traefik.svg
-        description: Reverse Proxy - rpi-angel-1
+        description: Reverse Proxy - docker
         container: traefik
 
 - Storage:
@@ -38,50 +38,50 @@
     - NextCloud:
         href: "https://nextcloud.docker.sheetgenius.app"
         icon: nextcloud.svg
-        description: Drive app - rpi-angel-1
+        description: Drive app - docker
         container: nextcloud
     - Immich:
         href: "https://immich.docker.sheetgenius.app"
         icon: immich.svg
-        description: Photo app - rpi-angel-1
+        description: Photo app - docker
         container: immich_server
     - Paperless-ngx:
         href: "https://paperless.docker.sheetgenius.app"
         icon: paperless-ngx.svg
-        description: Document management - rpi-angel-1
+        description: Document management - docker
         container: paperless-ngx-paperless-webserver-1
 
 - Management:
     - Portainer:
         href: https://portainer.docker.sheetgenius.app
         icon: portainer.svg
-        description: Container management - rpi-angel-1
+        description: Container management - docker
         container: portainer
     - Watchtower:
         icon: watchtower.svg
-        description: Container auto update - rpi-angel-1
+        description: Container auto update - docker
         container: watchtower
     # - Home Assistant:
     #     href: https://homeassistant.docker.sheetgenius.app
     #     icon: home-assistant.svg
-    #     description: Automation server - rpi-angel-1
+    #     description: Automation server - docker
     #     container: homeassistant
 
 
 - Monitoring:
     - Grafana:
         href: https://grafana.docker.sheetgenius.app
-        description: Graphs used for device stats - rpi-angel-1
+        description: Graphs used for device stats - docker
         icon: grafana.svg
         container: grafana
     - Uptime Kuma:
         href: https://uptime-kuma.docker.sheetgenius.app
-        description: Monitoring of apps - rpi-angel-1
+        description: Monitoring of apps - docker
         icon: uptime-kuma.svg
         container: uptime-kuma
     - Prometheus:
         href: https://prometheus.docker.sheetgenius.app
-        description: Metric collector - rpi-angel-1
+        description: Metric collector - docker
         icon: prometheus.svg
         container: prometheus
 
@@ -92,73 +92,73 @@
 #     - Ollama:
 #         href: http://ollama:11434
 #         icon: si-ollama-#FFFFFF
-#         description: AI model server - rpi-angel-1
+#         description: AI model server - docker
 #         container: ollama
 #     - OpenWebUI:
 #         href: http://openwebui:3003
 #         icon: chatgpt.svg
-#         description: Web UI for AI - rpi-angel-1
+#         description: Web UI for AI - docker
 #         container: openwebui
 
 - Media:
     # - Plex:
     #     href: https://plex.docker.sheetgenius.app
     #     icon: plex.svg
-    #     description: Media server - rpi-angel-1
+    #     description: Media server - docker
     #     container: plex
     - Jellyfin:
         href: https://jellyfin.docker.sheetgenius.app
         icon: jellyfin.svg
-        description: Open source media server - rpi-angel-1
+        description: Open source media server - docker
         container: jellyfin
     # - AudioBookShelf:
     #     href: https://audiobookshelf.docker.sheetgenius.app
     #     icon: audiobookshelf.svg
-    #     description: Audiobook server - rpi-angel-1
+    #     description: Audiobook server - docker
     #     container: audiobookshelf
 
 - Torrent:
     - Jellyseerr (Jellyfin):
         href: https://jellyseerr-jellyfin.docker.sheetgenius.app
         icon: jellyseerr.svg
-        description: Movie and TV show request management - rpi-angel-1
+        description: Movie and TV show request management - docker
         container: jellyseerr-jellyfin
     - Gluetun:
         icon: gluetun.svg
-        description: VPN client - rpi-angel-1
+        description: VPN client - docker
         container: gluetun
     - Qbittorrent:
         href: https://qbittorrent.docker.sheetgenius.app
         icon: si-qbittorrent
-        description: Torrent client - rpi-angel-1
+        description: Torrent client - docker
         container: qbittorrent
     - Prowlarr:
         href: https://prowlarr.docker.sheetgenius.app
         icon: prowlarr.svg
-        description: Indexer manager for all your apps - rpi-angel-1
+        description: Indexer manager for all your apps - docker
         container: prowlarr
     - Sonarr:
         href: https://sonarr.docker.sheetgenius.app
         icon: sonarr.svg
-        description: Automates the downloading of TV shows - rpi-angel-1
+        description: Automates the downloading of TV shows - docker
         container: sonarr
     - Radarr:
         href: https://radarr.docker.sheetgenius.app
         icon: radarr.svg
-        description: Automates the downloading of movies - rpi-angel-1
+        description: Automates the downloading of movies - docker
         container: radarr
     - Bazarr:
         href: https://bazarr.docker.sheetgenius.app
         icon: bazarr.svg
-        description: Automates the downloading of subtitles - rpi-angel-1
+        description: Automates the downloading of subtitles - docker
         container: bazarr
     # - Readarr:
     #     href: https://readarr.docker.sheetgenius.app
     #     icon: readarr.svg
-    #     description: Automates the downloading of books - rpi-angel-1
+    #     description: Automates the downloading of books - docker
     #     container: readarr
     # - Lidarr:
     #     href: https://lidarr.docker.sheetgenius.app
     #     icon: lidarr.svg
-    #     description: Automates the downloading of music - rpi-angel-1
+    #     description: Automates the downloading of music - docker
     #     container: lidarr
