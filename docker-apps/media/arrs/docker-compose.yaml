@@ -132,7 +132,7 @@ services:
     volumes:
       - ${WORKDIR}/radarr/config:/config
       - "${NAS_STORAGE_LOCATION}/library/movies:/movies"
-      - "${NAS_STORAGE_LOCATION}/downloads/torrents:/downloads"
+      - "${WORKDIR}/downloads/torrents:/downloads" # TODO: "${NAS_STORAGE_LOCATION}/downloads/torrents:/downloads"
     # ports:
     #   - 8114:7878
     network_mode: "service:gluetun"
@@ -160,7 +160,7 @@ services:
     volumes:
       - ${WORKDIR}/sonarr/config:/config
       - "${NAS_STORAGE_LOCATION}/library/tv:/tv"
-      - "${NAS_STORAGE_LOCATION}/downloads/torrents:/downloads"
+      - "${WORKDIR}/downloads/torrents:/downloads" # TODO: "${NAS_STORAGE_LOCATION}/downloads/torrents:/downloads"
     # ports:
     #   - 8115:8989
     network_mode: "service:gluetun"
