@@ -22,7 +22,7 @@ services:
     #   - 8085:8085
     volumes:
       - ${WORKDIR}/qbittorrent/config:/config
-      - "${NAS_STORAGE_LOCATION}/downloads/torrents:/downloads"
+      - "${WORKDIR}/downloads/torrents:/downloads" # TODO: "${NAS_STORAGE_LOCATION}/downloads/torrents:/downloads"
     network_mode: "service:gluetun"
     # networks:
     #   - proxy
