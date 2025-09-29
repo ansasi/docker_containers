@@ -31,10 +31,10 @@
 
 - Storage:
     - QNAP 462:
-        href: http://qnap-462.local:8080/cgi-bin/ # TODO
+        href: http://192.168.178.5:8080/cgi-bin/ # TODO
         icon: qnap.svg
         description: qnap-462 NAS
-        ping: http://qnap-462.local:8080/cgi-bin/ # TODO
+        ping: http://192.168.178.5:8080/cgi-bin/ # TODO
     - NextCloud:
         href: "https://nextcloud.docker.sheetgenius.app"
         icon: nextcloud.svg
