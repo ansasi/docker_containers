@@ -233,6 +233,7 @@ services:
   gluetun:
     image: qmcgaw/gluetun:v3.40
     container_name: gluetun
+    restart: unless-stopped
     hostname: gluetun
     cap_add:
       - NET_ADMIN
