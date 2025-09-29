@@ -9,22 +9,22 @@
             type: fritzbox
             url: http://192.168.178.1
     - PiHole:
-        href: http://pihole.local/admin # https://pihole.sheetgenius.app
+        href: http://192.168.178.10/admin
         icon: pi-hole.svg
         description: DNS - rpi-nico-small
-        ping: http://pihole.local/admin
+        ping: http://192.168.178.10/admin
         widget:
             type: pihole
-            url: http://pihole.local # https://pihole.sheetgenius.app
+            url: http://192.168.178.10
             version: 6
             key: '{{HOMEPAGE_VAR_PIHOLE_KEY}}'
     # - Wireguard:
-    #     href: https://wireguard.sheetgenius.app
+    #     href: https://wireguard.docker.sheetgenius.app
     #     icon: wireguard.png
     #     description: wireguard-prod-1 on rpi-angel-1
     #     container: wg-easy
     - Traefik:
-        href: https://traefik-dashboard.sheetgenius.app/
+        href: https://traefik-dashboard.docker.sheetgenius.app/
         icon: traefik.svg
         description: Reverse Proxy - rpi-angel-1
         container: traefik
@@ -36,24 +36,24 @@
         description: qnap-462 NAS
         ping: http://qnap-462.local:8080/cgi-bin/ # TODO
     - NextCloud:
-        href: "https://nextcloud.sheetgenius.app"
+        href: "https://nextcloud.docker.sheetgenius.app"
         icon: nextcloud.svg
         description: Drive app - rpi-angel-1
         container: nextcloud
     - Immich:
-        href: "https://immich.sheetgenius.app"
+        href: "https://immich.docker.sheetgenius.app"
         icon: immich.svg
         description: Photo app - rpi-angel-1
         container: immich_server
     - Paperless-ngx:
-        href: "https://paperless.sheetgenius.app"
+        href: "https://paperless.docker.sheetgenius.app"
         icon: paperless-ngx.svg
         description: Document management - rpi-angel-1
         container: paperless-ngx-paperless-webserver-1
 
 - Management:
     - Portainer:
-        href: https://portainer.sheetgenius.app
+        href: https://portainer.docker.sheetgenius.app
         icon: portainer.svg
         description: Container management - rpi-angel-1
         container: portainer
@@ -62,7 +62,7 @@
         description: Container auto update - rpi-angel-1
         container: watchtower
     # - Home Assistant:
-    #     href: https://homeassistant.sheetgenius.app
+    #     href: https://homeassistant.docker.sheetgenius.app
     #     icon: home-assistant.svg
     #     description: Automation server - rpi-angel-1
     #     container: homeassistant
@@ -70,17 +70,17 @@
 
 - Monitoring:
     - Grafana:
-        href: https://grafana.sheetgenius.app
+        href: https://grafana.docker.sheetgenius.app
         description: Graphs used for device stats - rpi-angel-1
         icon: grafana.svg
         container: grafana
     - Uptime Kuma:
-        href: https://uptime-kuma.sheetgenius.app
+        href: https://uptime-kuma.docker.sheetgenius.app
         description: Monitoring of apps - rpi-angel-1
         icon: uptime-kuma.svg
         container: uptime-kuma
     - Prometheus:
-        href: https://prometheus.sheetgenius.app
+        href: https://prometheus.docker.sheetgenius.app
         description: Metric collector - rpi-angel-1
         icon: prometheus.svg
         container: prometheus
@@ -102,24 +102,24 @@
 
 - Media:
     # - Plex:
-    #     href: https://plex.sheetgenius.app
+    #     href: https://plex.docker.sheetgenius.app
     #     icon: plex.svg
     #     description: Media server - rpi-angel-1
     #     container: plex
     - Jellyfin:
-        href: https://jellyfin.sheetgenius.app
+        href: https://jellyfin.docker.sheetgenius.app
         icon: jellyfin.svg
         description: Open source media server - rpi-angel-1
         container: jellyfin
     # - AudioBookShelf:
-    #     href: https://audiobookshelf.sheetgenius.app
+    #     href: https://audiobookshelf.docker.sheetgenius.app
     #     icon: audiobookshelf.svg
     #     description: Audiobook server - rpi-angel-1
     #     container: audiobookshelf
 
 - Torrent:
     - Jellyseerr (Jellyfin):
-        href: https://jellyseerr-jellyfin.sheetgenius.app
+        href: https://jellyseerr-jellyfin.docker.sheetgenius.app
         icon: jellyseerr.svg
         description: Movie and TV show request management - rpi-angel-1
         container: jellyseerr-jellyfin
@@ -128,37 +128,37 @@
         description: VPN client - rpi-angel-1
         container: gluetun
     - Qbittorrent:
-        href: https://qbittorrent.sheetgenius.app
+        href: https://qbittorrent.docker.sheetgenius.app
         icon: si-qbittorrent
         description: Torrent client - rpi-angel-1
         container: qbittorrent
     - Prowlarr:
-        href: https://prowlarr.sheetgenius.app
+        href: https://prowlarr.docker.sheetgenius.app
         icon: prowlarr.svg
         description: Indexer manager for all your apps - rpi-angel-1
         container: prowlarr
     - Sonarr:
-        href: https://sonarr.sheetgenius.app
+        href: https://sonarr.docker.sheetgenius.app
         icon: sonarr.svg
         description: Automates the downloading of TV shows - rpi-angel-1
         container: sonarr
     - Radarr:
-        href: https://radarr.sheetgenius.app
+        href: https://radarr.docker.sheetgenius.app
         icon: radarr.svg
         description: Automates the downloading of movies - rpi-angel-1
         container: radarr
     - Bazarr:
-        href: https://bazarr.sheetgenius.app
+        href: https://bazarr.docker.sheetgenius.app
         icon: bazarr.svg
         description: Automates the downloading of subtitles - rpi-angel-1
         container: bazarr
     # - Readarr:
-    #     href: https://readarr.sheetgenius.app
+    #     href: https://readarr.docker.sheetgenius.app
     #     icon: readarr.svg
     #     description: Automates the downloading of books - rpi-angel-1
     #     container: readarr
     # - Lidarr:
-    #     href: https://lidarr.sheetgenius.app
+    #     href: https://lidarr.docker.sheetgenius.app
     #     icon: lidarr.svg
     #     description: Automates the downloading of music - rpi-angel-1
     #     container: lidarr
