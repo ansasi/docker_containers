@@ -95,7 +95,7 @@ services:
 
   # Prowlarr - Indexer manager for all your media content
   prowlarr:
-    image: linuxserver/prowlarr:2.0.5
+    image: linuxserver/prowlarr:2.1.5
     container_name: prowlarr
     restart: unless-stopped
     environment:
