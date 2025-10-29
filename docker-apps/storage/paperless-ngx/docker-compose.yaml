@@ -52,7 +52,7 @@ services:
       paperless:
 
   paperless-webserver:
-    image: paperlessngx/paperless-ngx:2.18
+    image: paperlessngx/paperless-ngx:2.19
     restart: unless-stopped
     depends_on:
       - paperless-db
