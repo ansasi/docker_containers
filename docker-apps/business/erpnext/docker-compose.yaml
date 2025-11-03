@@ -87,7 +87,7 @@ services:
           fi
         done;
         echo "sites/common_site_config.json found";
-        bench new-site --mariadb-user-host-login-scope='%' --admin-password=${ADMIN_PASSWORD:-admin} --db-root-username=root --db-root-password=${DB_ROOT_PASSWORD:-admin} --install-app erpnext --set-default frontend;
+        bench new-site --mariadb-user-host-login-scope='%' --admin-password=${ADMIN_PASSWORD:-admin} --db-root-username=root --db-root-password=$${MARIADB_DB_USER:-admin} --install-app erpnext --set-default frontend;
 
   db:
     image: mariadb:10.6
@@ -136,7 +136,18 @@ services:
       - sites:/home/frappe/frappe-bench/sites
       - logs:/home/frappe/frappe-bench/logs
     ports:
-      - "8080:8080"
+      - "8083:8080"
+    labels:
+      - traefik.enable=true
+      - traefik.docker.network=proxy
+      - traefik.http.routers.erpnext.entrypoints=http
+      - traefik.http.routers.erpnext.rule=Host(`erpnext.${DOMAIN}`)
+      - traefik.http.routers.erpnext-secure.entrypoints=https
+      - traefik.http.routers.erpnext-secure.rule=Host(`erpnext.${DOMAIN}`)
+      - traefik.http.routers.erpnext-secure.tls=true
+      - traefik.http.routers.erpnext-secure.tls.certresolver=cloudflare
+      - traefik.http.routers.erpnext-secure.service=erpnext
+      - traefik.http.services.erpnext.loadbalancer.server.port=8080
 
   queue-long:
     image: frappe/erpnext:v15.85.1
