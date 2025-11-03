@@ -19,12 +19,12 @@
             version: 6
             key: '{{HOMEPAGE_VAR_PIHOLE_KEY}}'
     # - Wireguard:
-    #     href: https://wireguard.docker.sheetgenius.app
+    #     href: https://wireguard.docker.datia.me
     #     icon: wireguard.png
     #     description: wireguard-prod-1 on docker
     #     container: wg-easy
     - Traefik:
-        href: https://traefik-dashboard.docker.sheetgenius.app/
+        href: https://traefik-dashboard.docker.datia.me/
         icon: traefik.svg
         description: Reverse Proxy - docker
         container: traefik
@@ -36,24 +36,24 @@
         description: qnap-462 NAS
         ping: http://192.168.178.5:8080/cgi-bin/ # TODO
     - NextCloud:
-        href: "https://nextcloud.docker.sheetgenius.app"
+        href: "https://nextcloud.docker.datia.me"
         icon: nextcloud.svg
         description: Drive app - docker
         container: nextcloud
     - Immich:
-        href: "https://immich.docker.sheetgenius.app"
+        href: "https://immich.docker.datia.me"
         icon: immich.svg
         description: Photo app - docker
         container: immich_server
     - Paperless-ngx:
-        href: "https://paperless.docker.sheetgenius.app"
+        href: "https://paperless.docker.datia.me"
         icon: paperless-ngx.svg
         description: Document management - docker
         container: paperless-ngx-paperless-webserver-1
 
 - Management:
     - Portainer:
-        href: https://portainer.docker.sheetgenius.app
+        href: https://portainer.docker.datia.me
         icon: portainer.svg
         description: Container management - docker
         container: portainer
@@ -62,7 +62,7 @@
         description: Container auto update - docker
         container: watchtower
     # - Home Assistant:
-    #     href: https://homeassistant.docker.sheetgenius.app
+    #     href: https://homeassistant.docker.datia.me
     #     icon: home-assistant.svg
     #     description: Automation server - docker
     #     container: homeassistant
@@ -70,17 +70,17 @@
 
 - Monitoring:
     - Grafana:
-        href: https://grafana.docker.sheetgenius.app
+        href: https://grafana.docker.datia.me
         description: Graphs used for device stats - docker
         icon: grafana.svg
         container: grafana
     - Uptime Kuma:
-        href: https://uptime-kuma.docker.sheetgenius.app
+        href: https://uptime-kuma.docker.datia.me
         description: Monitoring of apps - docker
         icon: uptime-kuma.svg
         container: uptime-kuma
     - Prometheus:
-        href: https://prometheus.docker.sheetgenius.app
+        href: https://prometheus.docker.datia.me
         description: Metric collector - docker
         icon: prometheus.svg
         container: prometheus
@@ -102,24 +102,24 @@
 
 - Media:
     # - Plex:
-    #     href: https://plex.docker.sheetgenius.app
+    #     href: https://plex.docker.datia.me
     #     icon: plex.svg
     #     description: Media server - docker
     #     container: plex
     - Jellyfin:
-        href: https://jellyfin.docker.sheetgenius.app
+        href: https://jellyfin.docker.datia.me
         icon: jellyfin.svg
         description: Open source media server - docker
         container: jellyfin
     # - AudioBookShelf:
-    #     href: https://audiobookshelf.docker.sheetgenius.app
+    #     href: https://audiobookshelf.docker.datia.me
     #     icon: audiobookshelf.svg
     #     description: Audiobook server - docker
     #     container: audiobookshelf
 
 - Torrent:
     - Jellyseerr (Jellyfin):
-        href: https://jellyseerr-jellyfin.docker.sheetgenius.app
+        href: https://jellyseerr-jellyfin.docker.datia.me
         icon: jellyseerr.svg
         description: Movie and TV show request management - docker
         container: jellyseerr-jellyfin
@@ -128,37 +128,37 @@
         description: VPN client - docker
         container: gluetun
     - Qbittorrent:
-        href: https://qbittorrent.docker.sheetgenius.app
+        href: https://qbittorrent.docker.datia.me
         icon: si-qbittorrent
         description: Torrent client - docker
         container: qbittorrent
     - Prowlarr:
-        href: https://prowlarr.docker.sheetgenius.app
+        href: https://prowlarr.docker.datia.me
         icon: prowlarr.svg
         description: Indexer manager for all your apps - docker
         container: prowlarr
     - Sonarr:
-        href: https://sonarr.docker.sheetgenius.app
+        href: https://sonarr.docker.datia.me
         icon: sonarr.svg
         description: Automates the downloading of TV shows - docker
         container: sonarr
     - Radarr:
-        href: https://radarr.docker.sheetgenius.app
+        href: https://radarr.docker.datia.me
         icon: radarr.svg
         description: Automates the downloading of movies - docker
         container: radarr
     - Bazarr:
-        href: https://bazarr.docker.sheetgenius.app
+        href: https://bazarr.docker.datia.me
         icon: bazarr.svg
         description: Automates the downloading of subtitles - docker
         container: bazarr
     # - Readarr:
-    #     href: https://readarr.docker.sheetgenius.app
+    #     href: https://readarr.docker.datia.me
     #     icon: readarr.svg
     #     description: Automates the downloading of books - docker
     #     container: readarr
     # - Lidarr:
-    #     href: https://lidarr.docker.sheetgenius.app
+    #     href: https://lidarr.docker.datia.me
     #     icon: lidarr.svg
     #     description: Automates the downloading of music - docker
     #     container: lidarr

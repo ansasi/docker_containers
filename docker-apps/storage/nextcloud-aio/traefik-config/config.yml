@@ -4,13 +4,13 @@ http:
     nextcloud:
       entrypoints:
         - "https"
-      rule: "Host(`nc.sheetgenius.app`)"
+      rule: "Host(`nc.datia.me`)"
       middlewares:
         - https-redirect
         - nextcloud-secure-headers
       tls:
         domains:
-          - main: "nc.sheetgenius.app"
+          - main: "nc.datia.me"
       service: nextcloud
   services:
     nextcloud:
