@@ -171,7 +171,7 @@ services:
     security_opt:
       - no-new-privileges:true
     depends_on:
-      gluetun:
+      gluetun-4k:
         condition: service_healthy
         restart: true
     labels:
@@ -199,7 +199,7 @@ services:
     security_opt:
       - no-new-privileges:true
     depends_on:
-      gluetun:
+      gluetun-anime:
         condition: service_healthy
         restart: true
     labels:
@@ -255,7 +255,7 @@ services:
     security_opt:
       - no-new-privileges:true
     depends_on:
-      gluetun:
+      gluetun-4k:
         condition: service_healthy
         restart: true
     labels:
@@ -283,7 +283,7 @@ services:
     security_opt:
       - no-new-privileges:true
     depends_on:
-      gluetun:
+      gluetun-anime:
         condition: service_healthy
         restart: true
     labels:
