@@ -27,27 +27,23 @@ layout:
   Networking:
     icon: pi-hole.svg
     columns: 4
+  Storage:
+    icon: qnap.svg
+    columns: 4
   Management:
     icon: portainer.svg
     columns: 4
   Monitoring:
     icon: prometheus.svg
     columns: 4
-  Storage:
-    icon: qnap.svg
-    columns: 4
-  AI:
-    icon: chatgpt.svg
-    columns: 4
-  Automation:
-    icon: home-assistant.svg
-    columns: 4
   Media:
     icon: jellyfin.svg
     columns: 4
-  Torrent:
-    icon: si-bittorrent
-    # initiallyCollapsed: true
+  Download & Infrastructure:
+    icon: gluetun.svg
+    columns: 4
+  Content Management:
+    icon: prowlarr.svg
     columns: 4
 
 quicklaunch:

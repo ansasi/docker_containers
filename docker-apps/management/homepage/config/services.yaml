@@ -1,4 +1,3 @@
----
 - Networking:
     - FritzBox:
         href: http://192.168.178.1
@@ -13,16 +12,6 @@
         icon: pi-hole.svg
         description: DNS - rpi-nico-small
         ping: http://192.168.178.10/admin
-        widget:
-            type: pihole
-            url: http://192.168.178.10
-            version: 6
-            key: '{{HOMEPAGE_VAR_PIHOLE_KEY}}'
-    # - Wireguard:
-    #     href: https://wireguard.docker.datia.me
-    #     icon: wireguard.png
-    #     description: wireguard-prod-1 on docker
-    #     container: wg-easy
     - Traefik:
         href: https://traefik-dashboard.docker.datia.me/
         icon: traefik.svg
@@ -31,10 +20,10 @@
 
 - Storage:
     - QNAP 462:
-        href: http://192.168.178.5:8080/cgi-bin/ # TODO
+        href: http://192.168.178.5:8080/cgi-bin/
         icon: qnap.svg
         description: qnap-462 NAS
-        ping: http://192.168.178.5:8080/cgi-bin/ # TODO
+        ping: http://192.168.178.5:8080/cgi-bin/
     - NextCloud:
         href: "https://nextcloud.docker.datia.me"
         icon: nextcloud.svg
@@ -61,12 +50,6 @@
         icon: watchtower.svg
         description: Container auto update - docker
         container: watchtower
-    # - Home Assistant:
-    #     href: https://homeassistant.docker.datia.me
-    #     icon: home-assistant.svg
-    #     description: Automation server - docker
-    #     container: homeassistant
-
 
 - Monitoring:
     - Grafana:
@@ -85,80 +68,75 @@
         icon: prometheus.svg
         container: prometheus
 
-# - AI:
-#     - ChatGPT:
-#         href: https://chatgpt.com
-#         icon: chatgpt.svg
-#     - Ollama:
-#         href: http://ollama:11434
-#         icon: si-ollama-#FFFFFF
-#         description: AI model server - docker
-#         container: ollama
-#     - OpenWebUI:
-#         href: http://openwebui:3003
-#         icon: chatgpt.svg
-#         description: Web UI for AI - docker
-#         container: openwebui
-
 - Media:
-    # - Plex:
-    #     href: https://plex.docker.datia.me
-    #     icon: plex.svg
-    #     description: Media server - docker
-    #     container: plex
     - Jellyfin:
         href: https://jellyfin.docker.datia.me
         icon: jellyfin.svg
         description: Open source media server - docker
         container: jellyfin
-    # - AudioBookShelf:
-    #     href: https://audiobookshelf.docker.datia.me
-    #     icon: audiobookshelf.svg
-    #     description: Audiobook server - docker
-    #     container: audiobookshelf
-
-- Torrent:
     - Jellyseerr (Jellyfin):
         href: https://jellyseerr-jellyfin.docker.datia.me
         icon: jellyseerr.svg
         description: Movie and TV show request management - docker
         container: jellyseerr-jellyfin
-    - Gluetun:
-        icon: gluetun.svg
-        description: VPN client - docker
-        container: gluetun
+
+- Download & Infrastructure:
     - Qbittorrent:
         href: https://qbittorrent.docker.datia.me
         icon: si-qbittorrent
         description: Torrent client - docker
         container: qbittorrent
+    - Gluetun:
+        icon: gluetun.svg
+        description: VPN client - docker
+        container: gluetun
+    - Gluetun-Anime:
+        icon: gluetun.svg
+        description: VPN client for anime - docker
+        container: gluetun-anime
+    - Gluetun-4K:
+        icon: gluetun.svg
+        description: VPN client for 4K media - docker
+        container: gluetun-4k
+
+- Content Management:
     - Prowlarr:
         href: https://prowlarr.docker.datia.me
         icon: prowlarr.svg
         description: Indexer manager for all your apps - docker
         container: prowlarr
-    - Sonarr:
-        href: https://sonarr.docker.datia.me
-        icon: sonarr.svg
-        description: Automates the downloading of TV shows - docker
-        container: sonarr
     - Radarr:
         href: https://radarr.docker.datia.me
         icon: radarr.svg
         description: Automates the downloading of movies - docker
         container: radarr
+    - Radarr-4K:
+        href: https://radarr-4k.docker.datia.me
+        icon: radarr.svg
+        description: Automates the downloading of 4K movies - docker
+        container: radarr-4k
+    - Radarr-Anime:
+        href: https://radarr-anime.docker.datia.me
+        icon: radarr.svg
+        description: Automates the downloading of anime movies - docker
+        container: radarr-anime
+    - Sonarr:
+        href: https://sonarr.docker.datia.me
+        icon: sonarr.svg
+        description: Automates the downloading of TV shows - docker
+        container: sonarr
+    - Sonarr-4K:
+        href: https://sonarr-4k.docker.datia.me
+        icon: sonarr.svg
+        description: Automates the downloading of 4K TV shows - docker
+        container: sonarr-4k
+    - Sonarr-Anime:
+        href: https://sonarr-anime.docker.datia.me
+        icon: sonarr.svg
+        description: Automates the downloading of anime TV shows - docker
+        container: sonarr-anime
     - Bazarr:
         href: https://bazarr.docker.datia.me
         icon: bazarr.svg
         description: Automates the downloading of subtitles - docker
         container: bazarr
-    # - Readarr:
-    #     href: https://readarr.docker.datia.me
-    #     icon: readarr.svg
-    #     description: Automates the downloading of books - docker
-    #     container: readarr
-    # - Lidarr:
-    #     href: https://lidarr.docker.datia.me
-    #     icon: lidarr.svg
-    #     description: Automates the downloading of music - docker
-    #     container: lidarr
