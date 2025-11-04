@@ -145,6 +145,62 @@ services:
     labels:
       # Watchtower labels
       - com.centurylinklabs.watchtower.enable=false
+  
+  ###--- Radarr 4K - Library Manager for Movie 4K content management ---###
+  ### Enable this container to get separate instance for 4K Movie content ###
+  radarr-4k:
+    image: linuxserver/radarr:5.28.0
+    container_name: radarr-4k
+    restart: unless-stopped
+    environment:
+      PUID: "${PUID}"
+      PGID: "${PGID}"
+      UMASK: "002"
+      TZ: "Etc/Zurich"
+    volumes:
+      - ${WORKDIR}/radarr-4k/config:/config
+      - "${NAS_STORAGE_LOCATION}/library/movies:/movies"
+      - "${NAS_STORAGE_LOCATION}/downloads/torrents:/downloads"
+    # ports:
+    #   - 8115:7878
+    network_mode: "service:gluetun"
+    security_opt:
+      - no-new-privileges:true
+    depends_on:
+      gluetun:
+        condition: service_healthy
+        restart: true
+    labels:
+      # Watchtower labels
+      - com.centurylinklabs.watchtower.enable=false
+  
+  ###--- Radarr Anime - Library Manager for Anime Movie content management ---###
+  ### Enable this container to get separate instance for Anime Movie content ###
+  radarr-anime:
+    image: linuxserver/radarr:5.28.0
+    container_name: radarr-anime
+    restart: unless-stopped
+    environment:
+      PUID: "${PUID}"
+      PGID: "${PGID}"
+      UMASK: "002"
+      TZ: "Etc/Zurich"
+    volumes:
+      - ${WORKDIR}/radarr-anime/config:/config
+      - "${NAS_STORAGE_LOCATION}/library/movies:/movies"
+      - "${NAS_STORAGE_LOCATION}/downloads/torrents:/downloads"
+    # ports:
+    #   - 8115:7878
+    network_mode: "service:gluetun"
+    security_opt:
+      - no-new-privileges:true
+    depends_on:
+      gluetun:
+        condition: service_healthy
+        restart: true
+    labels:
+      # Watchtower labels
+      - com.centurylinklabs.watchtower.enable=false
 
   ###--- Sonarr - Library Manager for TV Show / Series / Anime content management ---###
   ### Do not use this container to download 4K TV content. Enable container below to have separate instance just for 4K TV content ###
@@ -162,7 +218,7 @@ services:
       - "${NAS_STORAGE_LOCATION}/library/tv:/tv"
       - "${NAS_STORAGE_LOCATION}/downloads/torrents:/downloads"
     # ports:
-    #   - 8115:8989
+    #   - 8989:8989
     network_mode: "service:gluetun"
     security_opt:
       - no-new-privileges:true
@@ -176,6 +232,59 @@ services:
 
   ###--- Sonarr 4K - Library Manager for TV 4K content management ---###
   ### Enable this container to get separate instance for 4K TV content ###
+  sonarr-4k:
+    image: linuxserver/sonarr:4.0.15
+    container_name: sonarr-4k
+    restart: unless-stopped
+    environment:
+      PUID: "${PUID}"
+      PGID: "${PGID}"
+      UMASK: "002"
+      TZ: "Etc/Zurich"
+    volumes:
+      - ${WORKDIR}/sonarr-4k/config:/config
+      - "${NAS_STORAGE_LOCATION}/library/tv:/tv"
+      - "${NAS_STORAGE_LOCATION}/downloads/torrents:/downloads"
+    # ports:
+    #   - 8989:8989
+    network_mode: "service:gluetun"
+    security_opt:
+      - no-new-privileges:true
+    depends_on:
+      gluetun:
+        condition: service_healthy
+        restart: true
+    labels:
+      # Watchtower labels
+      - com.centurylinklabs.watchtower.enable=false
+    
+  ###--- Sonarr Anime - Library Manager for Anime content management ---###
+  ### Enable this container to get separate instance for Anime content ###
+  sonarr-anime:
+    image: linuxserver/sonarr:4.0.15
+    container_name: sonarr-anime
+    restart: unless-stopped
+    environment:
+      PUID: "${PUID}"
+      PGID: "${PGID}"
+      UMASK: "002"
+      TZ: "Etc/Zurich"
+    volumes:
+      - ${WORKDIR}/sonarr-anime/config:/config
+      - "${NAS_STORAGE_LOCATION}/library/tv:/tv"
+      - "${NAS_STORAGE_LOCATION}/downloads/torrents:/downloads"
+    # ports:
+    #   - 8989:8989
+    network_mode: "service:gluetun"
+    security_opt:
+      - no-new-privileges:true
+    depends_on:
+      gluetun:
+        condition: service_healthy
+        restart: true
+    labels:
+      # Watchtower labels
+      - com.centurylinklabs.watchtower.enable=false
 
   # Bazarr - Library Manager for Subtitle management
   bazarr:
@@ -192,7 +301,7 @@ services:
       - "${NAS_STORAGE_LOCATION}/library/movies:/movies"
       - "${NAS_STORAGE_LOCATION}/library/tv:/tv"
     # ports:
-    #   - 8116:6767
+    #   - 6767:6767
     network_mode: "service:gluetun"
     security_opt:
       - no-new-privileges:true
@@ -248,6 +357,8 @@ services:
       - 8191:8191    # FlareSolverr - used by Prowlarr to bypass Cloudflare
       - 7878:7878    # Radarr
       - 8989:8989    # Sonarr
+      - 8990:8989    # Sonarr-4K
+      - 8991:8989    # Sonarr-anime
       - 6767:6767    # Bazarr
       # Note: This is uncommented as Proton VPN uses its own DNS servers, so it is not possible to resolve to mydomain.com INSIDE the containers that use gluetun as network mode
     volumes:
