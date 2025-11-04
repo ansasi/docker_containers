@@ -110,31 +110,31 @@
         icon: radarr.svg
         description: Automates the downloading of movies - docker
         container: radarr
-    - Radarr-4K:
-        href: https://radarr-4k.docker.datia.me
-        icon: radarr.svg
-        description: Automates the downloading of 4K movies - docker
-        container: radarr-4k
     - Radarr-Anime:
         href: https://radarr-anime.docker.datia.me
         icon: radarr.svg
         description: Automates the downloading of anime movies - docker
         container: radarr-anime
+    - Radarr-4K:
+        href: https://radarr-4k.docker.datia.me
+        icon: radarr.svg
+        description: Automates the downloading of 4K movies - docker
+        container: radarr-4k
     - Sonarr:
         href: https://sonarr.docker.datia.me
         icon: sonarr.svg
         description: Automates the downloading of TV shows - docker
         container: sonarr
-    - Sonarr-4K:
-        href: https://sonarr-4k.docker.datia.me
-        icon: sonarr.svg
-        description: Automates the downloading of 4K TV shows - docker
-        container: sonarr-4k
     - Sonarr-Anime:
         href: https://sonarr-anime.docker.datia.me
         icon: sonarr.svg
         description: Automates the downloading of anime TV shows - docker
         container: sonarr-anime
+    - Sonarr-4K:
+        href: https://sonarr-4k.docker.datia.me
+        icon: sonarr.svg
+        description: Automates the downloading of 4K TV shows - docker
+        container: sonarr-4k
     - Bazarr:
         href: https://bazarr.docker.datia.me
         icon: bazarr.svg
