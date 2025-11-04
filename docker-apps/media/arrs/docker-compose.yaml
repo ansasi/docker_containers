@@ -167,7 +167,7 @@ services:
       - "${NAS_STORAGE_LOCATION}/downloads/torrents:/downloads"
     # ports:
     #   - 8115:7878
-    network_mode: "service:gluetun"
+    network_mode: "service:gluetun-4k"
     security_opt:
       - no-new-privileges:true
     depends_on:
@@ -195,7 +195,7 @@ services:
       - "${NAS_STORAGE_LOCATION}/downloads/torrents:/downloads"
     # ports:
     #   - 8115:7878
-    network_mode: "service:gluetun"
+    network_mode: "service:gluetun-anime"
     security_opt:
       - no-new-privileges:true
     depends_on:
@@ -251,7 +251,7 @@ services:
       - "${NAS_STORAGE_LOCATION}/downloads/torrents:/downloads"
     # ports:
     #   - 8989:8989
-    network_mode: "service:gluetun"
+    network_mode: "service:gluetun-4k"
     security_opt:
       - no-new-privileges:true
     depends_on:
@@ -279,7 +279,7 @@ services:
       - "${NAS_STORAGE_LOCATION}/downloads/torrents:/downloads"
     # ports:
     #   - 8989:8989
-    network_mode: "service:gluetun"
+    network_mode: "service:gluetun-anime"
     security_opt:
       - no-new-privileges:true
     depends_on:
