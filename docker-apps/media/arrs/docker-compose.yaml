@@ -1,10 +1,6 @@
 volumes:
   gluetun-data:
     driver: local
-  gluetun-data-4k:
-    driver: local
-  gluetun-data-anime:
-    driver: local
 
 networks:
   proxy:
