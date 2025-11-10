@@ -135,6 +135,8 @@ services:
       - "${NAS_STORAGE_LOCATION}/downloads/torrents:/downloads"
     ports:
       - 7878:7878
+    networks:
+      - proxy
     security_opt:
       - no-new-privileges:true
     labels:
@@ -167,6 +169,8 @@ services:
       - "${NAS_STORAGE_LOCATION}/downloads/torrents:/downloads"
     ports:
       - 7879:7878
+    networks:
+      - proxy
     security_opt:
       - no-new-privileges:true
     labels:
@@ -199,6 +203,8 @@ services:
       - "${NAS_STORAGE_LOCATION}/downloads/torrents:/downloads"
     ports:
       - 7880:7878
+    networks:
+      - proxy
     security_opt:
       - no-new-privileges:true
     labels:
@@ -233,6 +239,8 @@ services:
       - "${NAS_STORAGE_LOCATION}/downloads/torrents:/downloads"
     ports:
       - 8989:8989
+    networks:
+      - proxy
     security_opt:
       - no-new-privileges:true
     depends_on:
@@ -269,6 +277,8 @@ services:
       - "${NAS_STORAGE_LOCATION}/downloads/torrents:/downloads"
     ports:
       - 8990:8989
+    networks:
+      - proxy
     security_opt:
       - no-new-privileges:true
     labels:
@@ -301,6 +311,8 @@ services:
       - "${NAS_STORAGE_LOCATION}/downloads/torrents:/downloads"
     ports:
       - 8991:8989
+    networks:
+      - proxy
     security_opt:
       - no-new-privileges:true
     labels:
