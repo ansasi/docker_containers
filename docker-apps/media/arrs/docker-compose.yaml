@@ -133,8 +133,8 @@ services:
       - ${WORKDIR}/radarr/config:/config
       - "${NAS_STORAGE_LOCATION}/library/movies:/movies"
       - "${NAS_STORAGE_LOCATION}/downloads/torrents:/downloads"
-    # ports:
-    #   - 8114:7878
+    ports:
+      - 7878:7878
     security_opt:
       - no-new-privileges:true
     labels:
@@ -165,8 +165,8 @@ services:
       - ${WORKDIR}/radarr-4k/config:/config
       - "${NAS_STORAGE_LOCATION}/library/movies:/movies"
       - "${NAS_STORAGE_LOCATION}/downloads/torrents:/downloads"
-    # ports:
-    #   - 8115:7878
+    ports:
+      - 7879:7878
     security_opt:
       - no-new-privileges:true
     labels:
@@ -198,8 +198,8 @@ services:
       - ${WORKDIR}/radarr-anime/config:/config
       - "${NAS_STORAGE_LOCATION}/library/movies:/movies"
       - "${NAS_STORAGE_LOCATION}/downloads/torrents:/downloads"
-    # ports:
-    #   - 8115:7878
+    ports:
+      - 7880:7878
     security_opt:
       - no-new-privileges:true
     labels:
@@ -230,8 +230,8 @@ services:
       - ${WORKDIR}/sonarr/config:/config
       - "${NAS_STORAGE_LOCATION}/library/tv:/tv"
       - "${NAS_STORAGE_LOCATION}/downloads/torrents:/downloads"
-    # ports:
-    #   - 8989:8989
+    ports:
+      - 8989:8989
     security_opt:
       - no-new-privileges:true
     depends_on:
@@ -266,8 +266,8 @@ services:
       - ${WORKDIR}/sonarr-4k/config:/config
       - "${NAS_STORAGE_LOCATION}/library/tv:/tv"
       - "${NAS_STORAGE_LOCATION}/downloads/torrents:/downloads"
-    # ports:
-    #   - 8989:8989
+    ports:
+      - 8990:8989
     security_opt:
       - no-new-privileges:true
     labels:
@@ -299,7 +299,7 @@ services:
       - "${NAS_STORAGE_LOCATION}/library/tv:/tv"
       - "${NAS_STORAGE_LOCATION}/downloads/torrents:/downloads"
     ports:
-      - 8989:8989
+      - 8991:8989
     security_opt:
       - no-new-privileges:true
     labels:
