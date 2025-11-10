@@ -298,8 +298,8 @@ services:
       - ${WORKDIR}/sonarr-anime/config:/config
       - "${NAS_STORAGE_LOCATION}/library/tv:/tv"
       - "${NAS_STORAGE_LOCATION}/downloads/torrents:/downloads"
-    # ports:
-    #   - 8989:8989
+    ports:
+      - 8989:8989
     security_opt:
       - no-new-privileges:true
     labels:
