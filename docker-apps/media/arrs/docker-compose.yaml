@@ -514,8 +514,8 @@ services:
       - 6883:6881
       - 6883:6881/udp
       # Ports to apps:
-      - 7878:7878    # Radarr-anime
-      - 8989:8989    # Sonarr-anime
+      - 7880:7878    # Radarr-anime
+      - 8991:8989    # Sonarr-anime
       # Note: This is uncommented as Proton VPN uses its own DNS servers, so it is not possible to resolve to mydomain.com INSIDE the containers that use gluetun as network mode
     volumes:
       - gluetun-data-anime:/gluetun
