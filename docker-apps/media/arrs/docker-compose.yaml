@@ -139,14 +139,18 @@ services:
       - "${NAS_STORAGE_LOCATION}/downloads/torrents:/downloads"
     # ports:
     #   - 8114:7878
-    network_mode: "service:gluetun"
     security_opt:
       - no-new-privileges:true
-    depends_on:
-      gluetun:
-        condition: service_healthy
-        restart: true
     labels:
+      # Traefik labels
+      - traefik.http.routers.radarr.entrypoints=http
+      - traefik.http.routers.radarr.rule=Host(`radarr.${DOMAIN}`)
+      - traefik.http.routers.radarr-secure.entrypoints=https
+      - traefik.http.routers.radarr-secure.rule=Host(`radarr.${DOMAIN}`)
+      - traefik.http.routers.radarr-secure.tls=true
+      - traefik.http.routers.radarr-secure.tls.certresolver=cloudflare
+      - traefik.http.routers.radarr-secure.service=radarr
+      - traefik.http.services.radarr.loadbalancer.server.port=7878
       # Watchtower labels
       - com.centurylinklabs.watchtower.enable=false
   
@@ -167,17 +171,22 @@ services:
       - "${NAS_STORAGE_LOCATION}/downloads/torrents:/downloads"
     # ports:
     #   - 8115:7878
-    network_mode: "service:gluetun-4k"
     security_opt:
       - no-new-privileges:true
-    depends_on:
-      gluetun-4k:
-        condition: service_healthy
-        restart: true
     labels:
+      # Traefik labels
+      - traefik.http.routers.radarr-4k.entrypoints=http
+      - traefik.http.routers.radarr-4k.rule=Host(`radarr-4k.${DOMAIN}`)
+      - traefik.http.routers.radarr-4k-secure.entrypoints=https
+      - traefik.http.routers.radarr-4k-secure.rule=Host(`radarr-4k.${DOMAIN}`)
+      - traefik.http.routers.radarr-4k-secure.tls=true
+      - traefik.http.routers.radarr-4k-secure.tls.certresolver=cloudflare
+      - traefik.http.routers.radarr-4k-secure.service=radarr-4k
+      - traefik.http.services.radarr-4k.loadbalancer.server.port=7878
       # Watchtower labels
       - com.centurylinklabs.watchtower.enable=false
-  
+
+
   ###--- Radarr Anime - Library Manager for Anime Movie content management ---###
   ### Enable this container to get separate instance for Anime Movie content ###
   radarr-anime:
@@ -195,14 +204,18 @@ services:
       - "${NAS_STORAGE_LOCATION}/downloads/torrents:/downloads"
     # ports:
     #   - 8115:7878
-    network_mode: "service:gluetun-anime"
     security_opt:
       - no-new-privileges:true
-    depends_on:
-      gluetun-anime:
-        condition: service_healthy
-        restart: true
     labels:
+      # Traefik labels
+      - traefik.http.routers.sonarr-anime.entrypoints=http
+      - traefik.http.routers.sonarr-anime.rule=Host(`sonarr-anime.${DOMAIN}`)
+      - traefik.http.routers.sonarr-anime-secure.entrypoints=https
+      - traefik.http.routers.sonarr-anime-secure.rule=Host(`sonarr-anime.${DOMAIN}`)
+      - traefik.http.routers.sonarr-anime-secure.tls=true
+      - traefik.http.routers.sonarr-anime-secure.tls.certresolver=cloudflare
+      - traefik.http.routers.sonarr-anime-secure.service=sonarr-anime
+      - traefik.http.services.sonarr-anime.loadbalancer.server.port=8989
       # Watchtower labels
       - com.centurylinklabs.watchtower.enable=false
 
@@ -223,7 +236,6 @@ services:
       - "${NAS_STORAGE_LOCATION}/downloads/torrents:/downloads"
     # ports:
     #   - 8989:8989
-    network_mode: "service:gluetun"
     security_opt:
       - no-new-privileges:true
     depends_on:
@@ -231,6 +243,15 @@ services:
         condition: service_healthy
         restart: true
     labels:
+      # Traefik labels
+      - traefik.http.routers.sonarr.entrypoints=http
+      - traefik.http.routers.sonarr.rule=Host(`sonarr.${DOMAIN}`)
+      - traefik.http.routers.sonarr-secure.entrypoints=https
+      - traefik.http.routers.sonarr-secure.rule=Host(`sonarr.${DOMAIN}`)
+      - traefik.http.routers.sonarr-secure.tls=true
+      - traefik.http.routers.sonarr-secure.tls.certresolver=cloudflare
+      - traefik.http.routers.sonarr-secure.service=sonarr
+      - traefik.http.services.sonarr.loadbalancer.server.port=8989
       # Watchtower labels
       - com.centurylinklabs.watchtower.enable=false
 
@@ -251,17 +272,21 @@ services:
       - "${NAS_STORAGE_LOCATION}/downloads/torrents:/downloads"
     # ports:
     #   - 8989:8989
-    network_mode: "service:gluetun-4k"
     security_opt:
       - no-new-privileges:true
-    depends_on:
-      gluetun-4k:
-        condition: service_healthy
-        restart: true
     labels:
+      # Traefik labels
+      - traefik.http.routers.sonarr-4k.entrypoints=http
+      - traefik.http.routers.sonarr-4k.rule=Host(`sonarr-4k.${DOMAIN}`)
+      - traefik.http.routers.sonarr-4k-secure.entrypoints=https
+      - traefik.http.routers.sonarr-4k-secure.rule=Host(`sonarr-4k.${DOMAIN}`)
+      - traefik.http.routers.sonarr-4k-secure.tls=true
+      - traefik.http.routers.sonarr-4k-secure.tls.certresolver=cloudflare
+      - traefik.http.routers.sonarr-4k-secure.service=sonarr-4k
+      - traefik.http.services.sonarr-4k.loadbalancer.server.port=8989
       # Watchtower labels
       - com.centurylinklabs.watchtower.enable=false
-    
+
   ###--- Sonarr Anime - Library Manager for Anime content management ---###
   ### Enable this container to get separate instance for Anime content ###
   sonarr-anime:
@@ -279,14 +304,18 @@ services:
       - "${NAS_STORAGE_LOCATION}/downloads/torrents:/downloads"
     # ports:
     #   - 8989:8989
-    network_mode: "service:gluetun-anime"
     security_opt:
       - no-new-privileges:true
-    depends_on:
-      gluetun-anime:
-        condition: service_healthy
-        restart: true
     labels:
+      # Traefik labels
+      - traefik.http.routers.sonarr-anime.entrypoints=http
+      - traefik.http.routers.sonarr-anime.rule=Host(`sonarr-anime.${DOMAIN}`)
+      - traefik.http.routers.sonarr-anime-secure.entrypoints=https
+      - traefik.http.routers.sonarr-anime-secure.rule=Host(`sonarr-anime.${DOMAIN}`)
+      - traefik.http.routers.sonarr-anime-secure.tls=true
+      - traefik.http.routers.sonarr-anime-secure.tls.certresolver=cloudflare
+      - traefik.http.routers.sonarr-anime-secure.service=sonarr-anime
+      - traefik.http.services.sonarr-anime.loadbalancer.server.port=8989
       # Watchtower labels
       - com.centurylinklabs.watchtower.enable=false
 
@@ -359,8 +388,6 @@ services:
       - 8085:8085    # qBittorrent
       - 9696:9696    # Prowlarr
       - 8191:8191    # FlareSolverr - used by Prowlarr to bypass Cloudflare
-      - 7878:7878    # Radarr
-      - 8989:8989    # Sonarr
       - 6767:6767    # Bazarr
       # Note: This is uncommented as Proton VPN uses its own DNS servers, so it is not possible to resolve to mydomain.com INSIDE the containers that use gluetun as network mode
     volumes:
@@ -408,26 +435,6 @@ services:
       - traefik.http.routers.prowlarr-secure.service=prowlarr
       - traefik.http.services.prowlarr.loadbalancer.server.port=9696
 
-      # Radarr
-      - traefik.http.routers.radarr.entrypoints=http
-      - traefik.http.routers.radarr.rule=Host(`radarr.${DOMAIN}`)
-      - traefik.http.routers.radarr-secure.entrypoints=https
-      - traefik.http.routers.radarr-secure.rule=Host(`radarr.${DOMAIN}`)
-      - traefik.http.routers.radarr-secure.tls=true
-      - traefik.http.routers.radarr-secure.tls.certresolver=cloudflare
-      - traefik.http.routers.radarr-secure.service=radarr
-      - traefik.http.services.radarr.loadbalancer.server.port=7878
-
-      # Sonarr
-      - traefik.http.routers.sonarr.entrypoints=http
-      - traefik.http.routers.sonarr.rule=Host(`sonarr.${DOMAIN}`)
-      - traefik.http.routers.sonarr-secure.entrypoints=https
-      - traefik.http.routers.sonarr-secure.rule=Host(`sonarr.${DOMAIN}`)
-      - traefik.http.routers.sonarr-secure.tls=true
-      - traefik.http.routers.sonarr-secure.tls.certresolver=cloudflare
-      - traefik.http.routers.sonarr-secure.service=sonarr
-      - traefik.http.services.sonarr.loadbalancer.server.port=8989
-
       # Bazarr
       - traefik.http.routers.bazarr.entrypoints=http
       - traefik.http.routers.bazarr.rule=Host(`bazarr.${DOMAIN}`)
@@ -437,127 +444,3 @@ services:
       - traefik.http.routers.bazarr-secure.tls.certresolver=cloudflare
       - traefik.http.routers.bazarr-secure.service=bazarr
       - traefik.http.services.bazarr.loadbalancer.server.port=6767
-  
-  # Gluetun 4k
-  gluetun-4k:
-    image: qmcgaw/gluetun:v3.40
-    container_name: gluetun-4k
-    restart: unless-stopped
-    hostname: gluetun-4k
-    cap_add:
-      - NET_ADMIN
-    devices:
-      - /dev/net/tun:/dev/net/tun
-    ports:
-      - 6882:6881
-      - 6882:6881/udp
-      # Ports to apps:
-      - 7879:7878    # Radarr-4K
-      - 8990:8989    # Sonarr-4K
-      # Note: This is uncommented as Proton VPN uses its own DNS servers, so it is not possible to resolve to mydomain.com INSIDE the containers that use gluetun as network mode
-    volumes:
-      - gluetun-data-4k:/gluetun
-    environment:
-      # VPN Configuration (see https://github.com/qdm12/gluetun-wiki for details)
-      - VPN_SERVICE_PROVIDER=protonvpn
-      - VPN_TYPE=wireguard
-      - WIREGUARD_PRIVATE_KEY=${WIREGUARD_PRIVATE_KEY}
-      - SERVER_COUNTRIES=Switzerland
-      - TZ=Europe/Madrid
-      - UPDATER_PERIOD=24h
-    healthcheck:
-      test: ping -c 1 www.google.com || exit 1
-      interval: 20s
-      timeout: 10s
-      retries: 5
-    networks:
-      - proxy
-    labels:
-      # Watchtower labels
-      - com.centurylinklabs.watchtower.enable=false
-
-      # Traefik labels
-      - "traefik.enable=true"
-      - "traefik.docker.network=proxy"
-
-      # Radarr-4K
-      - traefik.http.routers.radarr-4k.entrypoints=http
-      - traefik.http.routers.radarr-4k.rule=Host(`radarr-4k.${DOMAIN}`)
-      - traefik.http.routers.radarr-4k-secure.entrypoints=https
-      - traefik.http.routers.radarr-4k-secure.rule=Host(`radarr-4k.${DOMAIN}`)
-      - traefik.http.routers.radarr-4k-secure.tls=true
-      - traefik.http.routers.radarr-4k-secure.tls.certresolver=cloudflare
-      - traefik.http.routers.radarr-4k-secure.service=radarr-4k
-      - traefik.http.services.radarr-4k.loadbalancer.server.port=7878
-
-      # Sonarr-4K
-      - traefik.http.routers.sonarr-4k.entrypoints=http
-      - traefik.http.routers.sonarr-4k.rule=Host(`sonarr-4k.${DOMAIN}`)
-      - traefik.http.routers.sonarr-4k-secure.entrypoints=https
-      - traefik.http.routers.sonarr-4k-secure.rule=Host(`sonarr-4k.${DOMAIN}`)
-      - traefik.http.routers.sonarr-4k-secure.tls=true
-      - traefik.http.routers.sonarr-4k-secure.tls.certresolver=cloudflare
-      - traefik.http.routers.sonarr-4k-secure.service=sonarr-4k
-      - traefik.http.services.sonarr-4k.loadbalancer.server.port=8989
-    
-  # Gluetun Anime
-  gluetun-anime:
-    image: qmcgaw/gluetun:v3.40
-    container_name: gluetun-anime
-    restart: unless-stopped
-    hostname: gluetun-anime
-    cap_add:
-      - NET_ADMIN
-    devices:
-      - /dev/net/tun:/dev/net/tun
-    ports:
-      - 6883:6881
-      - 6883:6881/udp
-      # Ports to apps:
-      - 7880:7878    # Radarr-anime
-      - 8991:8989    # Sonarr-anime
-      # Note: This is uncommented as Proton VPN uses its own DNS servers, so it is not possible to resolve to mydomain.com INSIDE the containers that use gluetun as network mode
-    volumes:
-      - gluetun-data-anime:/gluetun
-    environment:
-      # VPN Configuration (see https://github.com/qdm12/gluetun-wiki for details)
-      - VPN_SERVICE_PROVIDER=protonvpn
-      - VPN_TYPE=wireguard
-      - WIREGUARD_PRIVATE_KEY=${WIREGUARD_PRIVATE_KEY}
-      - SERVER_COUNTRIES=Switzerland
-      - TZ=Europe/Madrid
-      - UPDATER_PERIOD=24h
-    healthcheck:
-      test: ping -c 1 www.google.com || exit 1
-      interval: 20s
-      timeout: 10s
-      retries: 5
-    networks:
-      - proxy
-    labels:
-      # Watchtower labels
-      - com.centurylinklabs.watchtower.enable=false
-
-      # Traefik labels
-      - "traefik.enable=true"
-      - "traefik.docker.network=proxy"
-
-      # Radarr-Anime
-      - traefik.http.routers.radarr-anime.entrypoints=http
-      - traefik.http.routers.radarr-anime.rule=Host(`radarr-anime.${DOMAIN}`)
-      - traefik.http.routers.radarr-anime-secure.entrypoints=https
-      - traefik.http.routers.radarr-anime-secure.rule=Host(`radarr-anime.${DOMAIN}`)
-      - traefik.http.routers.radarr-anime-secure.tls=true
-      - traefik.http.routers.radarr-anime-secure.tls.certresolver=cloudflare
-      - traefik.http.routers.radarr-anime-secure.service=radarr-anime
-      - traefik.http.services.radarr-anime.loadbalancer.server.port=7878
-
-      # Sonarr-Anime
-      - traefik.http.routers.sonarr-anime.entrypoints=http
-      - traefik.http.routers.sonarr-anime.rule=Host(`sonarr-anime.${DOMAIN}`)
-      - traefik.http.routers.sonarr-anime-secure.entrypoints=https
-      - traefik.http.routers.sonarr-anime-secure.rule=Host(`sonarr-anime.${DOMAIN}`)
-      - traefik.http.routers.sonarr-anime-secure.tls=true
-      - traefik.http.routers.sonarr-anime-secure.tls.certresolver=cloudflare
-      - traefik.http.routers.sonarr-anime-secure.service=sonarr-anime
-      - traefik.http.services.sonarr-anime.loadbalancer.server.port=8989
