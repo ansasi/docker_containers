@@ -396,6 +396,7 @@ services:
       - SERVER_COUNTRIES=Switzerland
       - TZ=Europe/Madrid
       - UPDATER_PERIOD=24h
+      - FIREWALL_OUTBOUND_SUBNETS=192.168.178.0/24
     healthcheck:
       test: ping -c 1 www.google.com || exit 1
       interval: 20s
