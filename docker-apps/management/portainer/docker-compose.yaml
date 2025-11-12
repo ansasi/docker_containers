@@ -13,7 +13,8 @@ services:
     networks:
       - proxy
     ports:
-      - "9000:9000"
+      # - 9443:9443 # HTTPS
+      - 9000:9000 # Optional: required for accessing the UI over HTTP (legacy reasons)
     labels:
       - traefik.enable=true
       - traefik.docker.network=proxy
