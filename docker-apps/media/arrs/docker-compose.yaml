@@ -360,7 +360,7 @@ services:
     
   # FlareSolverr - Proxy for bypassing Cloudflare protection
   flaresolverr:
-    image: flaresolverr/flaresolverr:v3.4.4
+    image: flaresolverr/flaresolverr:v3.4.5
     container_name: flaresolverr
     restart: unless-stopped
     environment:
