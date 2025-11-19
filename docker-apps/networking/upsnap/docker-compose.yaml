@@ -2,11 +2,12 @@ services:
   upsnap:
     container_name: upsnap
     image: ghcr.io/seriousm4x/upsnap:5
+    network_mode: host
     restart: unless-stopped
     volumes:
       - ./data:/app/pb_data
-    ports:
-      - 8090:8090 # HTTP port
+    # ports:
+    #   - 8090:8090 # HTTP port
     # # # To use a non-root user, create the mountpoint first (mkdir data) so that it has the right permission.
     # user: 1000:1000
     environment:
