@@ -356,16 +356,58 @@ services:
       - "${NAS_STORAGE_LOCATION}/library/tv:/tv"
     # ports:
     #   - 6767:6767
-    network_mode: "service:gluetun"
+    networks:
+      - proxy
     security_opt:
       - no-new-privileges:true
-    depends_on:
-      gluetun:
-        condition: service_healthy
-        restart: true
     labels:
+      # Traefik labels
+      - "traefik.enable=true"
+      - "traefik.docker.network=proxy"
+      - traefik.http.routers.bazarr.entrypoints=http
+      - traefik.http.routers.bazarr.rule=Host(`bazarr.${DOMAIN}`)
+      - traefik.http.routers.bazarr-secure.entrypoints=https
+      - traefik.http.routers.bazarr-secure.rule=Host(`bazarr.${DOMAIN}`)
+      - traefik.http.routers.bazarr-secure.tls=true
+      - traefik.http.routers.bazarr-secure.tls.certresolver=cloudflare
+      - traefik.http.routers.bazarr-secure.service=bazarr
+      - traefik.http.services.bazarr.loadbalancer.server.port=6767
       # Watchtower labels
       - com.centurylinklabs.watchtower.enable=false
+    
+    bazarr-anime:
+      image: linuxserver/bazarr:1.5.3
+      container_name: bazarr-anime
+      restart: unless-stopped
+      environment:
+        PUID: "${PUID}"
+        PGID: "${PGID}"
+        UMASK: "002"
+        TZ: "Etc/Zurich"
+      volumes:
+        - ${WORKDIR}/bazarr-anime/config:/config
+        - "${NAS_STORAGE_LOCATION}/library/movies:/movies"
+        - "${NAS_STORAGE_LOCATION}/library/tv:/tv"
+      # ports:
+      #   - 6768:6767
+      networks:
+        - proxy
+      security_opt:
+        - no-new-privileges:true
+      labels:
+        # Traefik labels
+        - "traefik.enable=true"
+        - "traefik.docker.network=proxy"
+        - traefik.http.routers.bazarr-anime.entrypoints=http
+        - traefik.http.routers.bazarr-anime.rule=Host(`bazarr-anime.${DOMAIN}`)
+        - traefik.http.routers.bazarr-anime-secure.entrypoints=https
+        - traefik.http.routers.bazarr-anime-secure.rule=Host(`bazarr-anime.${DOMAIN}`)
+        - traefik.http.routers.bazarr-anime-secure.tls=true
+        - traefik.http.routers.bazarr-anime-secure.tls.certresolver=cloudflare
+        - traefik.http.routers.bazarr-anime-secure.service=bazarr-anime
+        - traefik.http.services.bazarr-anime.loadbalancer.server.port=6767
+        # Watchtower labels
+        - com.centurylinklabs.watchtower.enable=false
 
 
   # Readarr - Library Manager for Books / Epubs content management
@@ -409,7 +451,6 @@ services:
       - 8085:8085    # qBittorrent
       - 9696:9696    # Prowlarr
       - 8191:8191    # FlareSolverr - used by Prowlarr to bypass Cloudflare
-      - 6767:6767    # Bazarr
       # Note: This is uncommented as Proton VPN uses its own DNS servers, so it is not possible to resolve to mydomain.com INSIDE the containers that use gluetun as network mode
     volumes:
       - gluetun-data:/gluetun
@@ -456,13 +497,3 @@ services:
       - traefik.http.routers.prowlarr-secure.tls.certresolver=cloudflare
       - traefik.http.routers.prowlarr-secure.service=prowlarr
       - traefik.http.services.prowlarr.loadbalancer.server.port=9696
-
-      # Bazarr
-      - traefik.http.routers.bazarr.entrypoints=http
-      - traefik.http.routers.bazarr.rule=Host(`bazarr.${DOMAIN}`)
-      - traefik.http.routers.bazarr-secure.entrypoints=https
-      - traefik.http.routers.bazarr-secure.rule=Host(`bazarr.${DOMAIN}`)
-      - traefik.http.routers.bazarr-secure.tls=true
-      - traefik.http.routers.bazarr-secure.tls.certresolver=cloudflare
-      - traefik.http.routers.bazarr-secure.service=bazarr
-      - traefik.http.services.bazarr.loadbalancer.server.port=6767
