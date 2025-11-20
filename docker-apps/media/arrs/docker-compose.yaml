@@ -39,30 +39,6 @@ services:
   # qBitmanage - qBittorrent manager - Used to run automated tasks for qBittorrent
 
   ###--- SABnzbd - Download client - Used to download NZB from Usenet groups ---###
-  ### This container has been disabled since you need a premium Usenet provider subscription to download files. ###
-  ### Enable this container if you found a free provider or want to pay for usenet ###
-  # sabnzbd:
-  #   image: lscr.io/linuxserver/sabnzbd:latest # TODO: Pin the version
-  #   container_name: sabnzbd
-  #   restart: unless-stopped
-  #   environment:
-  #     PUID: ${PUID}
-  #     PGID: ${PGID}
-  #     TZ: Etc/Zurich
-  #   volumes:
-  #     - /etc/localtime:/etc/localtime:ro
-  #     - ${WORKDIR}/sabnzbd/config:/config
-  #     - ${NAS_STORAGE_LOCATION}/download/usenet/:/data/usenet:rw
-  #   ports:
-  #     - 8085:8080
-  #     - 9091:9090
-  #   logging:
-  #     driver: json-file
-  #   network_mode: "service:gluetun"
-  #   depends_on:
-  #     gluetun:
-  #       condition: service_healthy
-  #     restart: true
 
   # Jellyseerr Image - Request management and media discovery tool
   jellyseerr-jellyfin:
