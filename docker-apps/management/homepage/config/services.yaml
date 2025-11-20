@@ -90,14 +90,6 @@
         icon: gluetun.svg
         description: VPN client - docker
         container: gluetun
-    - Gluetun-Anime:
-        icon: gluetun.svg
-        description: VPN client for anime - docker
-        container: gluetun-anime
-    - Gluetun-4K:
-        icon: gluetun.svg
-        description: VPN client for 4K media - docker
-        container: gluetun-4k
 
 - Content Management:
     - Prowlarr:
