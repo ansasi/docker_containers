@@ -179,14 +179,14 @@ services:
       # Traefik labels
       - "traefik.enable=true"
       - "traefik.docker.network=proxy"
-      - traefik.http.routers.sonarr-anime.entrypoints=http
-      - traefik.http.routers.sonarr-anime.rule=Host(`sonarr-anime.${DOMAIN}`)
-      - traefik.http.routers.sonarr-anime-secure.entrypoints=https
-      - traefik.http.routers.sonarr-anime-secure.rule=Host(`sonarr-anime.${DOMAIN}`)
-      - traefik.http.routers.sonarr-anime-secure.tls=true
-      - traefik.http.routers.sonarr-anime-secure.tls.certresolver=cloudflare
-      - traefik.http.routers.sonarr-anime-secure.service=sonarr-anime
-      - traefik.http.services.sonarr-anime.loadbalancer.server.port=8989
+      - traefik.http.routers.radarr-anime.entrypoints=http
+      - traefik.http.routers.radarr-anime.rule=Host(`radarr-anime.${DOMAIN}`)
+      - traefik.http.routers.radarr-anime-secure.entrypoints=https
+      - traefik.http.routers.radarr-anime-secure.rule=Host(`radarr-anime.${DOMAIN}`)
+      - traefik.http.routers.radarr-anime-secure.tls=true
+      - traefik.http.routers.radarr-anime-secure.tls.certresolver=cloudflare
+      - traefik.http.routers.radarr-anime-secure.service=radarr-anime
+      - traefik.http.services.radarr-anime.loadbalancer.server.port=8989
       # Watchtower labels
       - com.centurylinklabs.watchtower.enable=false
 
