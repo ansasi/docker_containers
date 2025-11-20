@@ -141,6 +141,8 @@ services:
       - no-new-privileges:true
     labels:
       # Traefik labels
+      - "traefik.enable=true"
+      - "traefik.docker.network=proxy"
       - traefik.http.routers.radarr.entrypoints=http
       - traefik.http.routers.radarr.rule=Host(`radarr.${DOMAIN}`)
       - traefik.http.routers.radarr-secure.entrypoints=https
@@ -175,6 +177,8 @@ services:
       - no-new-privileges:true
     labels:
       # Traefik labels
+      - "traefik.enable=true"
+      - "traefik.docker.network=proxy"
       - traefik.http.routers.sonarr-anime.entrypoints=http
       - traefik.http.routers.sonarr-anime.rule=Host(`sonarr-anime.${DOMAIN}`)
       - traefik.http.routers.sonarr-anime-secure.entrypoints=https
@@ -209,6 +213,8 @@ services:
       - no-new-privileges:true
     labels:
       # Traefik labels
+      - "traefik.enable=true"
+      - "traefik.docker.network=proxy"
       - traefik.http.routers.radarr-4k.entrypoints=http
       - traefik.http.routers.radarr-4k.rule=Host(`radarr-4k.${DOMAIN}`)
       - traefik.http.routers.radarr-4k-secure.entrypoints=https
@@ -249,6 +255,8 @@ services:
         restart: true
     labels:
       # Traefik labels
+      - "traefik.enable=true"
+      - "traefik.docker.network=proxy"
       - traefik.http.routers.sonarr.entrypoints=http
       - traefik.http.routers.sonarr.rule=Host(`sonarr.${DOMAIN}`)
       - traefik.http.routers.sonarr-secure.entrypoints=https
@@ -283,6 +291,8 @@ services:
       - no-new-privileges:true
     labels:
       # Traefik labels
+      - "traefik.enable=true"
+      - "traefik.docker.network=proxy"
       - traefik.http.routers.sonarr-anime.entrypoints=http
       - traefik.http.routers.sonarr-anime.rule=Host(`sonarr-anime.${DOMAIN}`)
       - traefik.http.routers.sonarr-anime-secure.entrypoints=https
@@ -317,6 +327,8 @@ services:
       - no-new-privileges:true
     labels:
       # Traefik labels
+      - "traefik.enable=true"
+      - "traefik.docker.network=proxy"
       - traefik.http.routers.sonarr-4k.entrypoints=http
       - traefik.http.routers.sonarr-4k.rule=Host(`sonarr-4k.${DOMAIN}`)
       - traefik.http.routers.sonarr-4k-secure.entrypoints=https
