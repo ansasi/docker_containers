@@ -90,7 +90,7 @@ services:
         bench new-site --mariadb-user-host-login-scope='%' --admin-password=${ADMIN_PASSWORD:-admin} --db-root-username=root --db-root-password=$${MARIADB_DB_USER:-admin} --install-app erpnext --set-default frontend;
 
   db:
-    image: mariadb:10.11
+    image: mariadb:12.1
     networks:
       - frappe_network
     healthcheck:
