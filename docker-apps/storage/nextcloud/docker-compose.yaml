@@ -9,7 +9,7 @@ volumes:
 services:
   nextcloud-postgres:
     # Note: Check the recommend version here: https://docs.nextcloud.com/server/latest/admin_manual/installation/system_requirements.html#server
-    image: postgres:17.7-alpine
+    image: postgres:18.1-alpine
     container_name: nextcloud-postgres
     networks:
       - nextcloud
