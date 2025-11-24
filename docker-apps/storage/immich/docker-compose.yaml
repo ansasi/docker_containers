@@ -21,8 +21,8 @@ services:
     networks:
       - proxy
       - immich
-    # ports:
-    #   - 2283:2283
+    ports:
+      - 2283:2283
     environment:
       DB_PASSWORD: '${DB_PASSWORD}'
       DB_USERNAME: '${DB_USERNAME}'
