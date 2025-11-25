@@ -75,7 +75,7 @@
         description: Open source media server - docker
         container: jellyfin
     - Jellyseerr (Jellyfin):
-        href: https://jellyseerr-jellyfin.docker.datia.me
+        href: http://192.168.178.50:8096
         icon: jellyseerr.svg
         description: Movie and TV show request management - docker
         container: jellyseerr-jellyfin
