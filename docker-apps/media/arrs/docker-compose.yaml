@@ -166,41 +166,41 @@ services:
       # Watchtower labels
       - com.centurylinklabs.watchtower.enable=false
 
-  ###--- Radarr 4K - Library Manager for Movie 4K content management ---###
-  ### Enable this container to get separate instance for 4K Movie content ###
-  radarr-4k:
-    image: linuxserver/radarr:6.0.4
-    container_name: radarr-4k
-    restart: unless-stopped
-    environment:
-      PUID: "${PUID}"
-      PGID: "${PGID}"
-      UMASK: "002"
-      TZ: "Etc/Zurich"
-    volumes:
-      - ${WORKDIR}/radarr-4k/config:/config
-      - "${NAS_STORAGE_LOCATION}/library/movies:/movies"
-      - "${NAS_STORAGE_LOCATION}/downloads/torrents:/downloads"
-    ports:
-      - 7880:7878
-    networks:
-      - proxy
-    security_opt:
-      - no-new-privileges:true
-    labels:
-      # Traefik labels
-      - "traefik.enable=true"
-      - "traefik.docker.network=proxy"
-      - traefik.http.routers.radarr-4k.entrypoints=http
-      - traefik.http.routers.radarr-4k.rule=Host(`radarr-4k.${DOMAIN}`)
-      - traefik.http.routers.radarr-4k-secure.entrypoints=https
-      - traefik.http.routers.radarr-4k-secure.rule=Host(`radarr-4k.${DOMAIN}`)
-      - traefik.http.routers.radarr-4k-secure.tls=true
-      - traefik.http.routers.radarr-4k-secure.tls.certresolver=cloudflare
-      - traefik.http.routers.radarr-4k-secure.service=radarr-4k
-      - traefik.http.services.radarr-4k.loadbalancer.server.port=7878
-      # Watchtower labels
-      - com.centurylinklabs.watchtower.enable=false
+  # ###--- Radarr 4K - Library Manager for Movie 4K content management ---###
+  # ### Enable this container to get separate instance for 4K Movie content ###
+  # radarr-4k:
+  #   image: linuxserver/radarr:6.0.4
+  #   container_name: radarr-4k
+  #   restart: unless-stopped
+  #   environment:
+  #     PUID: "${PUID}"
+  #     PGID: "${PGID}"
+  #     UMASK: "002"
+  #     TZ: "Etc/Zurich"
+  #   volumes:
+  #     - ${WORKDIR}/radarr-4k/config:/config
+  #     - "${NAS_STORAGE_LOCATION}/library/movies:/movies"
+  #     - "${NAS_STORAGE_LOCATION}/downloads/torrents:/downloads"
+  #   ports:
+  #     - 7880:7878
+  #   networks:
+  #     - proxy
+  #   security_opt:
+  #     - no-new-privileges:true
+  #   labels:
+  #     # Traefik labels
+  #     - "traefik.enable=true"
+  #     - "traefik.docker.network=proxy"
+  #     - traefik.http.routers.radarr-4k.entrypoints=http
+  #     - traefik.http.routers.radarr-4k.rule=Host(`radarr-4k.${DOMAIN}`)
+  #     - traefik.http.routers.radarr-4k-secure.entrypoints=https
+  #     - traefik.http.routers.radarr-4k-secure.rule=Host(`radarr-4k.${DOMAIN}`)
+  #     - traefik.http.routers.radarr-4k-secure.tls=true
+  #     - traefik.http.routers.radarr-4k-secure.tls.certresolver=cloudflare
+  #     - traefik.http.routers.radarr-4k-secure.service=radarr-4k
+  #     - traefik.http.services.radarr-4k.loadbalancer.server.port=7878
+  #     # Watchtower labels
+  #     - com.centurylinklabs.watchtower.enable=false
 
 
 
@@ -280,41 +280,41 @@ services:
       # Watchtower labels
       - com.centurylinklabs.watchtower.enable=false
 
-  ###--- Sonarr 4K - Library Manager for TV 4K content management ---###
-  ### Enable this container to get separate instance for 4K TV content ###
-  sonarr-4k:
-    image: linuxserver/sonarr:4.0.16
-    container_name: sonarr-4k
-    restart: unless-stopped
-    environment:
-      PUID: "${PUID}"
-      PGID: "${PGID}"
-      UMASK: "002"
-      TZ: "Etc/Zurich"
-    volumes:
-      - ${WORKDIR}/sonarr-4k/config:/config
-      - "${NAS_STORAGE_LOCATION}/library/tv:/tv"
-      - "${NAS_STORAGE_LOCATION}/downloads/torrents:/downloads"
-    ports:
-      - 8991:8989
-    networks:
-      - proxy
-    security_opt:
-      - no-new-privileges:true
-    labels:
-      # Traefik labels
-      - "traefik.enable=true"
-      - "traefik.docker.network=proxy"
-      - traefik.http.routers.sonarr-4k.entrypoints=http
-      - traefik.http.routers.sonarr-4k.rule=Host(`sonarr-4k.${DOMAIN}`)
-      - traefik.http.routers.sonarr-4k-secure.entrypoints=https
-      - traefik.http.routers.sonarr-4k-secure.rule=Host(`sonarr-4k.${DOMAIN}`)
-      - traefik.http.routers.sonarr-4k-secure.tls=true
-      - traefik.http.routers.sonarr-4k-secure.tls.certresolver=cloudflare
-      - traefik.http.routers.sonarr-4k-secure.service=sonarr-4k
-      - traefik.http.services.sonarr-4k.loadbalancer.server.port=8989
-      # Watchtower labels
-      - com.centurylinklabs.watchtower.enable=false
+  # ###--- Sonarr 4K - Library Manager for TV 4K content management ---###
+  # ### Enable this container to get separate instance for 4K TV content ###
+  # sonarr-4k:
+  #   image: linuxserver/sonarr:4.0.16
+  #   container_name: sonarr-4k
+  #   restart: unless-stopped
+  #   environment:
+  #     PUID: "${PUID}"
+  #     PGID: "${PGID}"
+  #     UMASK: "002"
+  #     TZ: "Etc/Zurich"
+  #   volumes:
+  #     - ${WORKDIR}/sonarr-4k/config:/config
+  #     - "${NAS_STORAGE_LOCATION}/library/tv:/tv"
+  #     - "${NAS_STORAGE_LOCATION}/downloads/torrents:/downloads"
+  #   ports:
+  #     - 8991:8989
+  #   networks:
+  #     - proxy
+  #   security_opt:
+  #     - no-new-privileges:true
+  #   labels:
+  #     # Traefik labels
+  #     - "traefik.enable=true"
+  #     - "traefik.docker.network=proxy"
+  #     - traefik.http.routers.sonarr-4k.entrypoints=http
+  #     - traefik.http.routers.sonarr-4k.rule=Host(`sonarr-4k.${DOMAIN}`)
+  #     - traefik.http.routers.sonarr-4k-secure.entrypoints=https
+  #     - traefik.http.routers.sonarr-4k-secure.rule=Host(`sonarr-4k.${DOMAIN}`)
+  #     - traefik.http.routers.sonarr-4k-secure.tls=true
+  #     - traefik.http.routers.sonarr-4k-secure.tls.certresolver=cloudflare
+  #     - traefik.http.routers.sonarr-4k-secure.service=sonarr-4k
+  #     - traefik.http.services.sonarr-4k.loadbalancer.server.port=8989
+  #     # Watchtower labels
+  #     - com.centurylinklabs.watchtower.enable=false
 
   # Bazarr - Library Manager for Subtitle management
   bazarr:
