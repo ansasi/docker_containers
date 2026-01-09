@@ -318,7 +318,7 @@ services:
 
   # Bazarr - Library Manager for Subtitle management
   bazarr:
-    image: linuxserver/bazarr:1.5.3
+    image: linuxserver/bazarr:1.5.4
     container_name: bazarr
     restart: unless-stopped
     environment:
@@ -352,7 +352,7 @@ services:
       - com.centurylinklabs.watchtower.enable=false
     
   bazarr-anime:
-    image: linuxserver/bazarr:1.5.3
+    image: linuxserver/bazarr:1.5.4
     container_name: bazarr-anime
     restart: unless-stopped
     environment:
