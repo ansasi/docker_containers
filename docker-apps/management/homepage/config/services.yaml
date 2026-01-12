@@ -10,7 +10,7 @@
     - PiHole:
         href: http://192.168.178.10/admin
         icon: pi-hole.svg
-        description: DNS - rpi-nico-small
+        description: DNS - rpi-zero-2w
         ping: http://192.168.178.10/admin
     - Traefik:
         href: https://traefik-dashboard.docker.datia.me/
@@ -46,10 +46,10 @@
         icon: portainer.svg
         description: Container management - docker
         container: portainer
-    - Watchtower:
-        icon: watchtower.svg
-        description: Container auto update - docker
-        container: watchtower
+    # - Watchtower:
+    #     icon: watchtower.svg
+    #     description: Container auto update - docker
+    #     container: watchtower
 
 - Monitoring:
     - Grafana:
@@ -73,6 +73,7 @@
         href: http://192.168.178.50:8096
         icon: jellyfin.svg
         description: Open source media server - docker
+        ping: http://192.168.178.50:8096
     - Jellyseerr (Jellyfin):
         href: https://jellyseerr-jellyfin.docker.datia.me
         icon: jellyseerr.svg
