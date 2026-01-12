@@ -73,7 +73,6 @@
         href: http://192.168.178.50:8096
         icon: jellyfin.svg
         description: Open source media server - docker
-        container: jellyfin
     - Jellyseerr (Jellyfin):
         href: https://jellyseerr-jellyfin.docker.datia.me
         icon: jellyseerr.svg
