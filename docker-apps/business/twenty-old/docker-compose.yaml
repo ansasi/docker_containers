@@ -5,10 +5,8 @@ networks:
 volumes:
   db-data:
     external: true
-    name: twenty_db-data
   server-local-data:
     external: true
-    name: twenty_server-local-data
 
 services:
   server:
