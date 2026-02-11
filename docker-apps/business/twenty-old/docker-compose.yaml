@@ -12,7 +12,7 @@ volumes:
 
 services:
   server:
-    image: twentycrm/twenty:v1.14
+    image: twentycrm/twenty:v1.0
     volumes:
       - server-local-data:/app/packages/twenty-server/.local-storage
     networks:
@@ -53,7 +53,7 @@ services:
       retries: 20
 
   worker:
-    image: twentycrm/twenty:v1.14
+    image: twentycrm/twenty:v1.0
     volumes:
       - ${WORKDIR}/server-local-data:/app/packages/twenty-server/.local-storage
     networks:
