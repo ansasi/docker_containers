@@ -4,7 +4,7 @@ networks:
 
 services:
   homepage:
-    image: ghcr.io/gethomepage/homepage # v1.0.4
+    image: gethomepage/homepage:v1.10.1
     container_name: homepage
     environment:
       HOMEPAGE_ALLOWED_HOSTS: 'homepage.${DOMAIN},localhost:3001'
@@ -20,19 +20,22 @@ services:
     volumes:
       - ./config:/app/config
       - /var/run/docker.sock:/var/run/docker.sock:ro
-    ports:
-      - "3001:3000"
+    # ports:
+    #   - "3001:3000"
     labels:
+      # Traefik labels
       - traefik.enable=true
       - traefik.docker.network=proxy
-      - traefik.http.routers.homepage.entrypoints=web
+      - traefik.http.routers.homepage.entrypoints=http
       - traefik.http.routers.homepage.rule=Host(`homepage.${DOMAIN}`)
-      - traefik.http.routers.homepage-secure.entrypoints=websecure
+      - traefik.http.routers.homepage-secure.entrypoints=https
       - traefik.http.routers.homepage-secure.rule=Host(`homepage.${DOMAIN}`)
       - traefik.http.routers.homepage-secure.tls=true
       - traefik.http.routers.homepage-secure.tls.certresolver=cloudflare
       - traefik.http.routers.homepage-secure.service=homepage
       - traefik.http.services.homepage.loadbalancer.server.port=3000
+      # Watchtower labels
+      - com.centurylinklabs.watchtower.enable=true
     networks:
       - proxy
     restart: unless-stopped

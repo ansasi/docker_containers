@@ -16,30 +16,30 @@ services:
 
 # --- Grafana Image
   grafana:
-    image: grafana/grafana
+    image: grafana/grafana:12.3.2-ubuntu # For a different OS you can simply use grafana/grafana:12.0.2
     container_name: grafana
     volumes:
       - ${WORKDIR}/data:/var/lib/grafana
     networks:
       - grafana-monitoring
       - proxy
-    ports:
-      # Web Interface (using traefik)
-      - "8164:3000"
+    # ports:
+    #   # Web Interface (using traefik)
+    #   - "8164:3000"
     user: '${PUID}:${PGID}'
     labels:
       # Traefik labels
       - traefik.enable=true
       - traefik.docker.network=proxy
-      - traefik.http.routers.grafana.entrypoints=web
+      - traefik.http.routers.grafana.entrypoints=http
       - traefik.http.routers.grafana.rule=Host(`grafana.${DOMAIN}`)
       - traefik.http.middlewares.grafana-https-redirect.redirectscheme.scheme=https
       - traefik.http.routers.grafana.middlewares=grafana-https-redirect
-      - traefik.http.routers.grafana-websecure.entrypoints=websecure
-      - traefik.http.routers.grafana-websecure.rule=Host(`grafana.${DOMAIN}`)
-      - traefik.http.routers.grafana-websecure.tls=true
-      - traefik.http.routers.grafana-websecure.tls.certresolver=cloudflare
-      - traefik.http.routers.grafana-websecure.service=grafana
+      - traefik.http.routers.grafana-secure.entrypoints=https
+      - traefik.http.routers.grafana-secure.rule=Host(`grafana.${DOMAIN}`)
+      - traefik.http.routers.grafana-secure.tls=true
+      - traefik.http.routers.grafana-secure.tls.certresolver=cloudflare
+      - traefik.http.routers.grafana-secure.service=grafana
       - traefik.http.services.grafana.loadbalancer.server.port=3000
       # Watchtower labels
       - com.centurylinklabs.watchtower.enable=true
@@ -47,13 +47,13 @@ services:
 
 # --- Prometheus Image
   prometheus:
-    image: prom/prometheus:latest
+    image: prom/prometheus:v3.9.1
     container_name: prometheus
     command:
       - '--config.file=/etc/config/prometheus.yml'
       - '--storage.tsdb.retention.time=7d'
-    ports:
-      - "9090:9090"
+    # ports:
+    #   - "9090:9090"
     volumes:
       - ./config/prometheus.yml:/etc/config/prometheus.yml:ro
       - prometheus:/prometheus
@@ -61,22 +61,25 @@ services:
       - grafana-monitoring
       - proxy
     labels:
+      # Watchtower labels
+      - com.centurylinklabs.watchtower.enable=true
+      # Traefik labels
       - traefik.enable=true
       - traefik.docker.network=proxy
-      - traefik.http.routers.prometheus.entrypoints=web
+      - traefik.http.routers.prometheus.entrypoints=http
       - traefik.http.routers.prometheus.rule=Host(`prometheus.${DOMAIN}`)
       - traefik.http.middlewares.prometheus-https-redirect.redirectscheme.scheme=https
       - traefik.http.routers.prometheus.middlewares=prometheus-https-redirect
-      - traefik.http.routers.prometheus-websecure.entrypoints=websecure
-      - traefik.http.routers.prometheus-websecure.rule=Host(`prometheus.${DOMAIN}`)
-      - traefik.http.routers.prometheus-websecure.tls=true
-      - traefik.http.routers.prometheus-websecure.tls.certresolver=cloudflare
-      - traefik.http.routers.prometheus-websecure.service=prometheus
+      - traefik.http.routers.prometheus-secure.entrypoints=https
+      - traefik.http.routers.prometheus-secure.rule=Host(`prometheus.${DOMAIN}`)
+      - traefik.http.routers.prometheus-secure.tls=true
+      - traefik.http.routers.prometheus-secure.tls.certresolver=cloudflare
+      - traefik.http.routers.prometheus-secure.service=prometheus
       - traefik.http.services.prometheus.loadbalancer.server.port=9090
     restart: unless-stopped
 
   node_exporter:
-    image: quay.io/prometheus/node-exporter:latest
+    image: prom/node-exporter:v1.10.2
     container_name: node_exporter
     command:
       - '--path.rootfs=/host'

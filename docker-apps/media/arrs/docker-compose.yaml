@@ -9,7 +9,7 @@ networks:
 services:
   # qBittorrent - Download Client
   qbittorrent:
-    image: lscr.io/linuxserver/qbittorrent
+    image: linuxserver/qbittorrent:latest # TODO: Renovate bot does not select the correct version
     container_name: qbittorrent
     restart: unless-stopped
     environment:
@@ -22,46 +22,56 @@ services:
     #   - 8085:8085
     volumes:
       - ${WORKDIR}/qbittorrent/config:/config
-      - "${MEDIA_ARRS_FOLDER}/downloads/torrents:/downloads"
+      - "${NAS_STORAGE_LOCATION}/downloads/torrents:/downloads"
     network_mode: "service:gluetun"
+    # networks:
+    #   - proxy
     security_opt:
       - no-new-privileges:true
     depends_on:
       gluetun:
         condition: service_healthy
         restart: true
+    labels:
+      # Watchtower labels
+      - com.centurylinklabs.watchtower.enable=false
 
   # qBitmanage - qBittorrent manager - Used to run automated tasks for qBittorrent
 
   ###--- SABnzbd - Download client - Used to download NZB from Usenet groups ---###
-  ### This container has been disabled since you need a premium Usenet provider subscription to download files. ###
-  ### Enable this container if you found a free provider or want to pay for usenet ###
-  # sabnzbd:
-  #   image: lscr.io/linuxserver/sabnzbd:latest
-  #   container_name: sabnzbd
-  #   restart: unless-stopped
-  #   environment:
-  #     PUID: ${PUID}
-  #     PGID: ${PGID}
-  #     TZ: Etc/Zurich
-  #   volumes:
-  #     - /etc/localtime:/etc/localtime:ro
-  #     - ${WORKDIR}/sabnzbd/config:/config
-  #     - ${MEDIA_ARRS_FOLDER}/download/usenet/:/data/usenet:rw
-  #   ports:
-  #     - 8085:8080
-  #     - 9091:9090
-  #   logging:
-  #     driver: json-file
-  #   network_mode: "service:gluetun"
-  #   depends_on:
-  #     gluetun:
-  #       condition: service_healthy
-  #     restart: true
+
+  # Jellyseerr Image - Request management and media discovery tool
+  jellyseerr-jellyfin:
+    image: fallenbagel/jellyseerr:2.7.3
+    container_name: jellyseerr-jellyfin
+    environment:
+      PGID: "${PGID}"
+      PUID: "${PUID}"
+      TZ: "Etc/UTC"
+    volumes:
+      - ${WORKDIR}/jellyseerr/config:/app/config
+    # ports:
+    #   - 8111:5055
+    networks:
+      - proxy
+    labels:
+      # Traefik labels
+      - traefik.enable=true
+      - traefik.docker.network=proxy
+      - traefik.http.routers.jellyseerr-jellyfin.entrypoints=http
+      - traefik.http.routers.jellyseerr-jellyfin.rule=Host(`jellyseerr-jellyfin.${DOMAIN}`)
+      - traefik.http.routers.jellyseerr-jellyfin-secure.entrypoints=https
+      - traefik.http.routers.jellyseerr-jellyfin-secure.rule=Host(`jellyseerr-jellyfin.${DOMAIN}`)
+      - traefik.http.routers.jellyseerr-jellyfin-secure.tls=true
+      - traefik.http.routers.jellyseerr-jellyfin-secure.tls.certresolver=cloudflare
+      - traefik.http.services.jellyseerr-jellyfin.loadbalancer.server.port=5055
+      # Watchtower labels
+      - com.centurylinklabs.watchtower.enable=false
+    restart: unless-stopped
 
   # Prowlarr - Indexer manager for all your media content
   prowlarr:
-    image: lscr.io/linuxserver/prowlarr:latest
+    image: linuxserver/prowlarr:2.3.0
     container_name: prowlarr
     restart: unless-stopped
     environment:
@@ -80,11 +90,14 @@ services:
       gluetun:
         condition: service_healthy
         restart: true
+    labels:
+      # Watchtower labels
+      - com.centurylinklabs.watchtower.enable=false
 
   ###--- Radarr - Library Manager for Movie content management ---###
-  ### Do not use this container to download 4K Movie content. Enable container below to have seperate instance just for 4K Movie content ###
+  ### Do not use this container to download 4K Movie content. Enable container below to have separate instance just for 4K Movie content ###
   radarr:
-    image: lscr.io/linuxserver/radarr:latest
+    image: linuxserver/radarr:6.0.4
     container_name: radarr
     restart: unless-stopped
     environment:
@@ -94,22 +107,107 @@ services:
       TZ: "Etc/Zurich"
     volumes:
       - ${WORKDIR}/radarr/config:/config
-      - "${MEDIA_ARRS_FOLDER}/library/movies:/movies"
-      - "${MEDIA_ARRS_FOLDER}/downloads/torrents:/downloads"
-    # ports:
-    #   - 8114:7878
-    network_mode: "service:gluetun"
+      - "${NAS_STORAGE_LOCATION}/library/movies:/movies"
+      - "${NAS_STORAGE_LOCATION}/downloads/torrents:/downloads"
+    ports:
+      - 7878:7878
+    networks:
+      - proxy
     security_opt:
       - no-new-privileges:true
-    depends_on:
-      gluetun:
-        condition: service_healthy
-        restart: true
+    labels:
+      # Traefik labels
+      - "traefik.enable=true"
+      - "traefik.docker.network=proxy"
+      - traefik.http.routers.radarr.entrypoints=http
+      - traefik.http.routers.radarr.rule=Host(`radarr.${DOMAIN}`)
+      - traefik.http.routers.radarr-secure.entrypoints=https
+      - traefik.http.routers.radarr-secure.rule=Host(`radarr.${DOMAIN}`)
+      - traefik.http.routers.radarr-secure.tls=true
+      - traefik.http.routers.radarr-secure.tls.certresolver=cloudflare
+      - traefik.http.routers.radarr-secure.service=radarr
+      - traefik.http.services.radarr.loadbalancer.server.port=7878
+      # Watchtower labels
+      - com.centurylinklabs.watchtower.enable=false
+
+  ###--- Radarr Anime - Library Manager for Anime Movie content management ---###
+  ### Enable this container to get separate instance for Anime Movie content ###
+  radarr-anime:
+    image: linuxserver/radarr:6.0.4
+    container_name: radarr-anime
+    restart: unless-stopped
+    environment:
+      PUID: "${PUID}"
+      PGID: "${PGID}"
+      UMASK: "002"
+      TZ: "Etc/Zurich"
+    volumes:
+      - ${WORKDIR}/radarr-anime/config:/config
+      - "${NAS_STORAGE_LOCATION}/library/movies:/movies"
+      - "${NAS_STORAGE_LOCATION}/downloads/torrents:/downloads"
+    ports:
+      - 7879:7878
+    networks:
+      - proxy
+    security_opt:
+      - no-new-privileges:true
+    labels:
+      # Traefik labels
+      - "traefik.enable=true"
+      - "traefik.docker.network=proxy"
+      - traefik.http.routers.radarr-anime.entrypoints=http
+      - traefik.http.routers.radarr-anime.rule=Host(`radarr-anime.${DOMAIN}`)
+      - traefik.http.routers.radarr-anime-secure.entrypoints=https
+      - traefik.http.routers.radarr-anime-secure.rule=Host(`radarr-anime.${DOMAIN}`)
+      - traefik.http.routers.radarr-anime-secure.tls=true
+      - traefik.http.routers.radarr-anime-secure.tls.certresolver=cloudflare
+      - traefik.http.routers.radarr-anime-secure.service=radarr-anime
+      - traefik.http.services.radarr-anime.loadbalancer.server.port=7878
+      # Watchtower labels
+      - com.centurylinklabs.watchtower.enable=false
+
+  # ###--- Radarr 4K - Library Manager for Movie 4K content management ---###
+  # ### Enable this container to get separate instance for 4K Movie content ###
+  # radarr-4k:
+  #   image: linuxserver/radarr:6.0.4
+  #   container_name: radarr-4k
+  #   restart: unless-stopped
+  #   environment:
+  #     PUID: "${PUID}"
+  #     PGID: "${PGID}"
+  #     UMASK: "002"
+  #     TZ: "Etc/Zurich"
+  #   volumes:
+  #     - ${WORKDIR}/radarr-4k/config:/config
+  #     - "${NAS_STORAGE_LOCATION}/library/movies:/movies"
+  #     - "${NAS_STORAGE_LOCATION}/downloads/torrents:/downloads"
+  #   ports:
+  #     - 7880:7878
+  #   networks:
+  #     - proxy
+  #   security_opt:
+  #     - no-new-privileges:true
+  #   labels:
+  #     # Traefik labels
+  #     - "traefik.enable=true"
+  #     - "traefik.docker.network=proxy"
+  #     - traefik.http.routers.radarr-4k.entrypoints=http
+  #     - traefik.http.routers.radarr-4k.rule=Host(`radarr-4k.${DOMAIN}`)
+  #     - traefik.http.routers.radarr-4k-secure.entrypoints=https
+  #     - traefik.http.routers.radarr-4k-secure.rule=Host(`radarr-4k.${DOMAIN}`)
+  #     - traefik.http.routers.radarr-4k-secure.tls=true
+  #     - traefik.http.routers.radarr-4k-secure.tls.certresolver=cloudflare
+  #     - traefik.http.routers.radarr-4k-secure.service=radarr-4k
+  #     - traefik.http.services.radarr-4k.loadbalancer.server.port=7878
+  #     # Watchtower labels
+  #     - com.centurylinklabs.watchtower.enable=false
+
+
 
   ###--- Sonarr - Library Manager for TV Show / Series / Anime content management ---###
-  ### Do not use this container to download 4K TV content. Enable container below to have seperate instance just for 4K TV content ###
+  ### Do not use this container to download 4K TV content. Enable container below to have separate instance just for 4K TV content ###
   sonarr:
-    image: lscr.io/linuxserver/sonarr:latest
+    image: linuxserver/sonarr:4.0.16
     container_name: sonarr
     restart: unless-stopped
     environment:
@@ -119,24 +217,108 @@ services:
       TZ: "Etc/Zurich"
     volumes:
       - ${WORKDIR}/sonarr/config:/config
-      - "${MEDIA_ARRS_FOLDER}/library/tv:/tv"
-      - "${MEDIA_ARRS_FOLDER}/downloads/torrents:/downloads"
-    # ports:
-    #   - 8115:8989
-    network_mode: "service:gluetun"
+      - "${NAS_STORAGE_LOCATION}/library/tv:/tv"
+      - "${NAS_STORAGE_LOCATION}/downloads/torrents:/downloads"
+    ports:
+      - 8989:8989
+    networks:
+      - proxy
     security_opt:
       - no-new-privileges:true
     depends_on:
       gluetun:
         condition: service_healthy
         restart: true
+    labels:
+      # Traefik labels
+      - "traefik.enable=true"
+      - "traefik.docker.network=proxy"
+      - traefik.http.routers.sonarr.entrypoints=http
+      - traefik.http.routers.sonarr.rule=Host(`sonarr.${DOMAIN}`)
+      - traefik.http.routers.sonarr-secure.entrypoints=https
+      - traefik.http.routers.sonarr-secure.rule=Host(`sonarr.${DOMAIN}`)
+      - traefik.http.routers.sonarr-secure.tls=true
+      - traefik.http.routers.sonarr-secure.tls.certresolver=cloudflare
+      - traefik.http.routers.sonarr-secure.service=sonarr
+      - traefik.http.services.sonarr.loadbalancer.server.port=8989
+      # Watchtower labels
+      - com.centurylinklabs.watchtower.enable=false
 
-  ###--- Sonarr 4K - Library Manager for TV 4K content management ---###
-  ### Enable this container to get seperate instance for 4K TV content ###
+###--- Sonarr Anime - Library Manager for Anime content management ---###
+  ### Enable this container to get separate instance for Anime content ###
+  sonarr-anime:
+    image: linuxserver/sonarr:4.0.16
+    container_name: sonarr-anime
+    restart: unless-stopped
+    environment:
+      PUID: "${PUID}"
+      PGID: "${PGID}"
+      UMASK: "002"
+      TZ: "Etc/Zurich"
+    volumes:
+      - ${WORKDIR}/sonarr-anime/config:/config
+      - "${NAS_STORAGE_LOCATION}/library/tv:/tv"
+      - "${NAS_STORAGE_LOCATION}/downloads/torrents:/downloads"
+    ports:
+      - 8990:8989
+    networks:
+      - proxy
+    security_opt:
+      - no-new-privileges:true
+    labels:
+      # Traefik labels
+      - "traefik.enable=true"
+      - "traefik.docker.network=proxy"
+      - traefik.http.routers.sonarr-anime.entrypoints=http
+      - traefik.http.routers.sonarr-anime.rule=Host(`sonarr-anime.${DOMAIN}`)
+      - traefik.http.routers.sonarr-anime-secure.entrypoints=https
+      - traefik.http.routers.sonarr-anime-secure.rule=Host(`sonarr-anime.${DOMAIN}`)
+      - traefik.http.routers.sonarr-anime-secure.tls=true
+      - traefik.http.routers.sonarr-anime-secure.tls.certresolver=cloudflare
+      - traefik.http.routers.sonarr-anime-secure.service=sonarr-anime
+      - traefik.http.services.sonarr-anime.loadbalancer.server.port=8989
+      # Watchtower labels
+      - com.centurylinklabs.watchtower.enable=false
+
+  # ###--- Sonarr 4K - Library Manager for TV 4K content management ---###
+  # ### Enable this container to get separate instance for 4K TV content ###
+  # sonarr-4k:
+  #   image: linuxserver/sonarr:4.0.16
+  #   container_name: sonarr-4k
+  #   restart: unless-stopped
+  #   environment:
+  #     PUID: "${PUID}"
+  #     PGID: "${PGID}"
+  #     UMASK: "002"
+  #     TZ: "Etc/Zurich"
+  #   volumes:
+  #     - ${WORKDIR}/sonarr-4k/config:/config
+  #     - "${NAS_STORAGE_LOCATION}/library/tv:/tv"
+  #     - "${NAS_STORAGE_LOCATION}/downloads/torrents:/downloads"
+  #   ports:
+  #     - 8991:8989
+  #   networks:
+  #     - proxy
+  #   security_opt:
+  #     - no-new-privileges:true
+  #   labels:
+  #     # Traefik labels
+  #     - "traefik.enable=true"
+  #     - "traefik.docker.network=proxy"
+  #     - traefik.http.routers.sonarr-4k.entrypoints=http
+  #     - traefik.http.routers.sonarr-4k.rule=Host(`sonarr-4k.${DOMAIN}`)
+  #     - traefik.http.routers.sonarr-4k-secure.entrypoints=https
+  #     - traefik.http.routers.sonarr-4k-secure.rule=Host(`sonarr-4k.${DOMAIN}`)
+  #     - traefik.http.routers.sonarr-4k-secure.tls=true
+  #     - traefik.http.routers.sonarr-4k-secure.tls.certresolver=cloudflare
+  #     - traefik.http.routers.sonarr-4k-secure.service=sonarr-4k
+  #     - traefik.http.services.sonarr-4k.loadbalancer.server.port=8989
+  #     # Watchtower labels
+  #     - com.centurylinklabs.watchtower.enable=false
 
   # Bazarr - Library Manager for Subtitle management
   bazarr:
-    image: lscr.io/linuxserver/bazarr:latest
+    image: linuxserver/bazarr:1.5.5
     container_name: bazarr
     restart: unless-stopped
     environment:
@@ -146,23 +328,32 @@ services:
       TZ: "Etc/Zurich"
     volumes:
       - ${WORKDIR}/bazarr/config:/config
-      - "${MEDIA_ARRS_FOLDER}/library/movies:/movies"
-      - "${MEDIA_ARRS_FOLDER}/library/tv:/tv"
+      - "${NAS_STORAGE_LOCATION}/library/movies:/movies"
+      - "${NAS_STORAGE_LOCATION}/library/tv:/tv"
     # ports:
-    #   - 8116:6767
-    network_mode: "service:gluetun"
+    #   - 6767:6767
+    networks:
+      - proxy
     security_opt:
       - no-new-privileges:true
-    depends_on:
-      gluetun:
-        condition: service_healthy
-        restart: true
-
-
-  # Readarr - Library Manager for Books / Epubs content management
-  readarr:
-    image: lscr.io/linuxserver/readarr:develop
-    container_name: readarr
+    labels:
+      # Traefik labels
+      - "traefik.enable=true"
+      - "traefik.docker.network=proxy"
+      - traefik.http.routers.bazarr.entrypoints=http
+      - traefik.http.routers.bazarr.rule=Host(`bazarr.${DOMAIN}`)
+      - traefik.http.routers.bazarr-secure.entrypoints=https
+      - traefik.http.routers.bazarr-secure.rule=Host(`bazarr.${DOMAIN}`)
+      - traefik.http.routers.bazarr-secure.tls=true
+      - traefik.http.routers.bazarr-secure.tls.certresolver=cloudflare
+      - traefik.http.routers.bazarr-secure.service=bazarr
+      - traefik.http.services.bazarr.loadbalancer.server.port=6767
+      # Watchtower labels
+      - com.centurylinklabs.watchtower.enable=false
+    
+  bazarr-anime:
+    image: linuxserver/bazarr:1.5.5
+    container_name: bazarr-anime
     restart: unless-stopped
     environment:
       PUID: "${PUID}"
@@ -170,22 +361,36 @@ services:
       UMASK: "002"
       TZ: "Etc/Zurich"
     volumes:
-      - ${WORKDIR}/readarr/config:/config
-      - "${MEDIA_ARRS_FOLDER}/library/books:/books"
-      - "${MEDIA_ARRS_FOLDER}/downloads/torrents:/downloads"
+      - ${WORKDIR}/bazarr-anime/config:/config
+      - "${NAS_STORAGE_LOCATION}/library/movies:/movies"
+      - "${NAS_STORAGE_LOCATION}/library/tv:/tv"
     # ports:
-    #   - 8118:8787
-    network_mode: "service:gluetun"
+    #   - 6768:6767
+    networks:
+      - proxy
     security_opt:
       - no-new-privileges:true
-    depends_on:
-      gluetun:
-        condition: service_healthy
-        restart: true
+    labels:
+      # Traefik labels
+      - "traefik.enable=true"
+      - "traefik.docker.network=proxy"
+      - traefik.http.routers.bazarr-anime.entrypoints=http
+      - traefik.http.routers.bazarr-anime.rule=Host(`bazarr-anime.${DOMAIN}`)
+      - traefik.http.routers.bazarr-anime-secure.entrypoints=https
+      - traefik.http.routers.bazarr-anime-secure.rule=Host(`bazarr-anime.${DOMAIN}`)
+      - traefik.http.routers.bazarr-anime-secure.tls=true
+      - traefik.http.routers.bazarr-anime-secure.tls.certresolver=cloudflare
+      - traefik.http.routers.bazarr-anime-secure.service=bazarr-anime
+      - traefik.http.services.bazarr-anime.loadbalancer.server.port=6767
+      # Watchtower labels
+      - com.centurylinklabs.watchtower.enable=false
+
+
+  # Readarr - Library Manager for Books / Epubs content management
     
   # FlareSolverr - Proxy for bypassing Cloudflare protection
   flaresolverr:
-    image: flaresolverr/flaresolverr:latest
+    image: flaresolverr/flaresolverr:v3.4.6
     container_name: flaresolverr
     restart: unless-stopped
     environment:
@@ -201,11 +406,15 @@ services:
       gluetun:
         condition: service_healthy
         restart: true
+    labels:
+      # Watchtower labels
+      - com.centurylinklabs.watchtower.enable=false
 
   # Gluetun - VPN Client - Used to connect to VPN services
   gluetun:
-    image: qmcgaw/gluetun
+    image: qmcgaw/gluetun:v3.41
     container_name: gluetun
+    restart: unless-stopped
     hostname: gluetun
     cap_add:
       - NET_ADMIN
@@ -215,14 +424,9 @@ services:
       - 6881:6881
       - 6881:6881/udp
       # Ports to apps:
-      - 5055:5055    # Jellyseerr
       - 8085:8085    # qBittorrent
       - 9696:9696    # Prowlarr
       - 8191:8191    # FlareSolverr - used by Prowlarr to bypass Cloudflare
-      - 7878:7878    # Radarr
-      - 8989:8989    # Sonarr
-      - 6767:6767    # Bazarr
-      - 8787:8787    # Readarr
       # Note: This is uncommented as Proton VPN uses its own DNS servers, so it is not possible to resolve to mydomain.com INSIDE the containers that use gluetun as network mode
     volumes:
       - gluetun-data:/gluetun
@@ -234,6 +438,7 @@ services:
       - SERVER_COUNTRIES=Switzerland
       - TZ=Europe/Madrid
       - UPDATER_PERIOD=24h
+      - FIREWALL_OUTBOUND_SUBNETS=${HOME_SUBNET}
     healthcheck:
       test: ping -c 1 www.google.com || exit 1
       interval: 20s
@@ -242,66 +447,29 @@ services:
     networks:
       - proxy
     labels:
+      # Watchtower labels
+      - com.centurylinklabs.watchtower.enable=false
+
+      # Traefik labels
       - "traefik.enable=true"
       - "traefik.docker.network=proxy"
 
       # qBittorrent
-      - traefik.http.routers.qbittorrent.entrypoints=web
+      - traefik.http.routers.qbittorrent.entrypoints=http
       - traefik.http.routers.qbittorrent.rule=Host(`qbittorrent.${DOMAIN}`)
-      - traefik.http.routers.qbittorrent-websecure.entrypoints=websecure
-      - traefik.http.routers.qbittorrent-websecure.rule=Host(`qbittorrent.${DOMAIN}`)
-      - traefik.http.routers.qbittorrent-websecure.tls=true
-      - traefik.http.routers.qbittorrent-websecure.tls.certresolver=cloudflare
-      - traefik.http.routers.qbittorrent-websecure.service=qbittorrent
+      - traefik.http.routers.qbittorrent-secure.entrypoints=https
+      - traefik.http.routers.qbittorrent-secure.rule=Host(`qbittorrent.${DOMAIN}`)
+      - traefik.http.routers.qbittorrent-secure.tls=true
+      - traefik.http.routers.qbittorrent-secure.tls.certresolver=cloudflare
+      - traefik.http.routers.qbittorrent-secure.service=qbittorrent
       - traefik.http.services.qbittorrent.loadbalancer.server.port=8085
 
       # Prowlarr
-      - traefik.http.routers.prowlarr.entrypoints=web
+      - traefik.http.routers.prowlarr.entrypoints=http
       - traefik.http.routers.prowlarr.rule=Host(`prowlarr.${DOMAIN}`)
-      - traefik.http.routers.prowlarr-websecure.entrypoints=websecure
-      - traefik.http.routers.prowlarr-websecure.rule=Host(`prowlarr.${DOMAIN}`)
-      - traefik.http.routers.prowlarr-websecure.tls=true
-      - traefik.http.routers.prowlarr-websecure.tls.certresolver=cloudflare
-      - traefik.http.routers.prowlarr-websecure.service=prowlarr
+      - traefik.http.routers.prowlarr-secure.entrypoints=https
+      - traefik.http.routers.prowlarr-secure.rule=Host(`prowlarr.${DOMAIN}`)
+      - traefik.http.routers.prowlarr-secure.tls=true
+      - traefik.http.routers.prowlarr-secure.tls.certresolver=cloudflare
+      - traefik.http.routers.prowlarr-secure.service=prowlarr
       - traefik.http.services.prowlarr.loadbalancer.server.port=9696
-
-      # Radarr
-      - traefik.http.routers.radarr.entrypoints=web
-      - traefik.http.routers.radarr.rule=Host(`radarr.${DOMAIN}`)
-      - traefik.http.routers.radarr-websecure.entrypoints=websecure
-      - traefik.http.routers.radarr-websecure.rule=Host(`radarr.${DOMAIN}`)
-      - traefik.http.routers.radarr-websecure.tls=true
-      - traefik.http.routers.radarr-websecure.tls.certresolver=cloudflare
-      - traefik.http.routers.radarr-websecure.service=radarr
-      - traefik.http.services.radarr.loadbalancer.server.port=7878
-
-      # Sonarr
-      - traefik.http.routers.sonarr.entrypoints=web
-      - traefik.http.routers.sonarr.rule=Host(`sonarr.${DOMAIN}`)
-      - traefik.http.routers.sonarr-websecure.entrypoints=websecure
-      - traefik.http.routers.sonarr-websecure.rule=Host(`sonarr.${DOMAIN}`)
-      - traefik.http.routers.sonarr-websecure.tls=true
-      - traefik.http.routers.sonarr-websecure.tls.certresolver=cloudflare
-      - traefik.http.routers.sonarr-websecure.service=sonarr
-      - traefik.http.services.sonarr.loadbalancer.server.port=8989
-
-      # Bazarr
-      - traefik.http.routers.bazarr.entrypoints=web
-      - traefik.http.routers.bazarr.rule=Host(`bazarr.${DOMAIN}`)
-      - traefik.http.routers.bazarr-websecure.entrypoints=websecure
-      - traefik.http.routers.bazarr-websecure.rule=Host(`bazarr.${DOMAIN}`)
-      - traefik.http.routers.bazarr-websecure.tls=true
-      - traefik.http.routers.bazarr-websecure.tls.certresolver=cloudflare
-      - traefik.http.routers.bazarr-websecure.service=bazarr
-      - traefik.http.services.bazarr.loadbalancer.server.port=6767
-
-      # Readarr
-      - traefik.http.routers.readarr.entrypoints=web
-      - traefik.http.routers.readarr.rule=Host(`readarr.${DOMAIN}`)
-      - traefik.http.routers.readarr-websecure.entrypoints=websecure
-      - traefik.http.routers.readarr-websecure.rule=Host(`readarr.${DOMAIN}`)
-      - traefik.http.routers.readarr-websecure.tls=true
-      - traefik.http.routers.readarr-websecure.tls.certresolver=cloudflare
-      - traefik.http.routers.readarr-websecure.service=readarr
-      - traefik.http.services.readarr.loadbalancer.server.port=8787
-  

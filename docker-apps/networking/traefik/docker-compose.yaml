@@ -5,7 +5,7 @@ networks:
 
 services:
   traefik:
-    image: traefik:v3
+    image: traefik:v3.6.7
     container_name: traefik
     ports:
       - "80:80"
@@ -16,13 +16,14 @@ services:
     volumes:
       - /etc/localtime:/etc/localtime:ro
       - /var/run/docker.sock:/var/run/docker.sock:ro
-      - ./traefik-config/traefik.yaml:/etc/traefik/traefik.yaml:ro
+      - ./traefik-config/traefik.yml:/etc/traefik/traefik.yml:ro
+      # - ./traefik-config/config.yml:/etc/traefik/config/config.yml # In case we need some pre-configuration that we cannot create with labels.
       - ./certs:/etc/traefik/certs/
     networks:
       - proxy
     labels:
       - traefik.enable=true
-      - traefik.http.routers.traefik.entrypoints=web # restricts dashboard to internal entrypoint
+      - traefik.http.routers.traefik.entrypoints=http # restricts dashboard to internal entrypoint
       - traefik.http.routers.traefik.rule=Host(`traefik-dashboard.${DOMAIN}`)
       - traefik.http.routers.traefik.tls=true
       # TODO: Add authentication
@@ -31,7 +32,7 @@ services:
       - traefik.http.middlewares.traefik-https-redirect.redirectscheme.scheme=https
       - traefik.http.middlewares.sslheader.headers.customrequestheaders.X-Forwarded-Proto=https
       - traefik.http.routers.traefik.middlewares=traefik-https-redirect
-      - traefik.http.routers.traefik-secure.entrypoints=websecure
+      - traefik.http.routers.traefik-secure.entrypoints=https
       - traefik.http.routers.traefik-secure.rule=Host(`traefik-dashboard.${DOMAIN}`)
       - traefik.http.routers.traefik-secure.tls=true
       - traefik.http.routers.traefik-secure.tls.certresolver=cloudflare

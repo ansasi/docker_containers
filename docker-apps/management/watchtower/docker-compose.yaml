@@ -1,9 +1,6 @@
-networks:
-  watchtower:
-
 services:
   watchtower:
-    image: containrrr/watchtower
+    image: containrrr/watchtower:1.7.1
     container_name: watchtower
     environment:
       - TZ=Europe/Madrid
@@ -35,14 +32,12 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock
     # ports:
     #   - 8080:8080
-    networks:
-      - watchtower
     # labels:
     #   - traefik.enable=true
     #   - traefik.docker.network=proxy
-    #   - traefik.http.routers.watchtower.entrypoints=web
+    #   - traefik.http.routers.watchtower.entrypoints=http
     #   - traefik.http.routers.watchtower.rule=Host(`watchtower.${DOMAIN}`)
-    #   - traefik.http.routers.watchtower-secure.entrypoints=websecure
+    #   - traefik.http.routers.watchtower-secure.entrypoints=https
     #   - traefik.http.routers.watchtower-secure.rule=Host(`watchtower.${DOMAIN}`)
     #   - traefik.http.routers.watchtower-secure.tls=true
     #   - traefik.http.routers.watchtower-secure.tls.certresolver=cloudflare

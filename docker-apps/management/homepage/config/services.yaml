@@ -1,4 +1,3 @@
----
 - Networking:
     - FritzBox:
         href: http://192.168.178.1
@@ -9,158 +8,122 @@
             type: fritzbox
             url: http://192.168.178.1
     - PiHole:
-        href: http://pihole.local/admin # https://pihole.sheetgenius.app
+        href: http://192.168.178.10/admin
         icon: pi-hole.svg
-        description: DNS - rpi-nico-small
-        ping: http://pihole.local/admin
-        widget:
-            type: pihole
-            url: http://pihole.local # https://pihole.sheetgenius.app
-            version: 6
-            key: '{{HOMEPAGE_VAR_PIHOLE_KEY}}'
-    # - Wireguard:
-    #     href: https://wireguard.sheetgenius.app
-    #     icon: wireguard.png
-    #     description: wireguard-prod-1 on rpi-angel-1
-    #     container: wg-easy
+        description: DNS - rpi-zero-2w
+        ping: http://192.168.178.10/admin
     - Traefik:
-        href: https://traefik-dashboard.sheetgenius.app/
+        href: https://traefik-dashboard.docker.datia.me/
         icon: traefik.svg
-        description: Reverse Proxy - rpi-angel-1
+        description: Reverse Proxy - docker
         container: traefik
 
 - Storage:
     - QNAP 462:
-        href: http://192.168.178.48:8080/cgi-bin/ # TODO
+        href: http://192.168.178.5:8080/cgi-bin/
         icon: qnap.svg
         description: qnap-462 NAS
-        ping: http://192.168.178.48:8080/cgi-bin/ # TODO
+        ping: http://192.168.178.5:8080/cgi-bin/
     - NextCloud:
-        href: "https://nextcloud.sheetgenius.app"
+        href: "https://nextcloud.docker.datia.me"
         icon: nextcloud.svg
-        description: Drive app - rpi-angel-1
+        description: Drive app - docker
         container: nextcloud
+    - Immich:
+        href: "https://immich.docker.datia.me"
+        icon: immich.svg
+        description: Photo app - docker
+        container: immich_server
+    - Paperless-ngx:
+        href: "https://paperless.docker.datia.me"
+        icon: paperless-ngx.svg
+        description: Document management - docker
+        container: paperless-ngx-paperless-webserver-1
 
 - Management:
     - Portainer:
-        href: https://portainer.sheetgenius.app
+        href: https://portainer.docker.datia.me
         icon: portainer.svg
-        description: Container management - rpi-angel-1
+        description: Container management - docker
         container: portainer
-    - Watchtower:
-        # href: https://watchtower.sheetgenius.app
-        icon: watchtower.svg
-        description: Container auto update - rpi-angel-1
-        container: watchtower
-    # - Home Assistant:
-    #     href: https://homeassistant.sheetgenius.app
-    #     icon: home-assistant.svg
-    #     description: Automation server - rpi-angel-1
-    #     container: homeassistant
-
+    # - Watchtower:
+    #     icon: watchtower.svg
+    #     description: Container auto update - docker
+    #     container: watchtower
 
 - Monitoring:
     - Grafana:
-        href: https://grafana.sheetgenius.app
-        description: Graphs used for device stats - rpi-angel-1
+        href: https://grafana.docker.datia.me
+        description: Graphs used for device stats - docker
         icon: grafana.svg
         container: grafana
-        # widget:
-        #     type: grafana
-        #     url: https://grafana.sheetgenius.app
-        #     username: {{HOMEPAGE_VAR_GRAFANA_USERNAME}}
-        #     password: {{HOMEPAGE_VAR_GRAFANA_PASSWORD}}
     - Uptime Kuma:
-        href: https://uptime-kuma.sheetgenius.app
-        description: Monitoring of apps - rpi-angel-1
+        href: https://uptime-kuma.docker.datia.me
+        description: Monitoring of apps - docker
         icon: uptime-kuma.svg
         container: uptime-kuma
-        # widget:
-        #     type: uptimekuma
-        #     url: https://uptime-kuma.sheetgenius.app
-        #     key: {{HOMEPAGE_VAR_UPTIMEKUMA_KEY}}
     - Prometheus:
-        href: https://prometheus.sheetgenius.app
-        description: Metric collector - rpi-angel-1
+        href: https://prometheus.docker.datia.me
+        description: Metric collector - docker
         icon: prometheus.svg
         container: prometheus
 
-# - AI:
-#     - ChatGPT:
-#         href: https://chatgpt.com
-#         icon: chatgpt.svg
-#     - Ollama:
-#         href: http://ollama:11434
-#         icon: si-ollama-#FFFFFF
-#         description: AI model server - rpi-angel-1
-#         container: ollama
-#     - OpenWebUI:
-#         href: http://openwebui:3003
-#         icon: chatgpt.svg
-#         description: Web UI for AI - rpi-angel-1
-#         container: openwebui
-
 - Media:
-    # - Plex:
-    #     href: https://plex.sheetgenius.app
-    #     icon: plex.svg
-    #     description: Media server - rpi-angel-1
-    #     container: plex
     - Jellyfin:
-        href: https://jellyfin.sheetgenius.app
+        href: http://192.168.178.50:8096
         icon: jellyfin.svg
-        description: Open source media server - rpi-angel-1
-        container: jellyfin
-    - Jellyfin Jellyseerr:
-        href: https://jellyseerr-jellyfin.sheetgenius.app
+        description: Open source media server - docker
+        ping: http://192.168.178.50:8096
+    - Jellyseerr (Jellyfin):
+        href: https://jellyseerr-jellyfin.docker.datia.me
         icon: jellyseerr.svg
-        description: Movie and TV show request management - rpi-angel-1
+        description: Movie and TV show request management - docker
         container: jellyseerr-jellyfin
-    # - AudioBookShelf:
-    #     href: https://audiobookshelf.sheetgenius.app
-    #     icon: audiobookshelf.svg
-    #     description: Audiobook server - rpi-angel-1
-    #     container: audiobookshelf
-    - Immich:
-        href: "https://immich.sheetgenius.app"
-        icon: immich.svg
-        description: Photo app - rpi-angel-1
-        container: immich_server
 
-
-- Torrent:
+- Download & Infrastructure:
     - Qbittorrent:
-        href: https://qbittorrent.sheetgenius.app
+        href: https://qbittorrent.docker.datia.me
         icon: si-qbittorrent
-        description: Torrent client - rpi-angel-1
+        description: Torrent client - docker
         container: qbittorrent
+    - Gluetun:
+        icon: gluetun.svg
+        description: VPN client - docker
+        container: gluetun
+
+- Content Management:
     - Prowlarr:
-        href: https://prowlarr.sheetgenius.app
+        href: https://prowlarr.docker.datia.me
         icon: prowlarr.svg
-        description: Indexer manager for all your apps - rpi-angel-1
+        description: Indexer manager for all your apps - docker
         container: prowlarr
-    - Sonarr:
-        href: https://sonarr.sheetgenius.app
-        icon: sonarr.svg
-        description: Automates the downloading of TV shows - rpi-angel-1
-        container: sonarr
     - Radarr:
-        href: https://radarr.sheetgenius.app
+        href: https://radarr.docker.datia.me
         icon: radarr.svg
-        description: Automates the downloading of movies - rpi-angel-1
+        description: Automates the downloading of movies - docker
         container: radarr
+    - Radarr-Anime:
+        href: https://radarr-anime.docker.datia.me
+        icon: radarr.svg
+        description: Automates the downloading of anime movies - docker
+        container: radarr-anime
+    - Sonarr:
+        href: https://sonarr.docker.datia.me
+        icon: sonarr.svg
+        description: Automates the downloading of TV shows - docker
+        container: sonarr
+    - Sonarr-Anime:
+        href: https://sonarr-anime.docker.datia.me
+        icon: sonarr.svg
+        description: Automates the downloading of anime TV shows - docker
+        container: sonarr-anime
     - Bazarr:
-        href: https://bazarr.sheetgenius.app
+        href: https://bazarr.docker.datia.me
         icon: bazarr.svg
-        description: Automates the downloading of subtitles - rpi-angel-1
+        description: Automates the downloading of subtitles - docker
         container: bazarr
-    - Readarr:
-        href: https://readarr.sheetgenius.app
-        icon: readarr.svg
-        description: Automates the downloading of books - rpi-angel-1
-        container: readarr
-    # - Lidarr:
-    #     href: https://lidarr.sheetgenius.app
-    #     icon: lidarr.svg
-    #     description: Automates the downloading of music - rpi-angel-1
-    #     container: lidarr
+    - Bazarr-Anime:
+        href: https://bazarr-anime.docker.datia.me
+        icon: bazarr.svg
+        description: Automates the downloading of anime subtitles - docker
+        container: bazarr-anime

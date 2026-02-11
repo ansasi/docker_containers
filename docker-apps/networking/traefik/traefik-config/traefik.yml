@@ -12,7 +12,7 @@ api:
   debug: true
 
 entryPoints:
-  web:
+  http:
     address: ":80"
     http:
       # middlewares:
@@ -21,11 +21,17 @@ entryPoints:
         entryPoint:
           to: https
           scheme: https
-  websecure:
+    transport:
+      respondingTimeouts:
+        readTimeout: 0s
+  https:
     address: ":443"
     # http:
     #   middlewares:
     #     - ip-allowlist@file
+    transport:
+      respondingTimeouts:
+        readTimeout: 0s
 
 certificatesResolvers:
   cloudflare:
@@ -49,5 +55,5 @@ providers:
     exposedByDefault: false
     watch: true
   file:
-    directory: /etc/traefik
+    directory: /etc/traefik/config
     watch: true

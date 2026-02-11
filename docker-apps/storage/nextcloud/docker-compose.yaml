@@ -7,39 +7,40 @@ volumes:
   nextcloud:
 
 services:
-  nextcloud-mariadb:
-    image: mariadb:10.11
-    container_name: nextcloud-mariadb
-    command: --transaction-isolation=READ-COMMITTED
-    volumes:
-      - ${WORKDIR}/nextcloud-mariadb:/var/lib/mysql
-    environment:
-      MYSQL_ROOT_PASSWORD: '${NEXTCLOUD_DB_ROOT_PASSWORD}'
-      MYSQL_PASSWORD: '${NEXTCLOUD_DB_PASSWORD}'
-      MYSQL_DATABASE: '${NEXTCLOUD_DB_NAME}'
-      MYSQL_USER: '${NEXTCLOUD_DB_USER}'
+  nextcloud-postgres:
+    # Note: Check the recommend version here: https://docs.nextcloud.com/server/latest/admin_manual/installation/system_requirements.html#server
+    image: postgres:17.7-alpine
+    container_name: nextcloud-postgres
     networks:
       - nextcloud
+    volumes:
+      - ${WORKDIR}/nextcloud-pg:/var/lib/postgresql/data
+    environment:
+      POSTGRES_DB: nextcloud_db
+      POSTGRES_USER: nextcloud_user
+      POSTGRES_PASSWORD: '${NEXTCLOUD_DB_PASSWORD}'
     restart: unless-stopped
-  
+
   nextcloud-redis:
-    image: redis:alpine
+    image: redis:8.2.2-alpine
     container_name: nextcloud-redis
     networks:
       - nextcloud
     restart: unless-stopped
 
   nextcloud:
-    image: nextcloud
+    image: nextcloud:32.0.5
     container_name: nextcloud
     environment:
-      MYSQL_PASSWORD: '${NEXTCLOUD_DB_PASSWORD}'
-      MYSQL_DATABASE: '${NEXTCLOUD_DB_NAME}'
-      MYSQL_USER: '${NEXTCLOUD_DB_USER}'
-      MYSQL_HOST: nextcloud-mariadb # This is the name of the service in the docker-compose file
+      POSTGRES_PASSWORD: '${NEXTCLOUD_DB_PASSWORD}'
+      POSTGRES_DB: nextcloud_db
+      POSTGRES_USER: nextcloud_user
+      POSTGRES_HOST: nextcloud-postgres # This is the name of the service in the docker-compose file
       NEXTCLOUD_ADMIN_USER: '${NEXTCLOUD_ADMIN_USER}'
       NEXTCLOUD_ADMIN_PASSWORD: '${NEXTCLOUD_ADMIN_PASSWORD}'
       NEXTCLOUD_TRUSTED_DOMAINS: '${DOMAIN}'
+      TRUSTED_PROXIES: '192.168.0.0/16 172.16.0.0/12'
+      # OVERWRITEPROTOCOL: 'https'
     volumes:
       - nextcloud:/var/www/html
     # ports:
@@ -48,11 +49,11 @@ services:
       # Traefik labels
       - traefik.enable=true
       - traefik.docker.network=proxy
-      - traefik.http.routers.nextcloud.entrypoints=web
+      - traefik.http.routers.nextcloud.entrypoints=http
       - traefik.http.routers.nextcloud.rule=Host(`nextcloud.${DOMAIN}`)
       - traefik.http.middlewares.nextcloud-https-redirect.redirectscheme.scheme=https
       - traefik.http.routers.nextcloud.middlewares=nextcloud-https-redirect
-      - traefik.http.routers.nextcloud-secure.entrypoints=websecure
+      - traefik.http.routers.nextcloud-secure.entrypoints=https
       - traefik.http.routers.nextcloud-secure.rule=Host(`nextcloud.${DOMAIN}`)
       - traefik.http.routers.nextcloud-secure.tls=true
       - traefik.http.routers.nextcloud-secure.tls.certresolver=cloudflare
@@ -63,5 +64,5 @@ services:
       - nextcloud
     restart: unless-stopped
     depends_on:
-      - nextcloud-mariadb
+      - nextcloud-postgres
       - nextcloud-redis
