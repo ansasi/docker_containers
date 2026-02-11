@@ -35,6 +35,18 @@ services:
       EMAIL_SMTP_PORT: ${EMAIL_SMTP_PORT}
       EMAIL_SMTP_USER: ${EMAIL_SMTP_USER}
       EMAIL_SMTP_PASSWORD: ${EMAIL_SMTP_PASSWORD}
+    
+    labels:
+      - traefik.enable=true
+      - traefik.docker.network=proxy
+      - traefik.http.routers.twenty-old.entrypoints=http
+      - traefik.http.routers.twenty-old.rule=Host(`twenty-old.${DOMAIN}`)
+      - traefik.http.routers.twenty-old-secure.entrypoints=https
+      - traefik.http.routers.twenty-old-secure.rule=Host(`twenty-old.${DOMAIN}`)
+      - traefik.http.routers.twenty-old-secure.tls=true
+      - traefik.http.routers.twenty-old-secure.tls.certresolver=cloudflare
+      - traefik.http.routers.twenty-old-secure.service=twenty-old
+      - traefik.http.services.twenty-old.loadbalancer.server.port=3000
 
     depends_on:
       db:
