@@ -1,6 +1,8 @@
 networks:
   twenty-2:
     driver: bridge
+  proxy:
+    external: true
 
 volumes:
   db-data:
@@ -13,6 +15,7 @@ services:
       - server-local-data:/app/packages/twenty-server/.local-storage
     networks:
       - twenty-2
+      - proxy
     ports:
       - "3005:3000"
     environment:
