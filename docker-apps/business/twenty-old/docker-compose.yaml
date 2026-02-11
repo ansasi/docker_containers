@@ -4,9 +4,7 @@ networks:
 
 volumes:
   db-data:
-    external: true
   server-local-data:
-    external: true
 
 services:
   server:
