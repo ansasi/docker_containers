@@ -29,7 +29,7 @@ services:
     restart: unless-stopped
 
   nextcloud:
-    image: nextcloud:32.0.5
+    image: nextcloud:32.0.6
     container_name: nextcloud
     environment:
       POSTGRES_PASSWORD: '${NEXTCLOUD_DB_PASSWORD}'
