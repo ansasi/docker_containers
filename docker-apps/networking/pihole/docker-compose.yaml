@@ -29,7 +29,7 @@ services:
 
   pihole:
     container_name: pihole
-    image: pihole/pihole:2025.11.1
+    image: pihole/pihole:v6
     ports:
       - "53:53/tcp"
       - "53:53/udp"
@@ -44,7 +44,7 @@ services:
       # TODO: Set a password to access the web interface
       FTLCONF_webserver_api_password: '${PIHOLE_WEB_PASSWORD}'
       # If using Docker's default `bridge` network, the DNS listening mode should be set to 'all'
-      FTLCONF_dns_listeningMode: 'all'
+      FTLCONF_dns_listeningMode: 'ALL'
       FTLCONF_dns_upstreams: '172.70.9.2#5053'
     volumes:
       - ${WORKDIR}/etc-pihole:/etc/pihole
