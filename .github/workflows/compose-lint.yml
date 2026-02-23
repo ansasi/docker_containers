@@ -7,7 +7,7 @@ jobs:
   compose-lint:
     runs-on: ubuntu-latest
     container:
-      image: docker:28.5-cli
+      image: docker:29.2-cli
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
       - name: Validate Compose files
