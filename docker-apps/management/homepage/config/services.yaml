@@ -74,11 +74,11 @@
         icon: jellyfin.svg
         description: Open source media server - docker
         ping: http://192.168.178.50:8096
-    - Jellyseerr (Jellyfin):
-        href: https://jellyseerr-jellyfin.docker.datia.me
-        icon: jellyseerr.svg
+    - Seerr (Jellyfin):
+        href: https://seerr-jellyfin.docker.datia.me
+        icon: seerr.svg
         description: Movie and TV show request management - docker
-        container: jellyseerr-jellyfin
+        container: seerr-jellyfin
 
 - Download & Infrastructure:
     - Qbittorrent:
