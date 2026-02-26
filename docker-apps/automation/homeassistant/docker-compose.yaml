@@ -36,7 +36,7 @@ services:
       - no-new-privileges:true
 
   homeassistant-db:
-    image: docker.io/postgres:16.12
+    image: docker.io/postgres:18.3
     container_name: homeassistant-db
     restart: unless-stopped
     environment:
