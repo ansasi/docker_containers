@@ -42,7 +42,7 @@ services:
 
   # seerr Image - Request management and media discovery tool
   seerr-jellyfin:
-    image: ghcr.io/seerr-team/seerr:v3.0.1
+    image: ghcr.io/seerr-team/seerr:v3.1.0
     container_name: seerr-jellyfin
     environment:
       PGID: "${PGID}"
