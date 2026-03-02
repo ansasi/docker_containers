@@ -188,7 +188,7 @@ services:
       FRAPPE_REDIS_QUEUE: redis://redis-queue:6379
 
   redis-queue:
-    image: redis:6.2-alpine
+    image: redis:8.6-alpine
     networks:
       - frappe_network
     deploy:
@@ -198,7 +198,7 @@ services:
       - redis-queue-data:/data
 
   redis-cache:
-    image: redis:6.2-alpine
+    image: redis:8.6-alpine
     networks:
       - frappe_network
     deploy:
