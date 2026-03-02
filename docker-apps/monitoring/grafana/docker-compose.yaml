@@ -47,7 +47,7 @@ services:
 
 # --- Prometheus Image
   prometheus:
-    image: prom/prometheus:v3.9.1
+    image: prom/prometheus:v3.10.0
     container_name: prometheus
     command:
       - '--config.file=/etc/config/prometheus.yml'
