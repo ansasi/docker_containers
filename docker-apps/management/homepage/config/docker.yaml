@@ -8,6 +8,3 @@
 
 # my-docker:
 #   socket: /var/run/docker.sock
-
-rpi-angel-1:
-    socket: /var/run/docker.sock

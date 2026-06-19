@@ -41,15 +41,21 @@
         container: paperless-ngx-paperless-webserver-1
 
 - Management:
+    - Proxmox:
+        href: http://192.168.178.20:8006
+        icon: proxmox.svg
+        description: Virtualization - proxmox
+        ping: http://192.168.178.20:8006
+    - PBS:
+        href: http://192.168.178.30:8007
+        icon: proxmox.svg
+        description: Backup server - proxmox backup server
+        ping: http://192.168.178.30:8007
     - Portainer:
         href: https://portainer.docker.datia.me
         icon: portainer.svg
         description: Container management - docker
         container: portainer
-    # - Watchtower:
-    #     icon: watchtower.svg
-    #     description: Container auto update - docker
-    #     container: watchtower
 
 - Monitoring:
     - Grafana:
