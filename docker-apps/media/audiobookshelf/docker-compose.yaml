@@ -1,0 +1,31 @@
+services:
+  audiobookshelf:
+    image: ghcr.io/advplyr/audiobookshelf:v2.35.1
+    restart: unless-stopped
+    ports:
+      - 13378:80 # remove if you're using a proxy
+    volumes:
+      - ${NAS_STORAGE_LOCATION}/Audiobooks:/audiobooks
+      # - </path/to/podcasts>:/podcasts
+      -  ${WORKDIR}/audiobookshelf:/config
+      -  ${WORKDIR}/audiobookshelf:/metadata
+    environment:
+      - TZ=Europe/Zurich
+    networks:
+      - proxy
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.audiobookshelf.entrypoints=http"
+      - "traefik.http.routers.audiobookshelf.rule=Host(`audiobookshelf.${DOMAIN}`)"
+      - "traefik.http.middlewares.audiobookshelf-https-redirect.redirectscheme.scheme=https"
+      - "traefik.http.routers.audiobookshelf.middlewares=audiobookshelf-https-redirect"
+      - "traefik.http.routers.audiobookshelf-secure.entrypoints=https"
+      - "traefik.http.routers.audiobookshelf-secure.rule=Host(`audiobookshelf.${DOMAIN}`)"
+      - "traefik.http.routers.audiobookshelf-secure.tls=true"
+      - "traefik.http.routers.audiobookshelf-secure.service=audiobookshelf"
+      - "traefik.http.services.audiobookshelf.loadbalancer.server.port=80"
+      - "traefik.docker.network=proxy"
+
+networks:
+  proxy:
+    external: true
