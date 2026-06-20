@@ -40,16 +40,16 @@ services:
 
   ###--- SABnzbd - Download client - Used to download NZB from Usenet groups ---###
 
-  # Jellyseerr Image - Request management and media discovery tool
-  jellyseerr-jellyfin:
-    image: fallenbagel/jellyseerr:2.7.3
-    container_name: jellyseerr-jellyfin
+  # seerr Image - Request management and media discovery tool
+  seerr-jellyfin:
+    image: ghcr.io/seerr-team/seerr:v3.3.0
+    container_name: seerr-jellyfin
     environment:
       PGID: "${PGID}"
       PUID: "${PUID}"
       TZ: "Etc/UTC"
     volumes:
-      - ${WORKDIR}/jellyseerr/config:/app/config
+      - ${WORKDIR}/seerr/config:/app/config
     # ports:
     #   - 8111:5055
     networks:
@@ -58,20 +58,26 @@ services:
       # Traefik labels
       - traefik.enable=true
       - traefik.docker.network=proxy
-      - traefik.http.routers.jellyseerr-jellyfin.entrypoints=http
-      - traefik.http.routers.jellyseerr-jellyfin.rule=Host(`jellyseerr-jellyfin.${DOMAIN}`)
-      - traefik.http.routers.jellyseerr-jellyfin-secure.entrypoints=https
-      - traefik.http.routers.jellyseerr-jellyfin-secure.rule=Host(`jellyseerr-jellyfin.${DOMAIN}`)
-      - traefik.http.routers.jellyseerr-jellyfin-secure.tls=true
-      - traefik.http.routers.jellyseerr-jellyfin-secure.tls.certresolver=cloudflare
-      - traefik.http.services.jellyseerr-jellyfin.loadbalancer.server.port=5055
+      - traefik.http.routers.seerr-jellyfin.entrypoints=http
+      - traefik.http.routers.seerr-jellyfin.rule=Host(`seerr-jellyfin.${DOMAIN}`)
+      - traefik.http.routers.seerr-jellyfin-secure.entrypoints=https
+      - traefik.http.routers.seerr-jellyfin-secure.rule=Host(`seerr-jellyfin.${DOMAIN}`)
+      - traefik.http.routers.seerr-jellyfin-secure.tls=true
+      - traefik.http.routers.seerr-jellyfin-secure.tls.certresolver=cloudflare
+      - traefik.http.services.seerr-jellyfin.loadbalancer.server.port=5055
       # Watchtower labels
       - com.centurylinklabs.watchtower.enable=false
+    healthcheck:
+      test: wget --no-verbose --tries=1 --spider http://localhost:5055/api/v1/status || exit 1
+      start_period: 20s
+      timeout: 3s
+      interval: 15s
+      retries: 3
     restart: unless-stopped
 
   # Prowlarr - Indexer manager for all your media content
   prowlarr:
-    image: linuxserver/prowlarr:2.3.0
+    image: linuxserver/prowlarr:2.4.0
     container_name: prowlarr
     restart: unless-stopped
     environment:
@@ -97,7 +103,7 @@ services:
   ###--- Radarr - Library Manager for Movie content management ---###
   ### Do not use this container to download 4K Movie content. Enable container below to have separate instance just for 4K Movie content ###
   radarr:
-    image: linuxserver/radarr:6.0.4
+    image: linuxserver/radarr:6.2.1
     container_name: radarr
     restart: unless-stopped
     environment:
@@ -133,7 +139,7 @@ services:
   ###--- Radarr Anime - Library Manager for Anime Movie content management ---###
   ### Enable this container to get separate instance for Anime Movie content ###
   radarr-anime:
-    image: linuxserver/radarr:6.0.4
+    image: linuxserver/radarr:6.2.1
     container_name: radarr-anime
     restart: unless-stopped
     environment:
@@ -207,7 +213,7 @@ services:
   ###--- Sonarr - Library Manager for TV Show / Series / Anime content management ---###
   ### Do not use this container to download 4K TV content. Enable container below to have separate instance just for 4K TV content ###
   sonarr:
-    image: linuxserver/sonarr:4.0.16
+    image: linuxserver/sonarr:4.0.17
     container_name: sonarr
     restart: unless-stopped
     environment:
@@ -247,7 +253,7 @@ services:
 ###--- Sonarr Anime - Library Manager for Anime content management ---###
   ### Enable this container to get separate instance for Anime content ###
   sonarr-anime:
-    image: linuxserver/sonarr:4.0.16
+    image: linuxserver/sonarr:4.0.17
     container_name: sonarr-anime
     restart: unless-stopped
     environment:
@@ -318,7 +324,7 @@ services:
 
   # Bazarr - Library Manager for Subtitle management
   bazarr:
-    image: linuxserver/bazarr:1.5.5
+    image: linuxserver/bazarr:1.5.6
     container_name: bazarr
     restart: unless-stopped
     environment:
@@ -352,7 +358,7 @@ services:
       - com.centurylinklabs.watchtower.enable=false
     
   bazarr-anime:
-    image: linuxserver/bazarr:1.5.5
+    image: linuxserver/bazarr:1.5.6
     container_name: bazarr-anime
     restart: unless-stopped
     environment:
@@ -390,7 +396,7 @@ services:
     
   # FlareSolverr - Proxy for bypassing Cloudflare protection
   flaresolverr:
-    image: flaresolverr/flaresolverr:v3.4.6
+    image: flaresolverr/flaresolverr:v3.5.0
     container_name: flaresolverr
     restart: unless-stopped
     environment:

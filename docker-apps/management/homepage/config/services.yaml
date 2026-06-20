@@ -41,15 +41,21 @@
         container: paperless-ngx-paperless-webserver-1
 
 - Management:
+    - Proxmox:
+        href: http://192.168.178.20:8006
+        icon: proxmox.svg
+        description: Virtualization - proxmox
+        ping: http://192.168.178.20:8006
+    - PBS:
+        href: http://192.168.178.30:8007
+        icon: proxmox.svg
+        description: Backup server - proxmox backup server
+        ping: http://192.168.178.30:8007
     - Portainer:
         href: https://portainer.docker.datia.me
         icon: portainer.svg
         description: Container management - docker
         container: portainer
-    # - Watchtower:
-    #     icon: watchtower.svg
-    #     description: Container auto update - docker
-    #     container: watchtower
 
 - Monitoring:
     - Grafana:
@@ -74,11 +80,11 @@
         icon: jellyfin.svg
         description: Open source media server - docker
         ping: http://192.168.178.50:8096
-    - Jellyseerr (Jellyfin):
-        href: https://jellyseerr-jellyfin.docker.datia.me
-        icon: jellyseerr.svg
+    - Seerr (Jellyfin):
+        href: https://seerr-jellyfin.docker.datia.me
+        icon: seerr.svg
         description: Movie and TV show request management - docker
-        container: jellyseerr-jellyfin
+        container: seerr-jellyfin
 
 - Download & Infrastructure:
     - Qbittorrent:
