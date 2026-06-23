@@ -1,0 +1,45 @@
+---
+networks:
+  proxy:
+    external: true
+
+volumes:
+  hermes:
+
+services:
+  hermes:
+    container_name: hermes
+    image: nousresearch/hermes-agent:v2026.6.19
+    command: gateway run
+    # ports:
+    #   - "8642:8642" # gateway API
+    #   - "9119:9119" # dashboard (only reached when HERMES_DASHBOARD=1)
+    environment:
+      HERMES_DASHBOARD: "1"
+      TELEGRAM_BOT_TOKEN: ${TELEGRAM_BOT_TOKEN}
+      # Uncomment to forward specific env vars instead of using ~/.hermes/.env:
+      # ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY}
+      # OPENAI_API_KEY: ${OPENAI_API_KEY}
+    volumes:
+      - hermes:/opt/data
+    deploy:
+      resources:
+        limits:
+          memory: 4G
+          cpus: "2.0"
+    labels:
+      - traefik.enable=true
+      - traefik.docker.network=proxy
+      - traefik.http.routers.hermes.entrypoints=http
+      - traefik.http.routers.hermes.rule=Host(`hermes.${DOMAIN}`)
+      - traefik.http.routers.hermes-secure.entrypoints=https
+      - traefik.http.routers.hermes-secure.rule=Host(`hermes.${DOMAIN}`)
+      - traefik.http.routers.hermes-secure.tls=true
+      - traefik.http.routers.hermes-secure.tls.certresolver=cloudflare
+      - traefik.http.routers.hermes-secure.service=hermes
+      - traefik.http.services.hermes.loadbalancer.server.port=9119
+    networks:
+      - proxy
+    restart: unless-stopped
+    security_opt:
+      - no-new-privileges:true
