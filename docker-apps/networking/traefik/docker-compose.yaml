@@ -17,8 +17,11 @@ services:
       - /etc/localtime:/etc/localtime:ro
       - /var/run/docker.sock:/var/run/docker.sock:ro
       - ./traefik-config/traefik.yml:/etc/traefik/traefik.yml:ro
-      # - ./traefik-config/config.yml:/etc/traefik/config/config.yml # In case we need some pre-configuration that we cannot create with labels.
+      - ./traefik-config/config:/etc/traefik/config:ro # File-provider dynamic config (currently: CrowdSec bouncer middleware)
       - ./certs:/etc/traefik/certs/
+      # Access log, shared read-only with the crowdsec stack (TRAEFIK_LOGS_DIR
+      # in its .env must point at this same host path).
+      - ${TRAEFIK_LOGS_DIR}:/var/log/traefik/
     networks:
       - proxy
     labels:
