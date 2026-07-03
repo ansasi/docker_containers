@@ -1,17 +1,35 @@
 # TODO — Apps to Add
 
-Prioritized roadmap for the homelab.
-
 For the full current-state inventory (what's active, interim, deferred, or
 rejected across all hosts), see the
 [homelab README's Apps & status table](https://github.com/ansasi/homelab#apps--status) —
 this file only tracks apps that are still candidates to add.
 
-Status legend: 🔥 Next up · 🧭 Needs research/decision · 🕒 Needs time investment · ⏳ Deferred
+Priority legend: 🔴 High · 🟡 Medium · 🟢 Low · ⚫ Resolved (not needed)
 
-## Phase 1 — Next up
+## Security & Authentication
 
-- [ ] **Gitea** 🔥 — Self-hosted Git + CI/CD. Needed because GitHub Actions can't reach
+- [ ] **CrowdSec** 🔴 — Definitely important, but time-to-deploy is unknown — treat as a
+  research spike before committing to a date.
+- [ ] **Authentik** 🟢 — Not a priority right now; likely to be built on the Kubernetes
+  cluster once it matures, not the Docker host. Pick one of Authentik/Authelia, not both.
+- [ ] **Authelia** 🟢 — Same as above; alternative to Authentik, not both.
+- [x] ~~**Vaultwarden**~~ ⚫ — Not needed. Using Proton Pass for secrets/vaults instead,
+  which already isolates homelab credentials without adding infra to maintain.
+
+## Networking
+
+- [ ] **NetBird** 🟡 — Preferred (open source), but not finalized against Tailscale.
+- [ ] **Tailscale** 🟡 — Alternative to NetBird; pick one, not both.
+
+## Monitoring
+
+- [ ] **Beszel** 🟡 — Want to learn more before deciding vs. Grafana/Netdata.
+- [ ] **Speedtest Tracker** 🟡 — Needs evaluation.
+
+## Development
+
+- [ ] **Gitea** 🔴 — Self-hosted Git + CI/CD. Needed because GitHub Actions can't reach
   the homelab, and the homelab doesn't run 24/7 (it's powered on/used on demand), so it
   can't act as an always-on git remote by itself either. Was postponed in favor of
   GitLab, but GitLab is too heavy to run on-demand. Also intended to close the gap left
@@ -21,32 +39,20 @@ Status legend: 🔥 Next up · 🧭 Needs research/decision · 🕒 Needs time i
   GitHub/GitLab.com as the primary remote and mirror to Gitea when the homelab is up, vs.
   self-hosted runners that only register while online. Also want self-hosted repos backed
   up to GitHub or GitLab.
-- [ ] **FreshRSS** 🔥 — No RSS reader today; wanted soon.
-- [ ] **SearXNG** 🔥 — Private search backend for the upcoming Hermes bot integration.
-- [ ] **CrowdSec** 🔥 — Important, but time-to-deploy is unknown — treat as a research
-  spike before committing to a date.
 
-## Phase 2 — Needs research or a decision
+## Communication
 
-- [ ] **Beszel** 🧭 — Want to learn more before deciding vs. Grafana/Netdata.
-- [ ] **Speedtest Tracker** 🧭
-- [ ] **Ntfy** 🧭 — Evaluate alongside the observability apps above.
-- [ ] **Tailscale** vs **NetBird** 🧭 — Leaning NetBird (prefer open source), not
-  finalized.
+- [ ] **Ntfy** 🟡 — Evaluate alongside the observability apps above (Beszel, Speedtest
+  Tracker).
 
-## Phase 3 — Needs time investment (not urgent)
+## Search & RSS
 
-- [ ] **Memos**
-- [ ] **Outline**
-- [ ] **Stirling-PDF**
-- [ ] **IT-Tools**
+- [ ] **SearXNG** 🔴 — Private search backend for the upcoming Hermes bot integration.
+- [ ] **FreshRSS** 🔴 — No RSS reader today; wanted soon.
 
-## Deferred
+## Productivity & Tools
 
-- [ ] **Authentik** / **Authelia** ⏳ — SSO isn't a priority right now; likely to be
-  built on the Kubernetes cluster once it matures, not the Docker host.
-
-## Not needed
-
-- ~~**Vaultwarden**~~ — Using Proton Pass for secrets/vaults instead, which already
-  isolates homelab credentials without adding infra to maintain.
+- [ ] **Memos** 🟢 — Needs time investment.
+- [ ] **Outline** 🟢 — Needs time investment.
+- [ ] **Stirling-PDF** 🟢 — Needs time investment.
+- [ ] **IT-Tools** 🟢 — Needs time investment.
