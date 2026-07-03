@@ -21,7 +21,7 @@ services:
       - ./certs:/etc/traefik/certs/
       # Access log, shared read-only with the crowdsec stack (TRAEFIK_LOGS_DIR
       # in its .env must point at this same host path).
-      - ${TRAEFIK_LOGS_DIR}:/var/log/traefik/
+      - ${TRAEFIK_LOGS_DIR:-/var/log/traefik}:/var/log/traefik/
     networks:
       - proxy
     labels:
