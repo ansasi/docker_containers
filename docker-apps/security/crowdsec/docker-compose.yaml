@@ -11,9 +11,9 @@ services:
       COLLECTIONS: 'crowdsecurity/traefik'
       CUSTOM_HOSTNAME: crowdsec
       # Auto-registers the "traefik" bouncer on startup with this key, so no
-      # manual `cscli bouncers add` step is needed. Must match the
-      # crowdsecLapiKey placeholder in
-      # ../networking/traefik/traefik-config/config/crowdsec.yml
+      # manual `cscli bouncers add` step is needed. Must match
+      # CROWDSEC_BOUNCER_API_KEY in the traefik stack's .env
+      # (docker-apps/networking/traefik).
       BOUNCER_KEY_TRAEFIK: '${CROWDSEC_BOUNCER_API_KEY}'
     volumes:
       - ./acquis.yaml:/etc/crowdsec/acquis.yaml:ro
