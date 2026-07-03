@@ -213,7 +213,7 @@ services:
   ###--- Sonarr - Library Manager for TV Show / Series / Anime content management ---###
   ### Do not use this container to download 4K TV content. Enable container below to have separate instance just for 4K TV content ###
   sonarr:
-    image: linuxserver/sonarr:4.0.17
+    image: linuxserver/sonarr:4.0.19
     container_name: sonarr
     restart: unless-stopped
     environment:
@@ -253,7 +253,7 @@ services:
 ###--- Sonarr Anime - Library Manager for Anime content management ---###
   ### Enable this container to get separate instance for Anime content ###
   sonarr-anime:
-    image: linuxserver/sonarr:4.0.17
+    image: linuxserver/sonarr:4.0.19
     container_name: sonarr-anime
     restart: unless-stopped
     environment:
