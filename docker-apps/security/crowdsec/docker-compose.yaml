@@ -22,7 +22,7 @@ services:
       # Shared with the traefik stack, which writes its access log here.
       # Must be set to the same host path as TRAEFIK_LOGS_DIR in the
       # traefik stack's .env.
-      - ${TRAEFIK_LOGS_DIR}:/var/log/traefik/:ro
+      - ${TRAEFIK_LOGS_DIR:-/var/log/traefik}:/var/log/traefik/:ro
     networks:
       - proxy
     security_opt:
