@@ -13,6 +13,10 @@ services:
     environment:
       CF_DNS_API_TOKEN: '${CF_DNS_API_TOKEN}'
       CF_API_EMAIL: '${CF_API_EMAIL}'
+      # Injected into the crowdsec-bouncer middleware via Go templating in
+      # traefik-config/config/crowdsec.yml; must match the key in the
+      # crowdsec stack's .env (docker-apps/security/crowdsec).
+      CROWDSEC_BOUNCER_API_KEY: '${CROWDSEC_BOUNCER_API_KEY}'
     volumes:
       - /etc/localtime:/etc/localtime:ro
       - /var/run/docker.sock:/var/run/docker.sock:ro
