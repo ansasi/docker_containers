@@ -8,6 +8,10 @@ jobs:
     runs-on: ubuntu-latest
     container:
       image: docker:29.5-cli
+    env:
+      # Placeholder so files that use ${WORKDIR} directly as a volume source
+      # (not just ${WORKDIR}/<subpath>) still get a valid, non-empty path.
+      WORKDIR: /home/ci-lint
     steps:
       - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7
       - name: Validate Compose files
