@@ -1,0 +1,30 @@
+networks:
+  proxy:
+    external: true
+
+services:
+  crowdsec:
+    image: crowdsecurity/crowdsec:v1.7.8
+    container_name: crowdsec
+    environment:
+      GID: '${GID:-1000}'
+      COLLECTIONS: 'crowdsecurity/traefik'
+      CUSTOM_HOSTNAME: crowdsec
+      # Auto-registers the "traefik" bouncer on startup with this key, so no
+      # manual `cscli bouncers add` step is needed. Must match the
+      # crowdsecLapiKey placeholder in
+      # ../networking/traefik/traefik-config/config/crowdsec.yml
+      BOUNCER_KEY_TRAEFIK: '${CROWDSEC_BOUNCER_API_KEY}'
+    volumes:
+      - ./acquis.yaml:/etc/crowdsec/acquis.yaml:ro
+      - ${WORKDIR}/db:/var/lib/crowdsec/data/
+      - ${WORKDIR}/config:/etc/crowdsec/
+      # Shared with the traefik stack, which writes its access log here.
+      # Must be set to the same host path as TRAEFIK_LOGS_DIR in the
+      # traefik stack's .env.
+      - ${TRAEFIK_LOGS_DIR}:/var/log/traefik/:ro
+    networks:
+      - proxy
+    security_opt:
+      - no-new-privileges:true
+    restart: unless-stopped
