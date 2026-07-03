@@ -23,6 +23,17 @@ Traefik is a popular reverse proxy that integrates well with Docker to manage an
 
 *Note: `Nextcloud AIO` configuration is configured in `config.yml` file, as it does not yet allow Traefik labels*
 
+## CrowdSec bouncer
+
+Every request through both entrypoints is checked against CrowdSec via the
+`crowdsec-bouncer-traefik-plugin`, configured in `traefik.yml`
+(`experimental.plugins`, `entryPoints.*.http.middlewares`) and
+`traefik-config/config/crowdsec.yml` (the middleware itself). This applies
+globally without needing a `crowdsec-bouncer` label on every other
+service. See [docker-apps/security/crowdsec](../../security/crowdsec) for
+setup steps — it must be deployed alongside this stack, and `TRAEFIK_LOGS_DIR`
+in this stack's `.env` must point at the same host path as in crowdsec's.
+
 ## Usage Examples in other Docker Compose Files
 
 ### Portainer
