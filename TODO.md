@@ -17,9 +17,6 @@ Priority legend: 🔴 High · 🟡 Medium · 🟢 Low · ⚫ Resolved (not neede
   it matures, not the Docker host. Pick one of Authentik/Authelia, not both.
 - [ ] **Authelia** 🟢 — Lightweight auth proxy for 2FA in front of any reverse proxy.
   Same as above; alternative to Authentik, not both.
-- [ ] **CrowdSec** 🔴 — Collaborative IPS / threat intelligence layer. Definitely
-  important, but time-to-deploy is unknown — treat as a research spike before
-  committing to a date.
 
 ## Networking
 
