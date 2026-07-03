@@ -6,17 +6,27 @@ global:
 log:
   level: DEBUG
 
+accessLog:
+  filePath: /var/log/traefik/access.log
+
 api:
   insecure: true # allows connecting to dashboard through port 8080
   dashboard: true
   debug: true
 
+experimental:
+  plugins:
+    bouncer:
+      moduleName: github.com/maxlerebourg/crowdsec-bouncer-traefik-plugin
+      version: v1.6.0
+
 entryPoints:
   http:
     address: ":80"
     http:
-      # middlewares:
-      #   - ip-allowlist@file
+      middlewares:
+        - crowdsec-bouncer@file
+      # - ip-allowlist@file
       redirections:
         entryPoint:
           to: https
@@ -26,9 +36,10 @@ entryPoints:
         readTimeout: 0s
   https:
     address: ":443"
-    # http:
-    #   middlewares:
-    #     - ip-allowlist@file
+    http:
+      middlewares:
+        - crowdsec-bouncer@file
+      # - ip-allowlist@file
     transport:
       respondingTimeouts:
         readTimeout: 0s
