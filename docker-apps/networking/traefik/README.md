@@ -31,8 +31,17 @@ Every request through both entrypoints is checked against CrowdSec via the
 `traefik-config/config/crowdsec.yml` (the middleware itself). This applies
 globally without needing a `crowdsec-bouncer` label on every other
 service. See [docker-apps/security/crowdsec](../../security/crowdsec) for
-setup steps — it must be deployed alongside this stack, and `TRAEFIK_LOGS_DIR`
-in this stack's `.env` must point at the same host path as in crowdsec's.
+setup steps — it must be deployed alongside this stack, and this stack's
+`.env` needs two extra variables shared with crowdsec's:
+
+```dotenv
+CROWDSEC_BOUNCER_API_KEY=<same key as in crowdsec's .env>
+TRAEFIK_LOGS_DIR=<same host path as in crowdsec's .env>
+```
+
+The key is injected into the middleware at runtime via Go templating
+(`{{ env "CROWDSEC_BOUNCER_API_KEY" }}` in `crowdsec.yml`), so no secret
+is ever committed to this repo.
 
 ## Usage Examples in other Docker Compose Files
 
