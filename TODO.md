@@ -14,10 +14,13 @@ Status legend: 🔥 Next up · 🧭 Needs research/decision · 🕒 Needs time i
 - [ ] **Gitea** 🔥 — Self-hosted Git + CI/CD. Needed because GitHub Actions can't reach
   the homelab, and the homelab doesn't run 24/7 (it's powered on/used on demand), so it
   can't act as an always-on git remote by itself either. Was postponed in favor of
-  GitLab, but GitLab is too heavy to run on-demand. **Open decision:** how repos stay
-  pushable while the homelab is off — e.g. keep GitHub/GitLab.com as the primary remote
-  and mirror to Gitea when the homelab is up, vs. self-hosted runners that only register
-  while online. Also want self-hosted repos backed up to GitHub or GitLab.
+  GitLab, but GitLab is too heavy to run on-demand. Also intended to close the gap left
+  by decommissioning Watchtower: deploy the updates that Renovate (already active, see
+  `.renovaterc.json5`) opens PRs for, instead of relying on Watchtower's blind auto-pull.
+  **Open decision:** how repos stay pushable while the homelab is off — e.g. keep
+  GitHub/GitLab.com as the primary remote and mirror to Gitea when the homelab is up, vs.
+  self-hosted runners that only register while online. Also want self-hosted repos backed
+  up to GitHub or GitLab.
 - [ ] **FreshRSS** 🔥 — No RSS reader today; wanted soon.
 - [ ] **SearXNG** 🔥 — Private search backend for the upcoming Hermes bot integration.
 - [ ] **CrowdSec** 🔥 — Important, but time-to-deploy is unknown — treat as a research
