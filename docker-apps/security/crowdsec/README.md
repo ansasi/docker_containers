@@ -41,23 +41,26 @@ extra network hop).*
    TRAEFIK_LOGS_DIR=/path/to/traefik/logs
    ```
 
-3. Make sure traefik's `.env` also sets `TRAEFIK_LOGS_DIR` to that same
-   path, and that its `docker-compose.yaml`/`traefik-config` changes from
-   this same change have been deployed (access log to file, plugin
-   enabled, `crowdsec-bouncer@file` wired into both entrypoints).
+3. Add to traefik's `.env` (`docker-apps/networking/traefik`):
 
-4. Edit
-   [`../../networking/traefik/traefik-config/config/crowdsec.yml`](../../networking/traefik/traefik-config/config/crowdsec.yml)
-   and replace the `crowdsecLapiKey` placeholder with the same key from
-   step 1.
+   ```dotenv
+   CROWDSEC_BOUNCER_API_KEY=<same key from step 1>
+   TRAEFIK_LOGS_DIR=<same path as above>
+   ```
 
-5. Start CrowdSec:
+   The key never lives in a git-tracked file: Traefik's dynamic config
+   ([`traefik-config/config/crowdsec.yml`](../../networking/traefik/traefik-config/config/crowdsec.yml))
+   reads it from the container environment via Go templating
+   (`{{ env "CROWDSEC_BOUNCER_API_KEY" }}`), and CrowdSec auto-registers
+   the bouncer from `BOUNCER_KEY_TRAEFIK` on startup.
+
+4. Start CrowdSec:
 
    ```bash
    docker compose up -d
    ```
 
-6. Restart Traefik so it downloads the plugin and picks up the new static
+5. Restart Traefik so it downloads the plugin and picks up the new static
    config:
 
    ```bash
@@ -70,26 +73,34 @@ extra network hop).*
 # Bouncer auto-registered via BOUNCER_KEY_TRAEFIK
 docker exec crowdsec cscli bouncers list
 
-# Collection installed and traefik-logs parser receiving lines
+# Collections installed (crowdsecurity/traefik pulls in
+# base-http-scenarios and http-cve) and traefik-logs parser receiving lines
 docker exec crowdsec cscli collections list
 docker exec crowdsec cscli metrics
 
-# Traefik logs should show the plugin loaded with no errors
+# Traefik logs should show "Plugins loaded" with no bouncer errors
 docker logs traefik --tail 50
 ```
 
 To confirm enforcement, add a short-lived manual ban for your own IP and
-check you get a 403 from any `Host()` behind Traefik until it expires:
+check you get a 403 from any `Host()` behind Traefik until it expires
+(the plugin runs in stream mode, so a fresh decision can take up to its
+60s refresh interval to apply):
 
 ```bash
-docker exec crowdsec cscli decisions add --ip <your-ip> --duration 1m --reason "test"
+docker exec crowdsec cscli decisions add --ip <your-ip> --duration 5m --reason "test"
 docker exec crowdsec cscli decisions list
+# ... after the test:
+docker exec crowdsec cscli decisions delete --ip <your-ip>
 ```
+
+Note: Traefik does not access-log requests answered by the entrypoint
+http→https redirect itself, so detection feeds off the https traffic —
+which is where every real request ends up anyway. Enforcement applies on
+both entrypoints.
 
 ## Notes / possible enhancements
 
-- **More coverage:** add `crowdsecurity/http-cve` to `COLLECTIONS` for
-  generic CVE-probing detection on top of the base Traefik scenarios.
 - **AppSec/WAF:** CrowdSec's Traefik plugin can also run requests through
   the AppSec (WAF) engine in real time (`crowdsecurity/appsec-virtual-patching`,
   `crowdsecurity/appsec-generic-rules` collections, an extra listener on
@@ -99,3 +110,6 @@ docker exec crowdsec cscli decisions list
 - **Central console:** optionally enroll into
   [app.crowdsec.net](https://app.crowdsec.net) for a dashboard and the
   community blocklist: `docker exec crowdsec cscli console enroll <enroll-key>`.
+- **Log rotation:** Traefik's access log grows unbounded; consider
+  logrotate on the host for `$TRAEFIK_LOGS_DIR/access.log` (CrowdSec's
+  file acquisition follows rotation).
