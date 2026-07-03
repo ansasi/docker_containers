@@ -1,0 +1,13 @@
+http:
+  middlewares:
+    crowdsec-bouncer:
+      plugin:
+        bouncer:
+          enabled: true
+          crowdsecMode: stream
+          crowdsecLapiScheme: http
+          crowdsecLapiHost: crowdsec:8080
+          # Must match CROWDSEC_BOUNCER_API_KEY in the crowdsec stack's
+          # .env (docker-apps/security/crowdsec) — generate with:
+          #   openssl rand -hex 32
+          crowdsecLapiKey: REPLACE_WITH_GENERATED_BOUNCER_KEY
