@@ -1,19 +1,31 @@
 ---
+# Hermes agent — instance-templated so the SAME file can run multiple agents
+# on one host without collisions.
+#
+# Everything that must be unique per agent is derived from ${HERMES_INSTANCE}:
+# the container name, the Traefik router/service names, the per-agent hostnames
+# and (via ${WORKDIR}) the data directory. Deploy each agent as its own Compose
+# project so they never share state:
+#
+#   HERMES_INSTANCE=1 WORKDIR=/…/hermes-1 docker compose -p hermes-1 up -d
+#   HERMES_INSTANCE=2 WORKDIR=/…/hermes-2 docker compose -p hermes-2 up -d
+#
+# The Ansible play (homelab: ansible/playbooks/rpi-4.yml) loops over
+# `hermes_instances` and sets these for you.
+#
+# No host ports are published — each agent is reached only through Traefik, as
+# the rpi-4 play documents. Both surfaces get their own per-instance hostname:
+#   - dashboard   -> hermes-${HERMES_INSTANCE}.${DOMAIN}     (port 9119)
+#   - gateway API -> hermes-${HERMES_INSTANCE}-gw.${DOMAIN}  (port 8642)
 networks:
   proxy:
     external: true
 
-volumes:
-  hermes:
-
 services:
   hermes:
-    container_name: hermes
+    container_name: hermes-${HERMES_INSTANCE}
     image: nousresearch/hermes-agent:v2026.7.1
     command: gateway run
-    ports:
-      - "8642:8642" # gateway API
-      - "9119:9119" # dashboard (only reached when HERMES_DASHBOARD=1)
     environment:
       HERMES_DASHBOARD: "1"
       HERMES_DASHBOARD_BASIC_AUTH_USERNAME: "${HERMES_DASHBOARD_BASIC_AUTH_USERNAME}"
@@ -24,19 +36,34 @@ services:
     deploy:
       resources:
         limits:
-          memory: 4G
-          cpus: "2.0"
+          # Lower these per instance so several agents fit on one Pi; the
+          # defaults preserve the original single-agent budget (4G / 2 CPU).
+          memory: ${HERMES_MEM_LIMIT:-4G}
+          cpus: "${HERMES_CPU_LIMIT:-2.0}"
     labels:
       - traefik.enable=true
       - traefik.docker.network=proxy
-      - traefik.http.routers.hermes.entrypoints=http
-      - traefik.http.routers.hermes.rule=Host(`hermes.${DOMAIN}`)
-      - traefik.http.routers.hermes-secure.entrypoints=https
-      - traefik.http.routers.hermes-secure.rule=Host(`hermes.${DOMAIN}`)
-      - traefik.http.routers.hermes-secure.tls=true
-      - traefik.http.routers.hermes-secure.tls.certresolver=cloudflare
-      - traefik.http.routers.hermes-secure.service=hermes
-      - traefik.http.services.hermes.loadbalancer.server.port=9119
+      # --- dashboard (port 9119) ---
+      - traefik.http.routers.hermes-${HERMES_INSTANCE}-dash.entrypoints=http
+      - traefik.http.routers.hermes-${HERMES_INSTANCE}-dash.rule=Host(`hermes-${HERMES_INSTANCE}.${DOMAIN}`)
+      - traefik.http.routers.hermes-${HERMES_INSTANCE}-dash-secure.entrypoints=https
+      - traefik.http.routers.hermes-${HERMES_INSTANCE}-dash-secure.rule=Host(`hermes-${HERMES_INSTANCE}.${DOMAIN}`)
+      - traefik.http.routers.hermes-${HERMES_INSTANCE}-dash-secure.tls=true
+      - traefik.http.routers.hermes-${HERMES_INSTANCE}-dash-secure.tls.certresolver=cloudflare
+      - traefik.http.routers.hermes-${HERMES_INSTANCE}-dash-secure.service=hermes-${HERMES_INSTANCE}-dashboard
+      - traefik.http.services.hermes-${HERMES_INSTANCE}-dashboard.loadbalancer.server.port=9119
+      # --- gateway API (port 8642) ---
+      # Replaces the old host-published 8642. The gateway has no auth of its
+      # own, so add a Traefik basicauth middleware before exposing it beyond the
+      # trusted network.
+      - traefik.http.routers.hermes-${HERMES_INSTANCE}-gw.entrypoints=http
+      - traefik.http.routers.hermes-${HERMES_INSTANCE}-gw.rule=Host(`hermes-${HERMES_INSTANCE}-gw.${DOMAIN}`)
+      - traefik.http.routers.hermes-${HERMES_INSTANCE}-gw-secure.entrypoints=https
+      - traefik.http.routers.hermes-${HERMES_INSTANCE}-gw-secure.rule=Host(`hermes-${HERMES_INSTANCE}-gw.${DOMAIN}`)
+      - traefik.http.routers.hermes-${HERMES_INSTANCE}-gw-secure.tls=true
+      - traefik.http.routers.hermes-${HERMES_INSTANCE}-gw-secure.tls.certresolver=cloudflare
+      - traefik.http.routers.hermes-${HERMES_INSTANCE}-gw-secure.service=hermes-${HERMES_INSTANCE}-gateway
+      - traefik.http.services.hermes-${HERMES_INSTANCE}-gateway.loadbalancer.server.port=8642
     networks:
       - proxy
     restart: unless-stopped
