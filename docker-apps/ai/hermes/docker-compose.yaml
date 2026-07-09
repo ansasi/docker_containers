@@ -14,9 +14,10 @@
 # `hermes_instances` and sets these for you.
 #
 # No host ports are published — each agent is reached only through Traefik, as
-# the rpi-4 play documents. Both surfaces get their own per-instance hostname:
+# the rpi-4 play documents:
 #   - dashboard   -> hermes-${HERMES_INSTANCE}.${DOMAIN}     (port 9119)
-#   - gateway API -> hermes-${HERMES_INSTANCE}-gw.${DOMAIN}  (port 8642)
+#   - gateway API -> port 8642, disabled by default (see the labels block for
+#     what it's for and how to enable it)
 networks:
   proxy:
     external: true
@@ -52,18 +53,25 @@ services:
       - traefik.http.routers.hermes-${HERMES_INSTANCE}-dash-secure.tls.certresolver=cloudflare
       - traefik.http.routers.hermes-${HERMES_INSTANCE}-dash-secure.service=hermes-${HERMES_INSTANCE}-dashboard
       - traefik.http.services.hermes-${HERMES_INSTANCE}-dashboard.loadbalancer.server.port=9119
-      # --- gateway API (port 8642) ---
-      # Replaces the old host-published 8642. The gateway has no auth of its
-      # own, so add a Traefik basicauth middleware before exposing it beyond the
-      # trusted network.
-      - traefik.http.routers.hermes-${HERMES_INSTANCE}-gw.entrypoints=http
-      - traefik.http.routers.hermes-${HERMES_INSTANCE}-gw.rule=Host(`hermes-${HERMES_INSTANCE}-gw.${DOMAIN}`)
-      - traefik.http.routers.hermes-${HERMES_INSTANCE}-gw-secure.entrypoints=https
-      - traefik.http.routers.hermes-${HERMES_INSTANCE}-gw-secure.rule=Host(`hermes-${HERMES_INSTANCE}-gw.${DOMAIN}`)
-      - traefik.http.routers.hermes-${HERMES_INSTANCE}-gw-secure.tls=true
-      - traefik.http.routers.hermes-${HERMES_INSTANCE}-gw-secure.tls.certresolver=cloudflare
-      - traefik.http.routers.hermes-${HERMES_INSTANCE}-gw-secure.service=hermes-${HERMES_INSTANCE}-gateway
-      - traefik.http.services.hermes-${HERMES_INSTANCE}-gateway.loadbalancer.server.port=8642
+      # --- gateway API (port 8642) — DISABLED for now ---
+      # The gateway API is the machine-to-machine HTTP control plane: how OTHER
+      # software drives the agent (POST tasks/messages, wire up another service,
+      # automation scripts). It is NOT needed for the dashboard or the Telegram
+      # bot — the bot talks to Telegram over outbound connections, so nothing
+      # reaches the agent through this port. Left disabled to avoid exposing an
+      # unauthenticated surface.
+      #
+      # To enable: uncomment the routes below and add a Traefik basicauth
+      # middleware first (the gateway has no auth of its own), then the API is
+      # reachable at hermes-${HERMES_INSTANCE}-gw.${DOMAIN}.
+      # - traefik.http.routers.hermes-${HERMES_INSTANCE}-gw.entrypoints=http
+      # - traefik.http.routers.hermes-${HERMES_INSTANCE}-gw.rule=Host(`hermes-${HERMES_INSTANCE}-gw.${DOMAIN}`)
+      # - traefik.http.routers.hermes-${HERMES_INSTANCE}-gw-secure.entrypoints=https
+      # - traefik.http.routers.hermes-${HERMES_INSTANCE}-gw-secure.rule=Host(`hermes-${HERMES_INSTANCE}-gw.${DOMAIN}`)
+      # - traefik.http.routers.hermes-${HERMES_INSTANCE}-gw-secure.tls=true
+      # - traefik.http.routers.hermes-${HERMES_INSTANCE}-gw-secure.tls.certresolver=cloudflare
+      # - traefik.http.routers.hermes-${HERMES_INSTANCE}-gw-secure.service=hermes-${HERMES_INSTANCE}-gateway
+      # - traefik.http.services.hermes-${HERMES_INSTANCE}-gateway.loadbalancer.server.port=8642
     networks:
       - proxy
     restart: unless-stopped
