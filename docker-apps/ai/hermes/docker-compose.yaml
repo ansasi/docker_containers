@@ -7,11 +7,11 @@
 # and (via ${WORKDIR}) the data directory. Deploy each agent as its own Compose
 # project so they never share state:
 #
-#   HERMES_INSTANCE=1 WORKDIR=/…/hermes-1 docker compose -p hermes-1 up -d
-#   HERMES_INSTANCE=2 WORKDIR=/…/hermes-2 docker compose -p hermes-2 up -d
+#   HERMES_INSTANCE=angel WORKDIR=/…/hermes-angel docker compose -p hermes-angel up -d
+#   HERMES_INSTANCE=marta WORKDIR=/…/hermes-marta docker compose -p hermes-marta up -d
 #
-# The Ansible play (homelab: ansible/playbooks/rpi-4.yml) loops over
-# `hermes_instances` and sets these for you.
+# The Ansible plays (homelab: ansible/playbooks/rpi-4.yml) define each agent
+# individually and set these for you.
 #
 # No host ports are published — each agent is reached only through Traefik, as
 # the rpi-4 play documents:
