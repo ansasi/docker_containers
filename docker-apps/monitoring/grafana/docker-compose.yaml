@@ -79,7 +79,7 @@ services:
     restart: unless-stopped
 
   node_exporter:
-    image: prom/node-exporter:v1.12.0
+    image: prom/node-exporter:v1.12.1
     container_name: node_exporter
     command:
       - '--path.rootfs=/host'
