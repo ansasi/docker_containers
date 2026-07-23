@@ -25,7 +25,7 @@ networks:
 services:
   hermes:
     container_name: hermes-${HERMES_INSTANCE}
-    image: nousresearch/hermes-agent:v2026.7.7
+    image: nousresearch/hermes-agent:v2026.7.20
     command: gateway run
     environment:
       HERMES_DASHBOARD: "1"
