@@ -7,7 +7,7 @@ jobs:
   compose-lint:
     runs-on: ubuntu-latest
     container:
-      image: docker:29.6-cli
+      image: docker:29.7-cli
     env:
       # Placeholder so files that use ${WORKDIR} directly as a volume source
       # (not just ${WORKDIR}/<subpath>) still get a valid, non-empty path.
