@@ -9,8 +9,9 @@ jobs:
     container:
       image: docker:29.7-cli
     env:
-      # Placeholder so files that use ${WORKDIR} directly as a volume source
-      # (not just ${WORKDIR}/<subpath>) still get a valid, non-empty path.
+      # Placeholders used only while interpolating Compose files for linting.
+      # No services are started by this workflow.
+      PIHOLE_WEB_PASSWORD: compose-lint-placeholder
       WORKDIR: /home/ci-lint
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
