@@ -2,30 +2,33 @@ networks:
   pihole_internal:
     ipam:
       config:
-        - subnet: 172.70.9.0/29
-    name: pihole_internal
-  proxy:
-    external: true
+        - subnet: 172.30.9.0/29
+  # Uncomment if this Pi later joins a Docker network managed by Traefik.
+  # proxy:
+  #   external: true
 
 services:
-  # # Cloudflared DNS-over-HTTPS proxy so ISP can't see your DNS queries
-  # cloudflared:
-  #   container_name: cloudflared
-  #   image: cloudflare/cloudflared:latest # TODO: Pin to a specific version
-  #   command: proxy-dns
-  #   environment:
-  #     - "TUNNEL_DNS_UPSTREAM=https://1.1.1.1/dns-query,https://1.0.0.1/dns-query,https://9.9.9.9/dns-query,https://149.112.112.9/dns-query"
-  #     # Listen on an unprivileged port
-  #     - "TUNNEL_DNS_PORT=5053"
-  #     # Listen on all interfaces
-  #     - "TUNNEL_DNS_ADDRESS=0.0.0.0"
-  #   # Attach cloudflared only to the private network
-  #   networks:
-  #     pihole_internal:
-  #       ipv4_address: 172.70.9.2
-  #   security_opt:
-  #     - no-new-privileges:true
-  #   restart: unless-stopped
+  # Lightweight encrypted-DNS forwarder, so ISP can't see your DNS queries.
+  # Pi-hole sends ordinary DNS only over this private Docker network; dnsproxy sends it upstream using HTTPS.
+  dnsproxy:
+    container_name: dnsproxy
+    image: adguard/dnsproxy:v0.84.1
+    command:
+      - --listen=0.0.0.0
+      - --port=5053
+      - --upstream=https://1.1.1.1/dns-query
+      - --upstream=https://1.0.0.1/dns-query
+      - --upstream-mode=load_balance
+      - --timeout=10s
+    networks:
+      pihole_internal:
+        ipv4_address: 172.30.9.2
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+    read_only: true
+    restart: unless-stopped
 
   pihole:
     container_name: pihole
@@ -34,42 +37,41 @@ services:
       - "53:53/tcp"
       - "53:53/udp"
       # - "67:67/udp" DHCP - uncomment if using it
+      # Pi-hole web interface (no Traefik on this host).
       - "80:80/tcp" # TODO: Comment it if Traefik is used
     networks:
       pihole_internal:
-        ipv4_address: 172.70.9.3
-      proxy:
+        ipv4_address: 172.30.9.3
+      # Uncomment together with the proxy network and Traefik labels below.
+      # proxy:
     environment:
-      TZ: 'Europe/Madrid'
-      # TODO: Set a password to access the web interface
-      FTLCONF_webserver_api_password: '${PIHOLE_WEB_PASSWORD}'
-      # If using Docker's default `bridge` network, the DNS listening mode should be set to 'all'
-      FTLCONF_dns_listeningMode: 'ALL'
-      # FTLCONF_dns_upstreams: '172.70.9.2#5053'
+      TZ: Europe/Madrid
+      FTLCONF_webserver_api_password: "${PIHOLE_WEB_PASSWORD:?Set PIHOLE_WEB_PASSWORD in .env}"
+      # Required for Pi-hole in Docker bridge networking.  Port 53 must never
+      # be forwarded by the router from the Internet.
+      FTLCONF_dns_listeningMode: ALL
+      FTLCONF_dns_upstreams: 172.30.9.2#5053
     volumes:
-      - ${WORKDIR}/etc-pihole:/etc/pihole
-      - ${WORKDIR}/etc-dnsmasq.d:/etc/dnsmasq.d
-    # cap_add:
-    #   # Required if you are using Pi-hole as your DHCP server, else not needed
-    #   # See Note On Capabilities below
-    #   - NET_ADMIN
-    # We don't use Traefik for PiHole as it will be used as a DNS server on a separate device
-    labels:
-      # Traefik labels
-      - traefik.enable=true
-      - traefik.docker.network=proxy
-      - traefik.http.routers.pihole.entrypoints=http
-      - traefik.http.routers.pihole.rule=Host(`pihole.${DOMAIN}`)
-      - traefik.http.middlewares.pihole-https-redirect.redirectscheme.scheme=https
-      - traefik.http.routers.pihole.middlewares=pihole-https-redirect
-      - traefik.http.routers.pihole-secure.entrypoints=https
-      - traefik.http.routers.pihole-secure.rule=Host(`pihole.${DOMAIN}`)
-      - traefik.http.routers.pihole-secure.tls=true
-      - traefik.http.routers.pihole-secure.service=pihole
-      - traefik.http.services.pihole.loadbalancer.server.port=80
+      - ${WORKDIR:?Set WORKDIR in .env}/etc-pihole:/etc/pihole
+      # Pi-hole v6 does not need /etc/dnsmasq.d unless you use custom files.
+      # If needed, uncomment this mount and set
+      # FTLCONF_misc_etc_dnsmasq_d: "true" above.
+      # - ${WORKDIR:?Set WORKDIR in .env}/etc-dnsmasq.d:/etc/dnsmasq.d
+    # Traefik is not installed on this Raspberry Pi. Keep these commented for
+    # possible future use together with the proxy network above.
+    # labels:
+    #   traefik.enable: "true"
+    #   traefik.docker.network: proxy
+    #   traefik.http.routers.pihole.entrypoints: http
+    #   traefik.http.routers.pihole.rule: "Host(`pihole.${DOMAIN}`)"
+    #   traefik.http.routers.pihole.middlewares: pihole-https-redirect
+    #   traefik.http.middlewares.pihole-https-redirect.redirectscheme.scheme: https
+    #   traefik.http.routers.pihole-secure.entrypoints: https
+    #   traefik.http.routers.pihole-secure.rule: "Host(`pihole.${DOMAIN}`)"
+    #   traefik.http.routers.pihole-secure.tls: "true"
+    #   traefik.http.routers.pihole-secure.service: pihole
+    #   traefik.http.services.pihole.loadbalancer.server.port: "80"
+    depends_on:
+      dnsproxy:
+        condition: service_started
     restart: unless-stopped
-    # depends_on:
-    #   - cloudflared
-
-# Notes:
-# - Remember to use Teleporter to backup and restore your PiHole settings
