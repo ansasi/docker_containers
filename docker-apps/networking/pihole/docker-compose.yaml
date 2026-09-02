@@ -23,8 +23,6 @@ services:
     networks:
       pihole_internal:
         ipv4_address: 172.30.9.2
-    cap_drop:
-      - ALL
     security_opt:
       - no-new-privileges:true
     read_only: true
