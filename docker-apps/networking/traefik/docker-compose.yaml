@@ -37,6 +37,6 @@ services:
       - traefik.http.routers.traefik-secure.tls.domains[0].sans=*.${DOMAIN} # same here, change 0 to 1
       - traefik.http.routers.traefik-secure.service=api@internal
       # Dashboard Authentication
-      - "traefik.http.middlewares.traefik-dashboard-auth.basicauth.users=${TRAEFIK_ADMIN_USER:?Set TRAEFIK_ADMIN_USER in .env}:${TRAEFIK_ADMIN_PASSWORD:?Set TRAEFIK_ADMIN_PASSWORD in .env}"
+      - traefik.http.middlewares.traefik-dashboard-auth.basicauth.users=${TRAEFIK_DASHBOARD_CREDENTIALS:?Set the TRAEFIK_DASHBOARD_CREDENTIALS environment variable in your .env file.}
       - traefik.http.routers.traefik-secure.middlewares=traefik-dashboard-auth
     restart: unless-stopped
