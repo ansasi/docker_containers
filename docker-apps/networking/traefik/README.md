@@ -6,10 +6,16 @@ Traefik is a popular reverse proxy that integrates well with Docker to manage an
 
 ## Installation Steps
 
-1. Update the domain name in the `traefik.yml` file to the desired domain.
-2. (Optional) Create a password using `htpasswd` for the Traefik dashboard.
-   1. Install `apache2-utils` package.
-   2. Run `echo $(htpasswd -nb "<user>" "<password>") | sed -e s/\\$/\\$\\$/g` to generate a password hash.
+1. Set `DOMAIN` in the Compose `.env` file.
+2. Create credentials for the Traefik dashboard.
+   1. Install the `apache2-utils` package.
+   2. Run `htpasswd -nB <user>` and enter the password when prompted.
+   3. Add the complete output to `.env` using single quotes so Compose treats
+      the `$` characters in the bcrypt hash literally:
+
+      ```dotenv
+      TRAEFIK_DASHBOARD_CREDENTIALS='<user>:$2y$...'
+      ```
 3. Create a API token in the Cloudflare dashboard.
    1. Go to the Cloudflare dashboard.
    2. Click on the profile icon in the top right corner.
@@ -18,8 +24,8 @@ Traefik is a popular reverse proxy that integrates well with Docker to manage an
    5. Click on `Create Token`.
    6. Select `Edit DNS Zone`.
    7. Select the desired zone.
-4. Add the Cloudflare API token to the environment variables in the `docker-compose.yaml` file.
-5. Run `docker-compose up -d` to start the Traefik container.
+4. Add the Cloudflare API token to `.env` as `CF_DNS_API_TOKEN`.
+5. Run `docker compose config` and then `docker compose up -d` to start Traefik.
 
 *Note: `Nextcloud AIO` configuration is configured in `config.yml` file, as it does not yet allow Traefik labels*
 

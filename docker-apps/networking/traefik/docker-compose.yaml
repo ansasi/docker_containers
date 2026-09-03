@@ -25,9 +25,6 @@ services:
       - traefik.enable=true
       - traefik.http.routers.traefik.entrypoints=http
       - traefik.http.routers.traefik.rule=Host(`traefik-dashboard.${DOMAIN}`)
-      # TODO: Add authentication
-      # - traefik.http.middlewares.traefik-auth.basicauth.users=${TRAEFIK_ADMIN_USER}:${TRAEFIK_ADMIN_PASSWORD}
-      # - traefik.http.routers.traefik-secure.middlewares=traefik-auth
       - traefik.http.middlewares.traefik-https-redirect.redirectscheme.scheme=https
       - traefik.http.middlewares.sslheader.headers.customrequestheaders.X-Forwarded-Proto=https
       - traefik.http.routers.traefik.middlewares=traefik-https-redirect
@@ -38,4 +35,6 @@ services:
       - traefik.http.routers.traefik-secure.tls.domains[0].main=${DOMAIN} # if you use the .home.yourdomain.co.uk entry you have to change the [0] into [1]
       - traefik.http.routers.traefik-secure.tls.domains[0].sans=*.${DOMAIN} # same here, change 0 to 1
       - traefik.http.routers.traefik-secure.service=api@internal
+      - "traefik.http.middlewares.traefik-dashboard-auth.basicauth.users=${TRAEFIK_DASHBOARD_CREDENTIALS:?Set TRAEFIK_DASHBOARD_CREDENTIALS in .env}"
+      - traefik.http.routers.traefik-secure.middlewares=traefik-dashboard-auth
     restart: unless-stopped
