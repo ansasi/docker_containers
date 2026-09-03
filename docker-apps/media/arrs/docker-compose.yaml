@@ -463,6 +463,7 @@ services:
       # qBittorrent
       - traefik.http.routers.qbittorrent.entrypoints=http
       - traefik.http.routers.qbittorrent.rule=Host(`qbittorrent.${DOMAIN}`)
+      - traefik.http.routers.qbittorrent.service=qbittorrent
       - traefik.http.routers.qbittorrent-secure.entrypoints=https
       - traefik.http.routers.qbittorrent-secure.rule=Host(`qbittorrent.${DOMAIN}`)
       - traefik.http.routers.qbittorrent-secure.tls=true
@@ -473,6 +474,7 @@ services:
       # Prowlarr
       - traefik.http.routers.prowlarr.entrypoints=http
       - traefik.http.routers.prowlarr.rule=Host(`prowlarr.${DOMAIN}`)
+      - traefik.http.routers.prowlarr.service=prowlarr
       - traefik.http.routers.prowlarr-secure.entrypoints=https
       - traefik.http.routers.prowlarr-secure.rule=Host(`prowlarr.${DOMAIN}`)
       - traefik.http.routers.prowlarr-secure.tls=true
