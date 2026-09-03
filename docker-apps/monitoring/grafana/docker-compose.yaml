@@ -59,23 +59,9 @@ services:
       - prometheus:/prometheus
     networks:
       - grafana-monitoring
-      - proxy
     labels:
       # Watchtower labels
       - com.centurylinklabs.watchtower.enable=true
-      # Traefik labels
-      - traefik.enable=true
-      - traefik.docker.network=proxy
-      - traefik.http.routers.prometheus.entrypoints=http
-      - traefik.http.routers.prometheus.rule=Host(`prometheus.${DOMAIN}`)
-      - traefik.http.middlewares.prometheus-https-redirect.redirectscheme.scheme=https
-      - traefik.http.routers.prometheus.middlewares=prometheus-https-redirect
-      - traefik.http.routers.prometheus-secure.entrypoints=https
-      - traefik.http.routers.prometheus-secure.rule=Host(`prometheus.${DOMAIN}`)
-      - traefik.http.routers.prometheus-secure.tls=true
-      - traefik.http.routers.prometheus-secure.tls.certresolver=cloudflare
-      - traefik.http.routers.prometheus-secure.service=prometheus
-      - traefik.http.services.prometheus.loadbalancer.server.port=9090
     restart: unless-stopped
 
   node_exporter:
