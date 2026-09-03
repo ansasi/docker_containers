@@ -23,9 +23,8 @@ services:
       - proxy
     labels:
       - traefik.enable=true
-      - traefik.http.routers.traefik.entrypoints=http # restricts dashboard to internal entrypoint
+      - traefik.http.routers.traefik.entrypoints=http
       - traefik.http.routers.traefik.rule=Host(`traefik-dashboard.${DOMAIN}`)
-      - traefik.http.routers.traefik.tls=true
       # TODO: Add authentication
       # - traefik.http.middlewares.traefik-auth.basicauth.users=${TRAEFIK_ADMIN_USER}:${TRAEFIK_ADMIN_PASSWORD}
       # - traefik.http.routers.traefik-secure.middlewares=traefik-auth
