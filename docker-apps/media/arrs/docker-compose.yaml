@@ -117,8 +117,6 @@ services:
       - "${NAS_STORAGE_LOCATION:?Set NAS_STORAGE_LOCATION in .env}:/data"
       - "${NAS_STORAGE_LOCATION}/library/movies:/movies"
       - "${NAS_STORAGE_LOCATION}/downloads/torrents:/downloads"
-    ports:
-      - 7878:7878
     networks:
       - proxy
     security_opt:
@@ -154,8 +152,6 @@ services:
       - "${NAS_STORAGE_LOCATION:?Set NAS_STORAGE_LOCATION in .env}:/data"
       - "${NAS_STORAGE_LOCATION}/library/movies:/movies"
       - "${NAS_STORAGE_LOCATION}/downloads/torrents:/downloads"
-    ports:
-      - 7879:7878
     networks:
       - proxy
     security_opt:
@@ -230,8 +226,6 @@ services:
       - "${NAS_STORAGE_LOCATION:?Set NAS_STORAGE_LOCATION in .env}:/data"
       - "${NAS_STORAGE_LOCATION}/library/tv:/tv"
       - "${NAS_STORAGE_LOCATION}/downloads/torrents:/downloads"
-    ports:
-      - 8989:8989
     networks:
       - proxy
     security_opt:
@@ -271,8 +265,6 @@ services:
       - "${NAS_STORAGE_LOCATION:?Set NAS_STORAGE_LOCATION in .env}:/data"
       - "${NAS_STORAGE_LOCATION}/library/tv:/tv"
       - "${NAS_STORAGE_LOCATION}/downloads/torrents:/downloads"
-    ports:
-      - 8990:8989
     networks:
       - proxy
     security_opt:
@@ -438,10 +430,6 @@ services:
     ports:
       - 6881:6881
       - 6881:6881/udp
-      # Ports to apps:
-      - 8085:8085    # qBittorrent
-      - 9696:9696    # Prowlarr
-      - 8191:8191    # FlareSolverr - used by Prowlarr to bypass Cloudflare
       # Note: This is uncommented as Proton VPN uses its own DNS servers, so it is not possible to resolve to mydomain.com INSIDE the containers that use gluetun as network mode
     volumes:
       - gluetun-data:/gluetun
