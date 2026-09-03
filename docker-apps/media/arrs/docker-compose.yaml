@@ -23,6 +23,7 @@ services:
     volumes:
       - ${WORKDIR}/qbittorrent/config:/config
       - "${NAS_STORAGE_LOCATION}:/data"
+      - "${NAS_STORAGE_LOCATION}/downloads/torrents:/downloads"
     network_mode: "service:gluetun"
     # networks:
     #   - proxy
@@ -114,6 +115,8 @@ services:
     volumes:
       - ${WORKDIR}/radarr/config:/config
       - "${NAS_STORAGE_LOCATION}:/data"
+      - "${NAS_STORAGE_LOCATION}/library/movies:/movies"
+      - "${NAS_STORAGE_LOCATION}/downloads/torrents:/downloads"
     ports:
       - 7878:7878
     networks:
@@ -149,6 +152,8 @@ services:
     volumes:
       - ${WORKDIR}/radarr-anime/config:/config
       - "${NAS_STORAGE_LOCATION}:/data"
+      - "${NAS_STORAGE_LOCATION}/library/movies:/movies"
+      - "${NAS_STORAGE_LOCATION}/downloads/torrents:/downloads"
     ports:
       - 7879:7878
     networks:
@@ -184,6 +189,8 @@ services:
   #   volumes:
   #     - ${WORKDIR}/radarr-4k/config:/config
   #     - "${NAS_STORAGE_LOCATION}:/data"
+  #     - "${NAS_STORAGE_LOCATION}/library/movies:/movies"
+  #     - "${NAS_STORAGE_LOCATION}/downloads/torrents:/downloads"
   #   ports:
   #     - 7880:7878
   #   networks:
@@ -221,6 +228,8 @@ services:
     volumes:
       - ${WORKDIR}/sonarr/config:/config
       - "${NAS_STORAGE_LOCATION}:/data"
+      - "${NAS_STORAGE_LOCATION}/library/tv:/tv"
+      - "${NAS_STORAGE_LOCATION}/downloads/torrents:/downloads"
     ports:
       - 8989:8989
     networks:
@@ -260,6 +269,8 @@ services:
     volumes:
       - ${WORKDIR}/sonarr-anime/config:/config
       - "${NAS_STORAGE_LOCATION}:/data"
+      - "${NAS_STORAGE_LOCATION}/library/tv:/tv"
+      - "${NAS_STORAGE_LOCATION}/downloads/torrents:/downloads"
     ports:
       - 8990:8989
     networks:
@@ -295,6 +306,8 @@ services:
   #   volumes:
   #     - ${WORKDIR}/sonarr-4k/config:/config
   #     - "${NAS_STORAGE_LOCATION}:/data"
+  #     - "${NAS_STORAGE_LOCATION}/library/tv:/tv"
+  #     - "${NAS_STORAGE_LOCATION}/downloads/torrents:/downloads"
   #   ports:
   #     - 8991:8989
   #   networks:
@@ -329,6 +342,8 @@ services:
     volumes:
       - ${WORKDIR}/bazarr/config:/config
       - "${NAS_STORAGE_LOCATION}:/data"
+      - "${NAS_STORAGE_LOCATION}/library/movies:/movies"
+      - "${NAS_STORAGE_LOCATION}/library/tv:/tv"
     # ports:
     #   - 6767:6767
     networks:
@@ -362,6 +377,8 @@ services:
     volumes:
       - ${WORKDIR}/bazarr-anime/config:/config
       - "${NAS_STORAGE_LOCATION}:/data"
+      - "${NAS_STORAGE_LOCATION}/library/movies:/movies"
+      - "${NAS_STORAGE_LOCATION}/library/tv:/tv"
     # ports:
     #   - 6768:6767
     networks:
