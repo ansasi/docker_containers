@@ -12,6 +12,7 @@ jobs:
       # Placeholders used only while interpolating Compose files for linting.
       # No services are started by this workflow.
       PIHOLE_WEB_PASSWORD: compose-lint-placeholder
+      TRAEFIK_DASHBOARD_CREDENTIALS: ci:compose-lint-placeholder
       WORKDIR: /home/ci-lint
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
