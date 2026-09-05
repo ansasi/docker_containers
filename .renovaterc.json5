@@ -15,6 +15,22 @@
       matchDatasources: ["docker"],
       matchPackageNames: ["linuxserver/jellyfin"],
       allowedVersions: "/^\\d{1,2}\\.\\d+\\.\\d+(?:ubu\\d+)?(?:-ls\\d+)?$/"
+    },
+    {
+      description: "Require manual database major-version migrations",
+      matchDatasources: ["docker"],
+      matchPackageNames: [
+        "postgres",
+        "docker.io/postgres",
+        "docker.io/library/postgres",
+        "mariadb",
+        "redis",
+        "docker.io/library/redis",
+        "docker.io/valkey/valkey",
+        "ghcr.io/immich-app/postgres"
+      ],
+      matchUpdateTypes: ["major"],
+      enabled: false
     }
   ]
 }
