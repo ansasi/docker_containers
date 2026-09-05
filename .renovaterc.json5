@@ -7,7 +7,10 @@
     {
       description: "Exclude legacy calendar tags for LinuxServer Calibre-Web",
       matchDatasources: ["docker"],
-      matchPackageNames: ["linuxserver/calibre-web"],
+      matchPackageNames: [
+        "linuxserver/calibre-web",
+        "lscr.io/linuxserver/calibre-web"
+      ],
       allowedVersions: "/^0\\.\\d+\\.\\d+(?:-ls\\d+)?$/"
     },
     {
