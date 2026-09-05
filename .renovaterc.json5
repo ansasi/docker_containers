@@ -2,5 +2,22 @@
   $schema: "https://docs.renovatebot.com/renovate-schema.json",
   extends: [
     "local>ansasi/renovate-config"
+  ],
+  packageRules: [
+    {
+      description: "Exclude legacy calendar tags for LinuxServer Calibre-Web",
+      matchDatasources: ["docker"],
+      matchPackageNames: [
+        "linuxserver/calibre-web",
+        "lscr.io/linuxserver/calibre-web"
+      ],
+      allowedVersions: "/^0\\.\\d+\\.\\d+(?:-ls\\d+)?$/"
+    },
+    {
+      description: "Exclude legacy calendar tags for LinuxServer Jellyfin",
+      matchDatasources: ["docker"],
+      matchPackageNames: ["linuxserver/jellyfin"],
+      allowedVersions: "/^\\d{1,2}\\.\\d+\\.\\d+(?:ubu\\d+)?(?:-ls\\d+)?$/"
+    }
   ]
 }
