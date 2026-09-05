@@ -6,7 +6,7 @@ networks:
 
 services:
   server:
-    image: twentycrm/twenty:v1.23
+    image: twentycrm/twenty:v2.38
     volumes:
       - ${WORKDIR}/server-local-data:/app/packages/twenty-server/.local-storage
     networks:
@@ -27,6 +27,9 @@ services:
       # STORAGE_S3_NAME: ${STORAGE_S3_NAME}
       # STORAGE_S3_ENDPOINT: ${STORAGE_S3_ENDPOINT}
 
+      # Twenty v2.5+ encrypts secrets at rest with this key. Falling back to
+      # APP_SECRET preserves the legacy key until ENCRYPTION_KEY is set.
+      ENCRYPTION_KEY: ${ENCRYPTION_KEY:-${APP_SECRET}}
       APP_SECRET: ${APP_SECRET}
       # MESSAGING_PROVIDER_GMAIL_ENABLED: ${MESSAGING_PROVIDER_GMAIL_ENABLED}
       # CALENDAR_PROVIDER_GOOGLE_ENABLED: ${CALENDAR_PROVIDER_GOOGLE_ENABLED}
@@ -76,7 +79,7 @@ services:
       retries: 20
 
   worker:
-    image: twentycrm/twenty:v1.23
+    image: twentycrm/twenty:v2.38
     volumes:
       - ${WORKDIR}/server-local-data:/app/packages/twenty-server/.local-storage
     networks:
@@ -94,6 +97,8 @@ services:
       # STORAGE_S3_NAME: ${STORAGE_S3_NAME}
       # STORAGE_S3_ENDPOINT: ${STORAGE_S3_ENDPOINT}
 
+      # Must match the server encryption key.
+      ENCRYPTION_KEY: ${ENCRYPTION_KEY:-${APP_SECRET}}
       APP_SECRET: ${APP_SECRET}
       # MESSAGING_PROVIDER_GMAIL_ENABLED: ${MESSAGING_PROVIDER_GMAIL_ENABLED}
       # CALENDAR_PROVIDER_GOOGLE_ENABLED: ${CALENDAR_PROVIDER_GOOGLE_ENABLED}
