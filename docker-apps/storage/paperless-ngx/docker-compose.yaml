@@ -75,16 +75,14 @@ services:
       PAPERLESS_DBNAME: ${PAPERLESS_DB_NAME}
       PAPERLESS_DBUSER: ${PAPERLESS_DB_USER}
       PAPERLESS_DBPASS: ${PAPERLESS_DB_PASSWORD}
+      # Required by v3. Set and back up this value before upgrading.
+      PAPERLESS_SECRET_KEY: ${PAPERLESS_SECRET_KEY}
       PAPERLESS_TIKA_ENABLED: 1
       PAPERLESS_TIKA_GOTENBERG_ENDPOINT: http://paperless-gotenberg:3000
       PAPERLESS_TIKA_ENDPOINT: http://paperless-tika:9998
       PAPERLESS_URL: https://paperless.${DOMAIN}
       PAPERLESS_ADMIN_USER: ${PAPERLESS_ADMIN_USER:-admin}
       PAPERLESS_ADMIN_PASSWORD: ${PAPERLESS_ADMIN_PASSWORD}
-      # TODO: Integrate with Authentik SSO
-      # PAPERLESS_APPS: "allauth.socialaccount.providers.openid_connect"
-      # # Find out how to configure Authentik: https://youtu.be/enwFWELCYJo
-      # PAPERLESS_SOCIALACCOUNT_PROVIDERS: '{"openid_connect": {"APPS": [{"provider_id": "authentik","name": "Authentik SSO","client_id": "BnxpFXvscduU2PdAdPaCelphhDYpAXo9upbAUS3F","secret": "0JcyunvA0Ra25i49zULTbro0jdbH9gHrdnSDExT9Ze2TNoB8so9B8AbdB7riYjYHPZfwuWtAeTCpwPAi2Sct7M8w3y8VTPPxwgFG1JzdoWdxLgUz0NO6l3L2UFBmzQ5m","settings": { "server_url": "https://authentik.${DOMAIN}/application/o/paperless-ngx/.well-known/openid-configuration"}}]}}'
     networks:
       paperless:
       proxy:
