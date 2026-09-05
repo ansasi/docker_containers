@@ -11,6 +11,7 @@ jobs:
     env:
       # Placeholders used only while interpolating Compose files for linting.
       # No services are started by this workflow.
+      NAS_STORAGE_LOCATION: /mnt/ci-nas
       PIHOLE_WEB_PASSWORD: compose-lint-placeholder
       TRAEFIK_DASHBOARD_CREDENTIALS: ci:compose-lint-placeholder
       WORKDIR: /home/ci-lint

@@ -22,6 +22,7 @@ services:
     #   - 8085:8085
     volumes:
       - ${WORKDIR}/qbittorrent/config:/config
+      - "${NAS_STORAGE_LOCATION:?Set NAS_STORAGE_LOCATION in .env}:/data"
       - "${NAS_STORAGE_LOCATION}/downloads/torrents:/downloads"
     network_mode: "service:gluetun"
     # networks:
@@ -113,6 +114,7 @@ services:
       TZ: "Etc/Zurich"
     volumes:
       - ${WORKDIR}/radarr/config:/config
+      - "${NAS_STORAGE_LOCATION:?Set NAS_STORAGE_LOCATION in .env}:/data"
       - "${NAS_STORAGE_LOCATION}/library/movies:/movies"
       - "${NAS_STORAGE_LOCATION}/downloads/torrents:/downloads"
     ports:
@@ -149,6 +151,7 @@ services:
       TZ: "Etc/Zurich"
     volumes:
       - ${WORKDIR}/radarr-anime/config:/config
+      - "${NAS_STORAGE_LOCATION:?Set NAS_STORAGE_LOCATION in .env}:/data"
       - "${NAS_STORAGE_LOCATION}/library/movies:/movies"
       - "${NAS_STORAGE_LOCATION}/downloads/torrents:/downloads"
     ports:
@@ -185,6 +188,7 @@ services:
   #     TZ: "Etc/Zurich"
   #   volumes:
   #     - ${WORKDIR}/radarr-4k/config:/config
+  #     - "${NAS_STORAGE_LOCATION:?Set NAS_STORAGE_LOCATION in .env}:/data"
   #     - "${NAS_STORAGE_LOCATION}/library/movies:/movies"
   #     - "${NAS_STORAGE_LOCATION}/downloads/torrents:/downloads"
   #   ports:
@@ -223,6 +227,7 @@ services:
       TZ: "Etc/Zurich"
     volumes:
       - ${WORKDIR}/sonarr/config:/config
+      - "${NAS_STORAGE_LOCATION:?Set NAS_STORAGE_LOCATION in .env}:/data"
       - "${NAS_STORAGE_LOCATION}/library/tv:/tv"
       - "${NAS_STORAGE_LOCATION}/downloads/torrents:/downloads"
     ports:
@@ -263,6 +268,7 @@ services:
       TZ: "Etc/Zurich"
     volumes:
       - ${WORKDIR}/sonarr-anime/config:/config
+      - "${NAS_STORAGE_LOCATION:?Set NAS_STORAGE_LOCATION in .env}:/data"
       - "${NAS_STORAGE_LOCATION}/library/tv:/tv"
       - "${NAS_STORAGE_LOCATION}/downloads/torrents:/downloads"
     ports:
@@ -299,6 +305,7 @@ services:
   #     TZ: "Etc/Zurich"
   #   volumes:
   #     - ${WORKDIR}/sonarr-4k/config:/config
+  #     - "${NAS_STORAGE_LOCATION:?Set NAS_STORAGE_LOCATION in .env}:/data"
   #     - "${NAS_STORAGE_LOCATION}/library/tv:/tv"
   #     - "${NAS_STORAGE_LOCATION}/downloads/torrents:/downloads"
   #   ports:
@@ -334,6 +341,7 @@ services:
       TZ: "Etc/Zurich"
     volumes:
       - ${WORKDIR}/bazarr/config:/config
+      - "${NAS_STORAGE_LOCATION:?Set NAS_STORAGE_LOCATION in .env}:/data"
       - "${NAS_STORAGE_LOCATION}/library/movies:/movies"
       - "${NAS_STORAGE_LOCATION}/library/tv:/tv"
     # ports:
@@ -368,6 +376,7 @@ services:
       TZ: "Etc/Zurich"
     volumes:
       - ${WORKDIR}/bazarr-anime/config:/config
+      - "${NAS_STORAGE_LOCATION:?Set NAS_STORAGE_LOCATION in .env}:/data"
       - "${NAS_STORAGE_LOCATION}/library/movies:/movies"
       - "${NAS_STORAGE_LOCATION}/library/tv:/tv"
     # ports:
