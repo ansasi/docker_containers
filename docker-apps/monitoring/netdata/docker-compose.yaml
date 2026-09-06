@@ -6,7 +6,7 @@ networks:
 services:
 # --- Netdata Image
   netdata:
-    image: netdata/netdata:v2.10
+    image: netdata/netdata:v2.11
     container_name: netdata
     cap_add:
       - SYS_PTRACE
@@ -27,7 +27,7 @@ services:
       - traefik.docker.network=proxy
       - traefik.http.routers.netdata.entrypoints=http
       - traefik.http.routers.netdata.rule=Host(`netdata.${DOMAIN}`)
-      - traefik.http.routers.netdata-secure.entrypoints=httos
+      - traefik.http.routers.netdata-secure.entrypoints=https
       - traefik.http.routers.netdata-secure.rule=Host(`netdata.${DOMAIN}`)
       - traefik.http.routers.netdata-secure.tls=true
       - traefik.http.routers.netdata-secure.tls.certresolver=cloudflare

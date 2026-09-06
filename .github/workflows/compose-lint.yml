@@ -2,20 +2,42 @@ name: Lint Compose Files
 
 on:
   pull_request:
+  push:
+    branches:
+      - develop
+  workflow_dispatch:
+
+permissions:
+  contents: read
 
 jobs:
   compose-lint:
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     container:
-      image: docker:29.5-cli
+      image: docker:29.7-cli
+    env:
+      # Placeholders used only while interpolating Compose files for linting.
+      # No services are started by this workflow.
+      NAS_STORAGE_LOCATION: /mnt/ci-nas
+      PIHOLE_WEB_PASSWORD: compose-lint-placeholder
+      TRAEFIK_DASHBOARD_CREDENTIALS: ci:compose-lint-placeholder
+      WORKDIR: /home/ci-lint
     steps:
-      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
       - name: Validate Compose files
         run: |
           set -euo pipefail
-          for file in $(find docker-apps -name docker-compose.yaml); do
+
+          files="$(find docker-apps -type f -name docker-compose.yaml | sort)"
+          if [ -z "$files" ]; then
+            echo "No docker-compose.yaml files found" >&2
+            exit 1
+          fi
+
+          printf '%s\n' "$files" | while IFS= read -r file; do
             echo "################"
             echo "Validating $file"
             echo "################"
-            docker compose -f "$file" config > /dev/null
+            docker compose -f "$file" config --quiet
           done

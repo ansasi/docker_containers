@@ -24,6 +24,8 @@ services:
     environment:
       # Tell Dockge where is your stacks directory
       - DOCKGE_STACKS_DIR=/opt/stacks
+    networks:
+      - proxy
     labels:
       - traefik.enable=true
       - traefik.docker.network=proxy

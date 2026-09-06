@@ -4,12 +4,10 @@ global:
   sendAnonymousUsage: false
 
 log:
-  level: DEBUG
+  level: INFO
 
 api:
-  insecure: true # allows connecting to dashboard through port 8080
   dashboard: true
-  debug: true
 
 entryPoints:
   http:
@@ -46,8 +44,8 @@ certificatesResolvers:
           - 1.1.1.1:53
           - 1.0.0.1:53
 
-serversTransport:
-  insecureSkipVerify: true
+# serversTransport:
+#   insecureSkipVerify: true
 
 providers:
   docker:

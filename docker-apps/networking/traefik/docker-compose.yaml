@@ -5,7 +5,7 @@ networks:
 
 services:
   traefik:
-    image: traefik:v3.7.5
+    image: traefik:v3.7.12
     container_name: traefik
     ports:
       - "80:80"
@@ -23,12 +23,9 @@ services:
       - proxy
     labels:
       - traefik.enable=true
-      - traefik.http.routers.traefik.entrypoints=http # restricts dashboard to internal entrypoint
+      - traefik.http.routers.traefik.entrypoints=http
       - traefik.http.routers.traefik.rule=Host(`traefik-dashboard.${DOMAIN}`)
       - traefik.http.routers.traefik.tls=true
-      # TODO: Add authentication
-      # - traefik.http.middlewares.traefik-auth.basicauth.users=${TRAEFIK_ADMIN_USER}:${TRAEFIK_ADMIN_PASSWORD}
-      # - traefik.http.routers.traefik-secure.middlewares=traefik-auth
       - traefik.http.middlewares.traefik-https-redirect.redirectscheme.scheme=https
       - traefik.http.middlewares.sslheader.headers.customrequestheaders.X-Forwarded-Proto=https
       - traefik.http.routers.traefik.middlewares=traefik-https-redirect
@@ -39,4 +36,7 @@ services:
       - traefik.http.routers.traefik-secure.tls.domains[0].main=${DOMAIN} # if you use the .home.yourdomain.co.uk entry you have to change the [0] into [1]
       - traefik.http.routers.traefik-secure.tls.domains[0].sans=*.${DOMAIN} # same here, change 0 to 1
       - traefik.http.routers.traefik-secure.service=api@internal
+      # Dashboard Authentication
+      - traefik.http.middlewares.traefik-dashboard-auth.basicauth.users=${TRAEFIK_DASHBOARD_CREDENTIALS:?Set the TRAEFIK_DASHBOARD_CREDENTIALS environment variable in your .env file.}
+      - traefik.http.routers.traefik-secure.middlewares=traefik-dashboard-auth
     restart: unless-stopped

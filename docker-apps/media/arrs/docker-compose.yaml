@@ -22,6 +22,7 @@ services:
     #   - 8085:8085
     volumes:
       - ${WORKDIR}/qbittorrent/config:/config
+      - "${NAS_STORAGE_LOCATION:?Set NAS_STORAGE_LOCATION in .env}:/data"
       - "${NAS_STORAGE_LOCATION}/downloads/torrents:/downloads"
     network_mode: "service:gluetun"
     # networks:
@@ -42,7 +43,7 @@ services:
 
   # seerr Image - Request management and media discovery tool
   seerr-jellyfin:
-    image: ghcr.io/seerr-team/seerr:v3.3.0
+    image: ghcr.io/seerr-team/seerr:v3.4.1
     container_name: seerr-jellyfin
     environment:
       PGID: "${PGID}"
@@ -77,7 +78,7 @@ services:
 
   # Prowlarr - Indexer manager for all your media content
   prowlarr:
-    image: linuxserver/prowlarr:2.4.0
+    image: linuxserver/prowlarr:2.5.2
     container_name: prowlarr
     restart: unless-stopped
     environment:
@@ -103,7 +104,7 @@ services:
   ###--- Radarr - Library Manager for Movie content management ---###
   ### Do not use this container to download 4K Movie content. Enable container below to have separate instance just for 4K Movie content ###
   radarr:
-    image: linuxserver/radarr:6.2.1
+    image: linuxserver/radarr:6.3.0
     container_name: radarr
     restart: unless-stopped
     environment:
@@ -113,6 +114,7 @@ services:
       TZ: "Etc/Zurich"
     volumes:
       - ${WORKDIR}/radarr/config:/config
+      - "${NAS_STORAGE_LOCATION:?Set NAS_STORAGE_LOCATION in .env}:/data"
       - "${NAS_STORAGE_LOCATION}/library/movies:/movies"
       - "${NAS_STORAGE_LOCATION}/downloads/torrents:/downloads"
     ports:
@@ -139,7 +141,7 @@ services:
   ###--- Radarr Anime - Library Manager for Anime Movie content management ---###
   ### Enable this container to get separate instance for Anime Movie content ###
   radarr-anime:
-    image: linuxserver/radarr:6.2.1
+    image: linuxserver/radarr:6.3.0
     container_name: radarr-anime
     restart: unless-stopped
     environment:
@@ -149,6 +151,7 @@ services:
       TZ: "Etc/Zurich"
     volumes:
       - ${WORKDIR}/radarr-anime/config:/config
+      - "${NAS_STORAGE_LOCATION:?Set NAS_STORAGE_LOCATION in .env}:/data"
       - "${NAS_STORAGE_LOCATION}/library/movies:/movies"
       - "${NAS_STORAGE_LOCATION}/downloads/torrents:/downloads"
     ports:
@@ -185,6 +188,7 @@ services:
   #     TZ: "Etc/Zurich"
   #   volumes:
   #     - ${WORKDIR}/radarr-4k/config:/config
+  #     - "${NAS_STORAGE_LOCATION:?Set NAS_STORAGE_LOCATION in .env}:/data"
   #     - "${NAS_STORAGE_LOCATION}/library/movies:/movies"
   #     - "${NAS_STORAGE_LOCATION}/downloads/torrents:/downloads"
   #   ports:
@@ -213,7 +217,7 @@ services:
   ###--- Sonarr - Library Manager for TV Show / Series / Anime content management ---###
   ### Do not use this container to download 4K TV content. Enable container below to have separate instance just for 4K TV content ###
   sonarr:
-    image: linuxserver/sonarr:4.0.17
+    image: linuxserver/sonarr:4.0.19
     container_name: sonarr
     restart: unless-stopped
     environment:
@@ -223,6 +227,7 @@ services:
       TZ: "Etc/Zurich"
     volumes:
       - ${WORKDIR}/sonarr/config:/config
+      - "${NAS_STORAGE_LOCATION:?Set NAS_STORAGE_LOCATION in .env}:/data"
       - "${NAS_STORAGE_LOCATION}/library/tv:/tv"
       - "${NAS_STORAGE_LOCATION}/downloads/torrents:/downloads"
     ports:
@@ -253,7 +258,7 @@ services:
 ###--- Sonarr Anime - Library Manager for Anime content management ---###
   ### Enable this container to get separate instance for Anime content ###
   sonarr-anime:
-    image: linuxserver/sonarr:4.0.17
+    image: linuxserver/sonarr:4.0.19
     container_name: sonarr-anime
     restart: unless-stopped
     environment:
@@ -263,6 +268,7 @@ services:
       TZ: "Etc/Zurich"
     volumes:
       - ${WORKDIR}/sonarr-anime/config:/config
+      - "${NAS_STORAGE_LOCATION:?Set NAS_STORAGE_LOCATION in .env}:/data"
       - "${NAS_STORAGE_LOCATION}/library/tv:/tv"
       - "${NAS_STORAGE_LOCATION}/downloads/torrents:/downloads"
     ports:
@@ -299,6 +305,7 @@ services:
   #     TZ: "Etc/Zurich"
   #   volumes:
   #     - ${WORKDIR}/sonarr-4k/config:/config
+  #     - "${NAS_STORAGE_LOCATION:?Set NAS_STORAGE_LOCATION in .env}:/data"
   #     - "${NAS_STORAGE_LOCATION}/library/tv:/tv"
   #     - "${NAS_STORAGE_LOCATION}/downloads/torrents:/downloads"
   #   ports:
@@ -324,7 +331,7 @@ services:
 
   # Bazarr - Library Manager for Subtitle management
   bazarr:
-    image: linuxserver/bazarr:1.5.6
+    image: linuxserver/bazarr:1.6.0
     container_name: bazarr
     restart: unless-stopped
     environment:
@@ -334,6 +341,7 @@ services:
       TZ: "Etc/Zurich"
     volumes:
       - ${WORKDIR}/bazarr/config:/config
+      - "${NAS_STORAGE_LOCATION:?Set NAS_STORAGE_LOCATION in .env}:/data"
       - "${NAS_STORAGE_LOCATION}/library/movies:/movies"
       - "${NAS_STORAGE_LOCATION}/library/tv:/tv"
     # ports:
@@ -358,7 +366,7 @@ services:
       - com.centurylinklabs.watchtower.enable=false
     
   bazarr-anime:
-    image: linuxserver/bazarr:1.5.6
+    image: linuxserver/bazarr:1.6.0
     container_name: bazarr-anime
     restart: unless-stopped
     environment:
@@ -368,6 +376,7 @@ services:
       TZ: "Etc/Zurich"
     volumes:
       - ${WORKDIR}/bazarr-anime/config:/config
+      - "${NAS_STORAGE_LOCATION:?Set NAS_STORAGE_LOCATION in .env}:/data"
       - "${NAS_STORAGE_LOCATION}/library/movies:/movies"
       - "${NAS_STORAGE_LOCATION}/library/tv:/tv"
     # ports:
@@ -463,6 +472,7 @@ services:
       # qBittorrent
       - traefik.http.routers.qbittorrent.entrypoints=http
       - traefik.http.routers.qbittorrent.rule=Host(`qbittorrent.${DOMAIN}`)
+      - traefik.http.routers.qbittorrent.service=qbittorrent
       - traefik.http.routers.qbittorrent-secure.entrypoints=https
       - traefik.http.routers.qbittorrent-secure.rule=Host(`qbittorrent.${DOMAIN}`)
       - traefik.http.routers.qbittorrent-secure.tls=true
@@ -473,6 +483,7 @@ services:
       # Prowlarr
       - traefik.http.routers.prowlarr.entrypoints=http
       - traefik.http.routers.prowlarr.rule=Host(`prowlarr.${DOMAIN}`)
+      - traefik.http.routers.prowlarr.service=prowlarr
       - traefik.http.routers.prowlarr-secure.entrypoints=https
       - traefik.http.routers.prowlarr-secure.rule=Host(`prowlarr.${DOMAIN}`)
       - traefik.http.routers.prowlarr-secure.tls=true

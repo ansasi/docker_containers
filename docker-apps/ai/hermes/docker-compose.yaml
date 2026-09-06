@@ -1,0 +1,79 @@
+---
+# Hermes agent — instance-templated so the SAME file can run multiple agents
+# on one host without collisions.
+#
+# Everything that must be unique per agent is derived from ${HERMES_INSTANCE}:
+# the container name, the Traefik router/service names, the per-agent hostnames
+# and (via ${WORKDIR}) the data directory. Deploy each agent as its own Compose
+# project so they never share state:
+#
+#   HERMES_INSTANCE=angel WORKDIR=/…/hermes-angel docker compose -p hermes-angel up -d
+#   HERMES_INSTANCE=marta WORKDIR=/…/hermes-marta docker compose -p hermes-marta up -d
+#
+# The Ansible plays (homelab: ansible/playbooks/rpi-4.yml) define each agent
+# individually and set these for you.
+#
+# No host ports are published — each agent is reached only through Traefik, as
+# the rpi-4 play documents:
+#   - dashboard   -> hermes-${HERMES_INSTANCE}.${DOMAIN}     (port 9119)
+#   - gateway API -> port 8642, disabled by default (see the labels block for
+#     what it's for and how to enable it)
+networks:
+  proxy:
+    external: true
+
+services:
+  hermes:
+    container_name: hermes-${HERMES_INSTANCE}
+    image: nousresearch/hermes-agent:v2026.8.31
+    command: gateway run
+    environment:
+      HERMES_DASHBOARD: "1"
+      HERMES_DASHBOARD_BASIC_AUTH_USERNAME: "${HERMES_DASHBOARD_BASIC_AUTH_USERNAME}"
+      HERMES_DASHBOARD_BASIC_AUTH_PASSWORD: "${HERMES_DASHBOARD_BASIC_AUTH_PASSWORD}"
+      HERMES_DASHBOARD_BASIC_AUTH_SECRET: "${HERMES_DASHBOARD_BASIC_AUTH_SECRET}"
+    volumes:
+      - ${WORKDIR}:/opt/data
+    deploy:
+      resources:
+        limits:
+          # Lower these per instance so several agents fit on one Pi; the
+          # defaults preserve the original single-agent budget (4G / 2 CPU).
+          memory: ${HERMES_MEM_LIMIT:-4G}
+          cpus: "${HERMES_CPU_LIMIT:-2.0}"
+    labels:
+      - traefik.enable=true
+      - traefik.docker.network=proxy
+      # --- dashboard (port 9119) ---
+      - traefik.http.routers.hermes-${HERMES_INSTANCE}-dash.entrypoints=http
+      - traefik.http.routers.hermes-${HERMES_INSTANCE}-dash.rule=Host(`hermes-${HERMES_INSTANCE}.${DOMAIN}`)
+      - traefik.http.routers.hermes-${HERMES_INSTANCE}-dash-secure.entrypoints=https
+      - traefik.http.routers.hermes-${HERMES_INSTANCE}-dash-secure.rule=Host(`hermes-${HERMES_INSTANCE}.${DOMAIN}`)
+      - traefik.http.routers.hermes-${HERMES_INSTANCE}-dash-secure.tls=true
+      - traefik.http.routers.hermes-${HERMES_INSTANCE}-dash-secure.tls.certresolver=cloudflare
+      - traefik.http.routers.hermes-${HERMES_INSTANCE}-dash-secure.service=hermes-${HERMES_INSTANCE}-dashboard
+      - traefik.http.services.hermes-${HERMES_INSTANCE}-dashboard.loadbalancer.server.port=9119
+      # --- gateway API (port 8642) — DISABLED for now ---
+      # The gateway API is the machine-to-machine HTTP control plane: how OTHER
+      # software drives the agent (POST tasks/messages, wire up another service,
+      # automation scripts). It is NOT needed for the dashboard or the Telegram
+      # bot — the bot talks to Telegram over outbound connections, so nothing
+      # reaches the agent through this port. Left disabled to avoid exposing an
+      # unauthenticated surface.
+      #
+      # To enable: uncomment the routes below and add a Traefik basicauth
+      # middleware first (the gateway has no auth of its own), then the API is
+      # reachable at hermes-${HERMES_INSTANCE}-gw.${DOMAIN}.
+      # - traefik.http.routers.hermes-${HERMES_INSTANCE}-gw.entrypoints=http
+      # - traefik.http.routers.hermes-${HERMES_INSTANCE}-gw.rule=Host(`hermes-${HERMES_INSTANCE}-gw.${DOMAIN}`)
+      # - traefik.http.routers.hermes-${HERMES_INSTANCE}-gw-secure.entrypoints=https
+      # - traefik.http.routers.hermes-${HERMES_INSTANCE}-gw-secure.rule=Host(`hermes-${HERMES_INSTANCE}-gw.${DOMAIN}`)
+      # - traefik.http.routers.hermes-${HERMES_INSTANCE}-gw-secure.tls=true
+      # - traefik.http.routers.hermes-${HERMES_INSTANCE}-gw-secure.tls.certresolver=cloudflare
+      # - traefik.http.routers.hermes-${HERMES_INSTANCE}-gw-secure.service=hermes-${HERMES_INSTANCE}-gateway
+      # - traefik.http.services.hermes-${HERMES_INSTANCE}-gateway.loadbalancer.server.port=8642
+    networks:
+      - proxy
+    restart: unless-stopped
+    security_opt:
+      - no-new-privileges:true
