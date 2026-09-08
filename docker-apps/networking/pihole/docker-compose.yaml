@@ -12,7 +12,7 @@ services:
   # Pi-hole sends ordinary DNS only over this private Docker network; dnsproxy sends it upstream using HTTPS.
   dnsproxy:
     container_name: dnsproxy
-    image: adguard/dnsproxy:v0.84.1
+    image: adguard/dnsproxy:v0.84.2
     command:
       - --listen=0.0.0.0
       - --port=5053
