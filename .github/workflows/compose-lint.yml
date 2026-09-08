@@ -15,7 +15,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 10
     container:
-      image: docker:29.7-cli
+      image: docker:29.8-cli
     env:
       # Placeholders used only while interpolating Compose files for linting.
       # No services are started by this workflow.
