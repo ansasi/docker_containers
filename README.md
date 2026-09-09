@@ -47,6 +47,7 @@ scope of the Compose stacks in this repository:
 | [Traefik](docker-apps/networking/traefik) | Used & maintained | Active on the Docker, Datia, and Hermes hosts. |
 | [UpSnap](docker-apps/networking/upsnap) | Used & maintained | Active on the Raspberry Pi Zero DNS host. |
 | [WireGuard Easy](docker-apps/networking/wireguard) | Maintained only | Deferred while the FritzBox WireGuard service is used. |
+| [Vaultwarden](docker-apps/security/vaultwarden/README.md) | Maintained only | New-install template with setup and backup/restore guide; deployment unconfirmed. Does not replace Proton Pass. |
 | [Immich](docker-apps/storage/immich) | Used & maintained | Active on the main Docker host. |
 | [Nextcloud](docker-apps/storage/nextcloud) | Maintained only | Deferred while Proton Docs and Drive are used. |
 | [Nextcloud AIO](docker-apps/storage/nextcloud-aio) | Maintained only | Deferred while Proton Docs and Drive are used. |

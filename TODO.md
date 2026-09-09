@@ -9,9 +9,10 @@ Priority legend: 🔴 High · 🟡 Medium · 🟢 Low · ⚫ Resolved (not neede
 
 ## Security & Authentication
 
-- [ ] **Vaultwarden** ⚫ — Bitwarden-compatible self-hosted password manager. Not needed —
-  using Proton Pass for secrets/vaults instead, which already isolates homelab
-  credentials without adding infra to maintain.
+Vaultwarden now has a [Compose stack and guide](docker-apps/security/vaultwarden/README.md).
+This resolves the repository addition only: deployment and any move from Proton
+Pass remain unconfirmed and are not performed by adding the stack.
+
 - [ ] **Authentik** 🟢 — Identity provider / SSO (LDAP, SAML, OAuth2); pairs well with
   Traefik. Not a priority right now; likely to be built on the Kubernetes cluster once
   it matures, not the Docker host. Pick one of Authentik/Authelia, not both.

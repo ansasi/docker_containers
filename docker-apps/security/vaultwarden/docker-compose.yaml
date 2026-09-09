@@ -1,0 +1,28 @@
+networks:
+  proxy:
+    external: true
+
+services:
+  vaultwarden:
+    image: vaultwarden/server:1.37.2
+    container_name: vaultwarden
+    environment:
+      DOMAIN: 'https://vaultwarden.${DOMAIN:?Set DOMAIN to your base DNS domain in .env}'
+      # Temporarily enable only while creating the initial account (see README).
+      SIGNUPS_ALLOWED: '${VAULTWARDEN_SIGNUPS_ALLOWED:-false}'
+      INVITATIONS_ALLOWED: 'false'
+    volumes:
+      - ${WORKDIR:?Set WORKDIR to a dedicated absolute Vaultwarden directory in .env}/data:/data
+    labels:
+      - traefik.enable=true
+      - traefik.docker.network=proxy
+      - traefik.http.routers.vaultwarden-secure.entrypoints=https
+      - traefik.http.routers.vaultwarden-secure.rule=Host(`vaultwarden.${DOMAIN}`)
+      - traefik.http.routers.vaultwarden-secure.tls=true
+      - traefik.http.routers.vaultwarden-secure.tls.certresolver=cloudflare
+      - traefik.http.routers.vaultwarden-secure.service=vaultwarden
+      # HTTP and WebSocket notifications share the main port.
+      - traefik.http.services.vaultwarden.loadbalancer.server.port=80
+    networks:
+      - proxy
+    restart: unless-stopped
