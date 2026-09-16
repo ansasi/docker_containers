@@ -14,6 +14,8 @@ services:
     volumes:
       - "${NAS_STORAGE_LOCATION}/library/tv:/media/TV"
       - "${NAS_STORAGE_LOCATION}/library/movies:/media/movies"
+      - "${NAS_STORAGE_LOCATION}/library/anime-movies:/media/anime-movies"
+      - "${NAS_STORAGE_LOCATION}/library/anime-tv:/media/anime-tv"
       - "${NAS_STORAGE_LOCATION}/library/music:/media/music"
       - "${NAS_STORAGE_LOCATION}/library/pictures:/media/pictures"
       - "${NAS_STORAGE_LOCATION}/library/books:/media/books"

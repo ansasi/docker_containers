@@ -1,479 +1,231 @@
-# Media Server & Download Manager Stack Docker Compose
-
-This repository provides a Docker Compose configuration for a comprehensive media server and download management stack. It includes services for media playback, request management, torrent downloads, indexer management, library management (movies, TV shows, music, books, subtitles), and automated post-processing.
-
-> **Note:** Some services are disabled by default (commented out) such as ErsatzTV, SABnzbd, Radarr 4K, and Sonarr 4K. Uncomment and configure these sections if you wish to enable them.
-
-## Table of Contents
-
-- [Media Server \& Download Manager Stack Docker Compose](#media-server--download-manager-stack-docker-compose)
-  - [Table of Contents](#table-of-contents)
-  - [Services Overview](#services-overview)
-    - [Jellyfin](#jellyfin)
-    - [ErsatzTV (Disabled)](#ersatztv-disabled)
-    - [Jellyseerr](#jellyseerr)
-    - [qBittorrent](#qbittorrent)
-    - [qBitmanage](#qbitmanage)
-    - [SABnzbd (Disabled)](#sabnzbd-disabled)
-    - [Prowlarr](#prowlarr)
-    - [Radarr](#radarr)
-    - [Radarr 4K (Disabled)](#radarr-4k-disabled)
-    - [Sonarr](#sonarr)
-    - [Sonarr 4K (Disabled)](#sonarr-4k-disabled)
-    - [Bazarr](#bazarr)
-    - [Lidarr](#lidarr)
-    - [Readarr](#readarr)
-    - [Unpackerr](#unpackerr)
-  - [Networks](#networks)
-  - [Installation](#installation)
-    - [Prerequisites](#prerequisites)
-    - [Steps](#steps)
-  - [Usage](#usage)
-  - [Troubleshooting](#troubleshooting)
-
----
-
-## Services Overview
-
-### Jellyfin
-
-- **Image:** `jellyfin/jellyfin:latest`  
-- **Container Name:** `jellyfin`  
-- **Description:**  
-  Jellyfin is a media library and player used for streaming your media content.
-- **Devices:**  
-  Provides GPU access for hardware acceleration (transcoding):
-  - `/dev/dri/card1` — Full GPU 02 access  
-  - `/dev/dri/renderD128` — GPU render-only access (GPU 01)  
-  - *Additional device mappings are available (commented out) and can be enabled if needed.*
-- **Environment Variables:**
-  - `PGID=1000`
-  - `PUID=1000`
-  - `UMASK=002`
-  - `TZ=Etc/UTC`
-- **Volumes:**
-  - Media Libraries:
-    - TV: `/media/disk/exthdd01/extarrs/data/library/tv` → `/media/TV`
-    - Movies: `/media/disk/exthdd01/extarrs/data/library/movies` → `/media/movies`
-    - Music: `/media/disk/exthdd01/extarrs/data/library/music` → `/media/music`
-    - Pictures: `/media/disk/exthdd01/extarrs/data/library/pictures` → `/media/pictures`
-    - Books: `/media/disk/exthdd01/extarrs/data/library/books` → `/media/books`
-  - Configuration & Cache:
-    - `./appdata/jellyfin/config` → `/config`
-    - `./appdata/jellyfin/cache` → `/cache`
-  - Transcoding:
-    - `/dev/shm` → `/transcode`
-- **Ports:**  
-  - TODO
-- **Network:**  
-  - Static IP on network `media`: `10.0.30.100`
-
----
-
-### ErsatzTV (Disabled)
-
-- **Image Options:**  
-  - Base (software transcoding): `jasongdove/ersatztv:latest`  
-  - Nvidia transcoding: `jasongdove/ersatztv:latest-nvidia`  
-  - VAAPI transcoding: `jasongdove/ersatztv:latest-vaapi`
-- **Container Name:** `ersatztv`  
-- **Description:**  
-  ErsatzTV is an IPTV server that lets you configure and stream custom live TV channels using your media library.
-- **Ports:**  
-  - Example: `8294:8409` (Container port 8409 to host port 8294)
-- **Volumes:**  
-  - Configuration: `./appdata/ersatztv/config` → `/root/.local/share/ersatztv`
-- **Network:**  
-  - Static IP on network `media`: `10.0.30.112`
-- **Notes:**  
-  - Media paths are not needed if you connect ErsatzTV to Jellyfin with an API key.
-  - This service is commented out by default. Uncomment and adjust as needed.
-
----
-
-### Jellyseerr
-
-- **Image:** `fallenbagel/jellyseerr:latest`  
-- **Container Name:** `jellyseerr`  
-- **Description:**  
-  Jellyseerr is a media request management and discovery tool that integrates with your media server.
-- **Environment Variables:**
-  - `PGID=1000`
-  - `PUID=1000`
-  - `UMASK=002`
-  - `LOG_LEVEL=debug`
-  - `TZ=Etc/UTC`
-- **Volumes:**  
-  - `./appdata/jellyseerr/config` → `/app/config`
-- **Ports:**  
-  - `8111:5055` (Maps container port 5055 to host port 8111)
-- **Network:**  
-  - Static IP on network `media`: `10.0.30.101`
-
----
-
-### qBittorrent
-
-- **Image:** `ghcr.io/hotio/qbittorrent:latest`  
-- **Container Name:** `qbittorrent`  
-- **Description:**  
-  qBittorrent is a torrent download client used to download torrent files.
-- **Environment Variables:**
-  - `PUID=1000`
-  - `PGID=1000`
-  - `UMASK=002`
-  - `TZ=Etc/UTC`
-  - `WEBUI_PORTS=8080/tcp,8080/udp`
-- **Volumes:**  
-  - Configuration: `./appdata/qbittorrent/config` → `/config`
-  - Torrent Data: `./data/torrents` → `/data/torrents`
-- **Ports:**  
-  - TODO
-- **Network:**  
-  - Static IP on network `media`: `10.0.30.102`
-
----
-
-### qBitmanage
-
-- **Image:** `ghcr.io/stuffanthings/qbit_manage:latest`  
-- **Container Name:** `qbitmanage`  
-- **Description:**  
-  qBitmanage automates routine tasks for qBittorrent, such as cross-seeding and cleanup.
-- **Environment Variables:**
-  - `PUID=1000`
-  - `PGID=1000`
-  - `UMASK=002`
-  - `TZ=Etc/UTC`
-  - Additional options (e.g., `QBT_RUN`, `QBT_SCHEDULE`, `QBT_CONFIG`, etc.) to customize behavior
-- **Volumes:**  
-  - Torrent data: `/media/disk/exthdd01/extarrs/data/torrents` → `/data/torrents`
-  - Configuration: `./appdata/qbitmanage/config` → `/config`
-  - qBittorrent Backup: `./appdata/qbittorrent/data/BT_backup` → `/torrentdir`
-- **Network:**  
-  - Static IP on network `media`: `10.0.30.111`
-
----
-
-### SABnzbd (Disabled)
-
-- **Image:** `ghcr.io/hotio/sabnzbd:latest`  
-- **Container Name:** `sabnzbd`  
-- **Description:**  
-  SABnzbd is a download client for NZB files from Usenet.  
-  **Important:** This container is disabled by default due to the need for a premium Usenet provider.
-- **Environment Variables:**
-  - `PUID=1000`
-  - `PGID=1000`
-  - `TZ=Etc/UTC`
-- **Volumes:**  
-  - Time sync: `/etc/localtime:/etc/localtime:ro`
-  - Configuration: `./appdata/sabnzbd/config` → `/config`
-  - Usenet Data: `/media/disk/exthdd01/extarrs/data/usenet` → `/data/usenet`
-- **Ports:**  
-  - TODO
-- **Network:**  
-  - Static IP on network `media`: `10.0.30.103`
-- **Notes:**  
-  - Uncomment to enable if you are using a Usenet provider.
-
----
-
-### Prowlarr
-
-- **Image:** `ghcr.io/hotio/prowlarr:latest`  
-- **Container Name:** `prowlarr`  
-- **Description:**  
-  Prowlarr manages indexers for “ARR” apps, helping to integrate search and download services.
-- **Environment Variables:**
-  - `PUID=1000`
-  - `PGID=1000`
-  - `TZ=Etc/UTC`
-- **Volumes:**  
-  - `./appdata/prowlarr/config` → `/config`
-- **Ports:**  
-  - `8113:9696` (Maps container port 9696 to host port 8113)
-- **Network:**  
-  - Static IP on network `media`: `10.0.30.104`
-
----
-
-### Radarr
-
-- **Image:** `ghcr.io/hotio/radarr:latest`  
-- **Container Name:** `radarr`  
-- **Description:**  
-  Radarr is a movie library manager for automating movie downloads and organization.
-- **Environment Variables:**
-  - `PUID=1000`
-  - `PGID=1000`
-  - `TZ=Etc/UTC`
-- **Volumes:**  
-  - Configuration: `./appdata/radarr/config` → `/config`
-  - Media Data: `/media/disk/exthdd01/extarrs/data` → `/data`
-- **Ports:**  
-  - `8114:7878` (Maps container port 7878 to host port 8114)
-- **Network:**  
-  - Static IP on network `media`: `10.0.30.105`
-
----
-
-### Radarr 4K (Disabled)
-
-- **Image:** `ghcr.io/hotio/radarr:latest`  
-- **Container Name:** `radarr4k`  
-- **Description:**  
-  A separate instance of Radarr dedicated to managing 4K movie content.
-- **Volumes:**  
-  - Configuration: `./appdata/radarr4k/config` → `/config`
-  - Media Data: `/media/disk/exthdd01/extarrs/data` → `/data`
-- **Ports:**  
-  - `8344:7878`
-- **Network:**  
-  - Static IP on network `media`: `10.0.30.115`
-- **Notes:**  
-  - Uncomment to enable if 4K management is required.
-
----
-
-### Sonarr
-
-- **Image:** `ghcr.io/hotio/sonarr:latest`  
-- **Container Name:** `sonarr`  
-- **Description:**  
-  Sonarr is a TV show and series library manager that automates downloads of TV content.
-- **Environment Variables:**
-  - `PUID=1000`
-  - `PGID=1000`
-  - `TZ=Etc/UTC`
-- **Volumes:**  
-  - Configuration: `./appdata/sonarr/config` → `/config`
-  - Media Data: `/media/disk/exthdd01/extarrs/data` → `/data`
-- **Ports:**  
-  - `8115:8989` (Maps container port 8989 to host port 8115)
-- **Network:**  
-  - Static IP on network `media`: `10.0.30.106`
-- **Notes:**  
-  - For 4K content, use the Sonarr 4K instance.
-
----
-
-### Sonarr 4K (Disabled)
-
-- **Image:** `ghcr.io/hotio/sonarr:latest`  
-- **Container Name:** `sonarr4k`  
-- **Description:**  
-  A separate instance of Sonarr dedicated to managing 4K TV content.
-- **Volumes:**  
-  - Configuration: `./appdata/sonarr4k/config` → `/config`
-  - Media Data: `/media/disk/exthdd01/extarrs/data` → `/data`
-- **Ports:**  
-  - `8345:8989`
-- **Network:**  
-  - Static IP on network `media`: `10.0.30.116`
-- **Notes:**  
-  - Uncomment to enable if needed.
-
----
-
-### Bazarr
-
-- **Image:** `ghcr.io/hotio/bazarr:latest`  
-- **Container Name:** `bazarr`  
-- **Description:**  
-  Bazarr manages subtitles for your media libraries by integrating with various media managers.
-- **Environment Variables:**
-  - `PUID=1000`
-  - `PGID=1000`
-  - `TZ=Etc/UTC`
-- **Volumes:**  
-  - Time sync: `/etc/localtime:/etc/localtime:ro`
-  - Configuration: `./appdata/bazarr/config` → `/config`
-  - Media Data: `/media/disk/exthdd01/extarrs/data` → `/data`
-- **Ports:**  
-  - `8116:6767` (Maps container port 6767 to host port 8116)
-- **Network:**  
-  - Static IP on network `media`: `10.0.30.107`
-
----
-
-### Lidarr
-
-- **Image:** `ghcr.io/hotio/lidarr:latest`  
-- **Container Name:** `lidarr`  
-- **Description:**  
-  Lidarr automates the download and organization of music, acting as a music library manager.
-- **Environment Variables:**
-  - `PUID=1000`
-  - `PGID=1000`
-  - `TZ=Etc/UTC`
-- **Volumes:**  
-  - Time sync: `/etc/localtime:/etc/localtime:ro`
-  - Configuration: `./appdata/lidarr/config` → `/config`
-  - Media Data: `/media/disk/exthdd01/extarrs/data` → `/data`
-- **Ports:**  
-  - `8117:8686` (Maps container port 8686 to host port 8117)
-- **Network:**  
-  - Static IP on network `media`: `10.0.30.108`
-
----
-
-### Readarr
-
-- **Image:** `ghcr.io/hotio/readarr:latest`  
-- **Container Name:** `readarr`  
-- **Description:**  
-  Readarr manages books and ebooks (EPUBs), automating download and library organization.
-- **Environment Variables:**
-  - `PUID=1000`
-  - `PGID=1000`
-  - `TZ=Etc/UTC`
-- **Volumes:**  
-  - Time sync: `/etc/localtime:/etc/localtime:ro`
-  - Configuration: `./appdata/readarr/config` → `/config`
-  - Media Data: `/media/disk/exthdd01/extarrs/data` → `/data`
-- **Ports:**  
-  - `8118:8787` (Maps container port 8787 to host port 8118)
-- **Network:**  
-  - Static IP on network `media`: `10.0.30.109`
-
----
-
-### Unpackerr
-
-- **Image:** `ghcr.io/hotio/unpackerr:latest`  
-- **Container Name:** `unpackerr`  
-- **Description:**  
-  Unpackerr automatically extracts downloaded files for Radarr, Sonarr, Lidarr, and Readarr, then deletes the extracted files after import.
-- **Volumes:**  
-  - Configuration: `./appdata/unpackerr/config` → `/config`
-  - Torrent Data: `/media/disk/exthdd01/extarrs/data/torrents` → `/data/torrents`
-- **Environment Variables:**
-  - `PUID=1000`
-  - `PGID=1000`
-  - `TZ=Etc/UTC`
-  - `UN_LOG_FILE=/data/torrents/unpackerr.log`
-  - API URLs & Keys (replace placeholders with your actual API keys):
-    - `UN_SONARR_0_URL=http://sonarr:8989/sonarr`
-    - `UN_SONARR_0_API_KEY=IMPORT_SONARR_API_KEY_HERE`
-    - `UN_RADARR_0_URL=http://radarr:7878/radarr`
-    - `UN_RADARR_0_API_KEY=IMPORT_RADARR_API_KEY_HERE`
-    - `UN_LIDARR_0_URL=http://lidarr:8686/lidarr`
-    - `UN_LIDARR_0_API_KEY=IMPORT_LIDARR_API_KEY_HERE`
-    - `UN_READARR_0_URL=http://readarr:8787/readarr`
-    - `UN_READARR_0_API_KEY=IMPORT_READARR_API_KEY_HERE`
-- **Security Options:**  
-  - `no-new-privileges: true`
-- **Network:**  
-  - Static IP on network `media`: `10.0.30.110`
-
----
-
-## Networks
-
-All services connect to a custom Docker network named `media` with the following configuration:
-
-- **Driver:** `bridge`
-- **Attachable:** `true`
-- **Internal:** `false`
-- **IPAM Configuration:**
-  - **Subnet:** `10.0.30.0/24`  
-    *(Change this to your preferred range if needed.)*
-  - **Gateway:** `10.0.30.1`
-
----
-## Installation
-
-### Prerequisites
-
-- **Docker Engine:** [Install Docker](https://docs.docker.com/engine/install/)
-- **Docker Compose:** [Install Docker Compose](https://docs.docker.com/compose/install/)
-
-### Steps
-
-1. **Clone the Repository:**
-
-  ```bash
-  git clone https://your-repository-url.git
-  cd your-repository-directory
-  ```
-
-2. **Create Required Directories:**
-
-  Make sure these directories exist for persistent storage:
-
-  ```bash
-  mkdir -p appdata/jellyfin/config appdata/jellyfin/cache
-  mkdir -p appdata/jellyseerr/config
-  mkdir -p appdata/qbittorrent/config
-  mkdir -p data/torrents
-  mkdir -p appdata/qbitmanage/config
-  mkdir -p appdata/prowlarr/config
-  mkdir -p appdata/radarr/config
-  mkdir -p appdata/sonarr/config
-  mkdir -p appdata/bazarr/config
-  mkdir -p appdata/lidarr/config
-  mkdir -p appdata/readarr/config
-  mkdir -p appdata/unpackerr/config
-  ```
-
-3. **Review & Customize:**
-
-  - **Media Paths:** Update paths (e.g., `/media/disk/exthdd01/extarrs/data/...`) to match your setup.
-  - **Device Access:** Modify device mappings under Jellyfin if additional GPU or hardware acceleration is needed.
-  - **API Keys:** Replace placeholder API keys in Unpackerr with your actual keys.
-  - **Network Subnet:** Adjust the network subnet in the Compose file if necessary.
-  - **Enable/Disable Services:** Uncomment any disabled services if you wish to use them.
-
-## Usage
-
-1. **Start the Stack:**
-
-  From the directory containing the `docker-compose.yaml` file, run:
-
-  ```bash
-  docker-compose up -d
-  ```
-
-2. **Access the Services:**
-
-  Replace `your-host` with your server's IP address or domain:
-
-  - Jellyfin: [http://your-host:8110](http://your-host:8110)
-  - Jellyseerr: [http://your-host:8111](http://your-host:8111)
-  - qBittorrent: [http://your-host:8290](http://your-host:8290)
-  - Prowlarr: [http://your-host:8113](http://your-host:8113)
-  - Radarr: [http://your-host:8114](http://your-host:8114)
-  - Sonarr: [http://your-host:8115](http://your-host:8115)
-  - Bazarr: [http://your-host:8116](http://your-host:8116)
-  - Lidarr: [http://your-host:8117](http://your-host:8117)
-  - Readarr: [http://your-host:8118](http://your-host:8118)
-
-  For any disabled services, enable them and adjust port mappings as required.
-
-3. **View Logs:**
-
-  To view real-time logs for a service, run:
-
-  ```bash
-  docker-compose logs -f <service_name>
-  ```
-
-  Replace `<service_name>` with the appropriate container name (e.g., `jellyfin`, `qbittorrent`, `unpackerr`).
-
-## Troubleshooting
-
-- **Port Conflicts:**  
-  Ensure that the host ports (e.g., 8110, 8290, etc.) are not already in use.
-  
-- **Persistent Data:**  
-  Verify that the required directories exist and have the proper permissions.
-  
-- **Device Mappings:**  
-  Adjust or uncomment device mappings under Jellyfin if GPU acceleration is not functioning as expected.
-  
-- **Network Configuration:**  
-  Confirm that the custom network settings do not conflict with other Docker networks.
-  
-- **API Keys:**  
-  Double-check that all API keys for Unpackerr and other integrations are correctly set.
+# ARR stack
+
+Production stack on the main Docker host. Deployment locations are tracked in the
+[homelab inventory](https://github.com/ansasi/homelab#apps--status).
+Jellyfin runs separately in an LXC; its [Compose template](../jellyfin/docker-compose.yaml)
+is maintained here but does not configure that LXC.
+
+## Services and connections
+
+The Compose file is the source of truth for image versions. Active services are
+qBittorrent, Seerr, Prowlarr, Radarr/Sonarr and their anime instances, two Bazarr
+instances, FlareSolverr, and Gluetun. Radarr/Sonarr 4K are commented templates,
+not enabled services. qBitmanage, SABnzbd, Lidarr, Readarr, Unpackerr, and Jellyfin
+are not deployed by this stack.
+
+The external Docker network is `proxy`, shared with Traefik. qBittorrent,
+Prowlarr, and FlareSolverr use `network_mode: service:gluetun`; their ports and
+qBittorrent/Prowlarr Traefik labels therefore live on Gluetun. The other apps
+connect directly to `proxy`.
+
+| Service | Address from another container on `proxy` | Published host port |
+|---|---|---|
+| qBittorrent | `http://gluetun:8085` | 8085 |
+| Prowlarr | `http://gluetun:9696` | 9696 |
+| FlareSolverr | `http://gluetun:8191` | 8191 |
+| Radarr | `http://radarr:7878` | 7878 |
+| Radarr Anime | `http://radarr-anime:7878` | 7879 |
+| Sonarr | `http://sonarr:8989` | 8989 |
+| Sonarr Anime | `http://sonarr-anime:8989` | 8990 |
+| Bazarr | `http://bazarr:6767` | None; Traefik |
+| Bazarr Anime | `http://bazarr-anime:6767` | None; Traefik |
+| Seerr | `http://seerr-jellyfin:5055` | None; Traefik |
+
+Use container ports for app connections, including the anime instances.
+Prowlarr has no independent network endpoint on `proxy`: use `gluetun:9696`
+as its callback URL in Prowlarr's application settings. Within the shared VPN
+namespace, Prowlarr can reach FlareSolverr at `http://localhost:8191`.
+Existing published ports, proxy routes, VPN configuration and image versions
+are preserved by the storage cleanup.
+
+## Storage contract
+
+`NAS_STORAGE_LOCATION` is the **existing** host directory containing both
+`downloads` and `library`, not either subdirectory. In the migration discussed
+for this installation it is `/mnt/qnap/media/arrs`; verify the live bind sources
+before deployment. Do not create a replacement empty tree if the NAS is offline.
+
+| Host path relative to `NAS_STORAGE_LOCATION` | Purpose |
+|---|---|
+| `downloads/torrents/radarr` | Standard movie torrents |
+| `downloads/torrents/radarr-anime` | Anime movie torrents |
+| `downloads/torrents/sonarr` | Standard TV torrents |
+| `downloads/torrents/sonarr-anime` | Anime TV torrents |
+| `library/movies` | Standard movie library |
+| `library/anime-movies` | Anime movie library |
+| `library/tv` | Standard TV library |
+| `library/anime-tv` | Anime TV library |
+
+| Container | Host bind source | Container destination |
+|---|---|---|
+| qBittorrent | `${NAS_STORAGE_LOCATION}/downloads/torrents` | `/data/downloads/torrents` |
+| All Radarr/Sonarr instances | `${NAS_STORAGE_LOCATION}` | `/data` |
+| Both Bazarr instances | `${NAS_STORAGE_LOCATION}/library` | `/data/library` |
+| Prowlarr | No media bind | Config only |
+
+Each app retains its existing `${WORKDIR}/<app>/config` directory (`seerr` for
+Seerr); Gluetun retains its named volume. Keep application databases on suitable
+local storage. Do not change `WORKDIR` during this cleanup.
+
+This follows [TRaSH's Docker storage guidance](https://trash-guides.info/File-and-Folder-Structure/How-to-set-up/Docker/).
+Our names `downloads/torrents` and `library` are intentional: consistency and a
+common filesystem matter, not copying the guide's example directory names.
+Radarr/Sonarr perform the import and must see source and destination through one
+bind. qBittorrent does not need library access; Bazarr needs writable library
+access for subtitles. Separate NAS exports, datasets, or nested filesystems can
+still prevent hardlinks even under one `/data` bind.
+
+### Permissions
+
+Retain the working numeric `PUID`/`PGID` shared by the LinuxServer media apps and
+`UMASK=002`. With suitable ownership/ACLs this allows group-writable directories
+and files (normally 775/664). Verify the application identity with
+`docker exec radarr id abc`; plain `docker exec radarr id` reports the exec user,
+which can be root even though the application runs as `abc`.
+
+On QNAP, inspect the mount type and ACLs before changing permissions. A failed
+`chown` may reflect NFS root squashing or SMB ownership semantics. Do not disable
+root squashing, erase ACLs, or recursively make media files executable. Effective
+read/write access as the configured application user is the relevant check.
+
+## Application settings (not configured by Compose)
+
+| App | Library root | qBittorrent category |
+|---|---|---|
+| Radarr | `/data/library/movies` | `radarr` |
+| Radarr Anime | `/data/library/anime-movies` | `radarr-anime` |
+| Sonarr | `/data/library/tv` | `sonarr` |
+| Sonarr Anime | `/data/library/anime-tv` | `sonarr-anime` |
+
+Enable hardlinks and Completed Download Handling in all four apps. Use
+`gluetun:8085` with qBittorrent credentials. Leave Remote Path Mappings empty
+because the client reports the same paths the Arrs see. Review collections,
+Seerr default roots, and any import lists for obsolete roots as well.
+Disabled 4K templates also use `/data`; choose separate roots/categories and
+verify their image versions and integration settings before enabling them.
+
+In qBittorrent, set the default save path to `/data/downloads/torrents`, use
+Automatic Torrent Management, and give each category the corresponding full
+`/data/downloads/torrents/<category>` save path. Audit **existing torrents** as
+well as defaults. Any incomplete, watched, or exported-torrent directory must
+remain accessible after the narrower mount. Never download into `library`.
+See [TRaSH qBittorrent setup](https://trash-guides.info/Downloaders/qBittorrent/Basic-Setup/).
+
+For seeding, leave global ratio/time/inactive-time limits disabled and manage
+tracker-specific goals through the Starr indexer settings (or Prowlarr sync,
+where supported). Verify the values actually received by each Arr and torrent.
+Choose Pause/Stop on reaching a goal, not qBittorrent deletion. Enable Arr
+completed-download removal only with correct tracker goals and successful
+imports; leave the post-import category empty for this workflow. Where both
+ratio and time apply, qBittorrent acts on the first limit reached: ensure the
+chosen policy meets **all** private-tracker requirements.
+
+Connect `bazarr` to `radarr:7878` and `sonarr:8989`, and `bazarr-anime` to
+`radarr-anime:7878` and `sonarr-anime:8989`, using each instance's own API key.
+Leave Bazarr Path Mappings empty and verify its paths start with `/data/library`.
+This matches the [Bazarr setup guide](https://wiki.bazarr.media/Getting-Started/Setup-Guide/).
+Check subtitle writing for one movie and episode per instance.
+
+Prowlarr needs four application connections, using the Radarr/Sonarr URLs in
+the table above and their respective API keys. Use Full Sync if Prowlarr is the
+source of truth; understand that it overwrites synchronized indexer settings.
+Test all four connections and the indexers. No media mount is needed.
+
+## Jellyfin
+
+The separate Docker template exposes the following library paths. Preserve
+case: its existing TV path is `/media/TV`.
+
+| Jellyfin library | Docker template folders |
+|---|---|
+| Movies | `/media/movies`, `/media/anime-movies` |
+| Shows | `/media/TV`, `/media/anime-tv` |
+
+For the active LXC, expose the same NAS anime directories through its own mount
+configuration and add those **actual LXC paths** to the existing libraries.
+Its current TV path may be `/media/tv`; do not rename it just to match Docker.
+Editing this repository does not update LXC mounts. Scan only after files and
+mounts are verified. Do not add the torrent tree or the whole mixed library root
+as a Movies folder.
+
+## Deployment gate and rollback
+
+This is phase two of the migration: removing legacy `/movies`, `/tv`, and
+`/downloads` aliases. The user reported the file moves complete and previously
+verified standard Radarr hardlinks. That does not verify both Bazarr instances,
+all remaining imports, or the current live configuration. Keep the PR draft
+until the following checks are recorded.
+
+1. Capture read-only live mount evidence, for example:
+   ```bash
+   docker inspect --format '{{range .Mounts}}{{println .Source "->" .Destination}}{{end}}' qbittorrent radarr radarr-anime sonarr sonarr-anime bazarr bazarr-anime
+   findmnt -T /mnt/qnap/media/arrs/library/anime-movies
+   ```
+   Compare the bind sources with the existing deployment `.env`; do not publish
+   that file or unfiltered container environment output. Confirm the NAS is
+   mounted and every required source directory exists.
+2. With transitional mounts still present, finish all settings above. Check
+   every existing torrent path, all Arr roots/collections, both Bazarr libraries,
+   Seerr, and any scripts. No dependency may remain on a removed alias.
+3. Back up the deployed Compose, private `.env`, app configs/databases and
+   qBittorrent resume state consistently (app backup or stopped-app copy).
+   Back up the library according to the existing policy. Verify a restore into
+   a separate location; retain the currently running image IDs locally so
+   rollback does not depend on a moving tag.
+4. Validate using the existing deployment environment:
+   ```bash
+   docker compose -f docker-compose.yaml config --quiet
+   ```
+   Required existing variables are `WORKDIR`, `NAS_STORAGE_LOCATION`, `PUID`,
+   `PGID`, `DOMAIN`, `WIREGUARD_PRIVATE_KEY`, and `HOME_SUBNET`. `proxy` and the
+   host's `/dev/net/tun` must exist. No sample credentials belong in Git.
+5. Schedule a brief interruption, pause new grabs and subtitle jobs, and apply
+   the reviewed change using the same project name, working directory and
+   environment as the deployed stack. Reuse existing images; do not combine
+   this cleanup with an image pull/upgrade. Recreate only changed services.
+   Do not run `down -v` or delete any config/media directory. Jellyfin's Docker
+   template is not a command to deploy a second Jellyfin alongside the LXC.
+6. Inspect effective mounts and app health, test download-client connections,
+   then perform one download/import per Arr. From the importing container,
+   compare the real torrent and library files:
+   ```bash
+   docker exec radarr stat -c '%d %i %h %n' '/data/downloads/torrents/radarr/<torrent>/<file>' '/data/library/movies/<movie>/<file>'
+   ```
+   Replace placeholders with actual files; repeat in each other Arr. Matching
+   device and inode with link count at least two proves a hardlink. Verify
+   subtitle writes in both Bazarr instances, Prowlarr sync, Seerr roots, and
+   Jellyfin playback. Resume automation after these checks pass.
+
+If paths disappear or imports fail, pause affected jobs, restore the prior
+Compose and recreate the affected containers with the same configs/images.
+This restores aliases without moving media back. Keep application paths on
+`/data/...`, which the transitional Compose already supports. Restore app
+backups only if needed and while those apps are stopped; account for changes
+made since backup. No database/image migration is part of this PR.
+
+## Review boundaries and existing follow-ups
+
+The storage model can be checked statically; Compose validation cannot prove
+NAS availability, ACLs, actual hardlinks, application settings, VPN behavior,
+or subtitle downloads. Quality profiles, custom formats, naming, and quality
+sizes live in app databases and need their own TRaSH review.
+
+- qBittorrent still uses `latest` (existing Renovate TODO). Do not pull it as
+  part of this storage rollout; choose a version separately after checking
+  tracker compatibility and the running version.
+- Gluetun retains its existing ping-based healthcheck. A successful ping is not
+  proof of VPN isolation or successful app traffic; validate live connectivity.
+- Publishing 6881 on the host is not Proton VPN port forwarding. Verify the
+  provider-forwarded port and qBittorrent's listening port separately; this PR
+  does not change VPN routing or forwarding.
+- FlareSolverr is retained to preserve existing integrations. TRaSH currently
+  [flags it as non-functional](https://trash-guides.info/Prowlarr/prowlarr-setup-flaresolverr/);
+  verify actual indexer needs/results rather than assuming bypass works.
+
+Upstream image references: [qBittorrent](https://docs.linuxserver.io/images/docker-qbittorrent/),
+[Radarr](https://docs.linuxserver.io/images/docker-radarr/),
+[Sonarr](https://docs.linuxserver.io/images/docker-sonarr/),
+[Bazarr](https://docs.linuxserver.io/images/docker-bazarr/), and
+[Jellyfin](https://docs.linuxserver.io/images/docker-jellyfin/).
+Gluetun's [shared-network instructions](https://github.com/qdm12/gluetun-wiki/blob/main/setup/connect-a-container-to-gluetun.md)
+explain why the three VPN-routed services are reached through Gluetun.
