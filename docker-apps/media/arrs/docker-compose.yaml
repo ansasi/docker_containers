@@ -16,14 +16,14 @@ services:
       PUID: "${PUID}"
       PGID: "${PGID}"
       UMASK: "002"
-      TZ: "Etc/Zurich"
+      TZ: "Europe/Zurich"
       WEBUI_PORT: "8085"
     # ports:
     #   - 8085:8085
     volumes:
       - ${WORKDIR}/qbittorrent/config:/config
-      - "${NAS_STORAGE_LOCATION:?Set NAS_STORAGE_LOCATION in .env}:/data"
-      - "${NAS_STORAGE_LOCATION}/downloads/torrents:/downloads"
+      # Torrent client only needs the download tree; keep paths identical to the Arrs.
+      - "${NAS_STORAGE_LOCATION:?Set NAS_STORAGE_LOCATION in .env}/downloads/torrents:/data/downloads/torrents"
     network_mode: "service:gluetun"
     # networks:
     #   - proxy
@@ -85,7 +85,7 @@ services:
       PUID: "${PUID}"
       PGID: "${PGID}"
       UMASK: "002"
-      TZ: "Etc/Zurich"
+      TZ: "Europe/Zurich"
     volumes:
       - ${WORKDIR}/prowlarr/config:/config
     # ports:
@@ -111,12 +111,10 @@ services:
       PUID: "${PUID}"
       PGID: "${PGID}"
       UMASK: "002"
-      TZ: "Etc/Zurich"
+      TZ: "Europe/Zurich"
     volumes:
       - ${WORKDIR}/radarr/config:/config
       - "${NAS_STORAGE_LOCATION:?Set NAS_STORAGE_LOCATION in .env}:/data"
-      - "${NAS_STORAGE_LOCATION}/library/movies:/movies"
-      - "${NAS_STORAGE_LOCATION}/downloads/torrents:/downloads"
     ports:
       - 7878:7878
     networks:
@@ -148,12 +146,10 @@ services:
       PUID: "${PUID}"
       PGID: "${PGID}"
       UMASK: "002"
-      TZ: "Etc/Zurich"
+      TZ: "Europe/Zurich"
     volumes:
       - ${WORKDIR}/radarr-anime/config:/config
       - "${NAS_STORAGE_LOCATION:?Set NAS_STORAGE_LOCATION in .env}:/data"
-      - "${NAS_STORAGE_LOCATION}/library/movies:/movies"
-      - "${NAS_STORAGE_LOCATION}/downloads/torrents:/downloads"
     ports:
       - 7879:7878
     networks:
@@ -185,12 +181,10 @@ services:
   #     PUID: "${PUID}"
   #     PGID: "${PGID}"
   #     UMASK: "002"
-  #     TZ: "Etc/Zurich"
+  #     TZ: "Europe/Zurich"
   #   volumes:
   #     - ${WORKDIR}/radarr-4k/config:/config
   #     - "${NAS_STORAGE_LOCATION:?Set NAS_STORAGE_LOCATION in .env}:/data"
-  #     - "${NAS_STORAGE_LOCATION}/library/movies:/movies"
-  #     - "${NAS_STORAGE_LOCATION}/downloads/torrents:/downloads"
   #   ports:
   #     - 7880:7878
   #   networks:
@@ -224,12 +218,10 @@ services:
       PUID: "${PUID}"
       PGID: "${PGID}"
       UMASK: "002"
-      TZ: "Etc/Zurich"
+      TZ: "Europe/Zurich"
     volumes:
       - ${WORKDIR}/sonarr/config:/config
       - "${NAS_STORAGE_LOCATION:?Set NAS_STORAGE_LOCATION in .env}:/data"
-      - "${NAS_STORAGE_LOCATION}/library/tv:/tv"
-      - "${NAS_STORAGE_LOCATION}/downloads/torrents:/downloads"
     ports:
       - 8989:8989
     networks:
@@ -265,12 +257,10 @@ services:
       PUID: "${PUID}"
       PGID: "${PGID}"
       UMASK: "002"
-      TZ: "Etc/Zurich"
+      TZ: "Europe/Zurich"
     volumes:
       - ${WORKDIR}/sonarr-anime/config:/config
       - "${NAS_STORAGE_LOCATION:?Set NAS_STORAGE_LOCATION in .env}:/data"
-      - "${NAS_STORAGE_LOCATION}/library/tv:/tv"
-      - "${NAS_STORAGE_LOCATION}/downloads/torrents:/downloads"
     ports:
       - 8990:8989
     networks:
@@ -302,12 +292,10 @@ services:
   #     PUID: "${PUID}"
   #     PGID: "${PGID}"
   #     UMASK: "002"
-  #     TZ: "Etc/Zurich"
+  #     TZ: "Europe/Zurich"
   #   volumes:
   #     - ${WORKDIR}/sonarr-4k/config:/config
   #     - "${NAS_STORAGE_LOCATION:?Set NAS_STORAGE_LOCATION in .env}:/data"
-  #     - "${NAS_STORAGE_LOCATION}/library/tv:/tv"
-  #     - "${NAS_STORAGE_LOCATION}/downloads/torrents:/downloads"
   #   ports:
   #     - 8991:8989
   #   networks:
@@ -338,12 +326,11 @@ services:
       PUID: "${PUID}"
       PGID: "${PGID}"
       UMASK: "002"
-      TZ: "Etc/Zurich"
+      TZ: "Europe/Zurich"
     volumes:
       - ${WORKDIR}/bazarr/config:/config
-      - "${NAS_STORAGE_LOCATION:?Set NAS_STORAGE_LOCATION in .env}:/data"
-      - "${NAS_STORAGE_LOCATION}/library/movies:/movies"
-      - "${NAS_STORAGE_LOCATION}/library/tv:/tv"
+      # Writable library access for subtitles; no torrent access needed.
+      - "${NAS_STORAGE_LOCATION:?Set NAS_STORAGE_LOCATION in .env}/library:/data/library"
     # ports:
     #   - 6767:6767
     networks:
@@ -373,12 +360,11 @@ services:
       PUID: "${PUID}"
       PGID: "${PGID}"
       UMASK: "002"
-      TZ: "Etc/Zurich"
+      TZ: "Europe/Zurich"
     volumes:
       - ${WORKDIR}/bazarr-anime/config:/config
-      - "${NAS_STORAGE_LOCATION:?Set NAS_STORAGE_LOCATION in .env}:/data"
-      - "${NAS_STORAGE_LOCATION}/library/movies:/movies"
-      - "${NAS_STORAGE_LOCATION}/library/tv:/tv"
+      # Writable library access for subtitles; no torrent access needed.
+      - "${NAS_STORAGE_LOCATION:?Set NAS_STORAGE_LOCATION in .env}/library:/data/library"
     # ports:
     #   - 6768:6767
     networks:
@@ -409,7 +395,7 @@ services:
     container_name: flaresolverr
     restart: unless-stopped
     environment:
-      TZ: "Etc/Zurich"
+      TZ: "Europe/Zurich"
     volumes:
       - ${WORKDIR}/flaresolverr/config:/config
     # ports:
