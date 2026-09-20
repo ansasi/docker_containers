@@ -4,7 +4,7 @@ networks:
 
 services:
   vaultwarden:
-    image: vaultwarden/server:1.37.2
+    image: vaultwarden/server:1.37.3
     container_name: vaultwarden
     environment:
       DOMAIN: 'https://vaultwarden.${DOMAIN:?Set DOMAIN to your base DNS domain in .env}'
