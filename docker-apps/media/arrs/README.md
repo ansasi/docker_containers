@@ -13,15 +13,16 @@ instances, FlareSolverr, and Gluetun. Radarr/Sonarr 4K are commented templates,
 not enabled services. qBitmanage, SABnzbd, Lidarr, Readarr, Unpackerr, and Jellyfin
 are not deployed by this stack.
 
-The external Docker network is `proxy`, shared with Traefik. qBittorrent,
-Prowlarr, and FlareSolverr use `network_mode: service:gluetun`; their ports and
-qBittorrent/Prowlarr Traefik labels therefore live on Gluetun. The other apps
-connect directly to `proxy`.
+The external Docker network is `proxy`, shared with Traefik. qBittorrent and
+FlareSolverr use `network_mode: service:gluetun`; their published ports and
+qBittorrent Traefik labels live on Gluetun. Prowlarr and the other apps connect
+directly to `proxy`; Prowlarr's published port and Traefik labels live on
+Prowlarr. qBittorrent remains on the VPN.
 
 | Service | Address from another container on `proxy` | Published host port |
 |---|---|---|
 | qBittorrent | `http://gluetun:8085` | 8085 |
-| Prowlarr | `http://gluetun:9696` | 9696 |
+| Prowlarr | `http://prowlarr:9696` | 9696 |
 | FlareSolverr | `http://gluetun:8191` | 8191 |
 | Radarr | `http://radarr:7878` | 7878 |
 | Radarr Anime | `http://radarr-anime:7878` | 7879 |
@@ -32,11 +33,12 @@ connect directly to `proxy`.
 | Seerr | `http://seerr-jellyfin:5055` | None; Traefik |
 
 Use container ports for app connections, including the anime instances.
-Prowlarr has no independent network endpoint on `proxy`: use `gluetun:9696`
-as its callback URL in Prowlarr's application settings. Within the shared VPN
-namespace, Prowlarr can reach FlareSolverr at `http://localhost:8191`.
-Existing published ports, proxy routes, VPN configuration and image versions
-are preserved by the storage cleanup.
+Use `http://prowlarr:9696` as Prowlarr's server URL in its Radarr/Sonarr
+application settings and for any direct API integration on `proxy`. Change
+any saved `http://gluetun:9696` address after the cutover. Prowlarr can
+still reach VPN-routed FlareSolverr at `http://gluetun:8191` when required
+by a tagged indexer. The Prowlarr image, config bind, public port number,
+and hostname route stay the same.
 
 ## Storage contract
 
@@ -147,6 +149,42 @@ Its current TV path may be `/media/tv`; do not rename it just to match Docker.
 Editing this repository does not update LXC mounts. Scan only after files and
 mounts are verified. Do not add the torrent tree or the whole mixed library root
 as a Movies folder.
+
+## Prowlarr network cutover
+
+[TRaSH's Prowlarr proxy guide](https://trash-guides.info/Prowlarr/prowlarr-setup-proxy/)
+and the [Servarr VPN guide](https://wiki.servarr.com/vpn) recommend routing
+the torrent client through a VPN while keeping Prowlarr on a regular network.
+A shared VPN exit can be blocked by indexers or flagged as account sharing.
+If a particular indexer really needs a VPN, configure a per-indexer tagged
+proxy in Prowlarr after checking that indexer's rules. This change does not
+create such a proxy or change existing Prowlarr application settings.
+
+Before deployment, back up Prowlarr's `/config` and the deployed Compose
+configuration. Record Prowlarr's current server URL in each of its four
+Radarr/Sonarr application connections and in any other integration. Check
+that `proxy` exists and that the new `prowlarr:9696` service name is reachable
+from the Arr containers. Keep the current image and credentials for rollback.
+
+This moves host port 9696 from Gluetun to Prowlarr; the old Gluetun
+container must release it before Prowlarr is recreated. Plan a short
+interruption for Prowlarr (and possibly VPN-sharing services if Gluetun
+is recreated). Apply the reviewed Compose change with the same project name
+and environment, without pulling images or running the broad homelab Ansible
+playbook. Never use `down -v` or prune volumes. Afterward update the
+Prowlarr server URL from `http://gluetun:9696` to
+`http://prowlarr:9696` in Prowlarr's application entries, as well as any
+saved callbacks. Keep each Radarr/Sonarr application URL pointing to its
+existing service name. Verify the Prowlarr UI through both the host port
+and Traefik, all four application tests/sync, qBittorrent at
+`gluetun:8085`, and every indexer's test/search result. Confirm that
+qBittorrent is still using the VPN and that Prowlarr's requests use the
+host's normal connection; neither is proven by Compose parsing.
+
+If the route or sync fails, restore the previous Compose and recreate
+the affected services using the retained images and same config bind;
+restore saved `gluetun:9696` application URLs. Do not remove the
+Prowlarr config or Gluetun volume.
 
 ## Deployment gate and rollback
 
