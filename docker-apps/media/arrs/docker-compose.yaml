@@ -88,18 +88,29 @@ services:
       TZ: "Europe/Zurich"
     volumes:
       - ${WORKDIR}/prowlarr/config:/config
-    # ports:
-    #   - "8113:9696"
-    network_mode: "service:gluetun"
+    ports:
+      - 9696:9696
+    networks:
+      - proxy
     security_opt:
       - no-new-privileges:true
-    depends_on:
-      gluetun:
-        condition: service_healthy
-        restart: true
     labels:
       # Watchtower labels
       - com.centurylinklabs.watchtower.enable=false
+
+      # Traefik labels
+      - traefik.enable=true
+      - traefik.docker.network=proxy
+      # Prowlarr
+      - traefik.http.routers.prowlarr.entrypoints=http
+      - traefik.http.routers.prowlarr.rule=Host(`prowlarr.${DOMAIN}`)
+      - traefik.http.routers.prowlarr.service=prowlarr
+      - traefik.http.routers.prowlarr-secure.entrypoints=https
+      - traefik.http.routers.prowlarr-secure.rule=Host(`prowlarr.${DOMAIN}`)
+      - traefik.http.routers.prowlarr-secure.tls=true
+      - traefik.http.routers.prowlarr-secure.tls.certresolver=cloudflare
+      - traefik.http.routers.prowlarr-secure.service=prowlarr
+      - traefik.http.services.prowlarr.loadbalancer.server.port=9696
 
   ###--- Radarr - Library Manager for Movie content management ---###
   ### Do not use this container to download 4K Movie content. Enable container below to have separate instance just for 4K Movie content ###
@@ -426,7 +437,6 @@ services:
       - 6881:6881/udp
       # Ports to apps:
       - 8085:8085    # qBittorrent
-      - 9696:9696    # Prowlarr
       - 8191:8191    # FlareSolverr - used by Prowlarr to bypass Cloudflare
       # Note: This is uncommented as Proton VPN uses its own DNS servers, so it is not possible to resolve to mydomain.com INSIDE the containers that use gluetun as network mode
     volumes:
@@ -466,13 +476,3 @@ services:
       - traefik.http.routers.qbittorrent-secure.service=qbittorrent
       - traefik.http.services.qbittorrent.loadbalancer.server.port=8085
 
-      # Prowlarr
-      - traefik.http.routers.prowlarr.entrypoints=http
-      - traefik.http.routers.prowlarr.rule=Host(`prowlarr.${DOMAIN}`)
-      - traefik.http.routers.prowlarr.service=prowlarr
-      - traefik.http.routers.prowlarr-secure.entrypoints=https
-      - traefik.http.routers.prowlarr-secure.rule=Host(`prowlarr.${DOMAIN}`)
-      - traefik.http.routers.prowlarr-secure.tls=true
-      - traefik.http.routers.prowlarr-secure.tls.certresolver=cloudflare
-      - traefik.http.routers.prowlarr-secure.service=prowlarr
-      - traefik.http.services.prowlarr.loadbalancer.server.port=9696
