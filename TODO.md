@@ -18,9 +18,10 @@ Pass remain unconfirmed and are not performed by adding the stack.
   host is not decided yet. Pick one of Authentik/Authelia, not both.
 - [ ] **Authelia** 🟢 — Lightweight auth proxy for 2FA in front of any reverse proxy.
   Same as above; alternative to Authentik, not both.
-- [ ] **CrowdSec** 🔴 — Collaborative IPS / threat intelligence layer. Definitely
-  important, but time-to-deploy is unknown — treat as a research spike before
-  committing to a date.
+- [ ] **CrowdSec** 🟢 — Collaborative IPS / threat intelligence layer. Low priority
+  while nothing is exposed to the internet (LAN/VPN access only); revisit if a
+  service is published. A July 2026 draft (Traefik bouncer plugin) exists on the
+  `claude/crowdsec-docker-setup-acfk4x` branch.
 
 ## Networking
 
