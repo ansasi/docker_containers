@@ -70,9 +70,9 @@ services:
 
   immich-redis:
     container_name: immich_redis
-    image: docker.io/valkey/valkey:8-bookworm
+    image: docker.io/valkey/valkey:9
     healthcheck:
-      test: redis-cli ping || exit 1
+      test: redis-cli ping | grep -q PONG || exit 1
     networks:
       - immich
     restart: unless-stopped
@@ -92,3 +92,5 @@ services:
       - immich
     shm_size: 128mb
     restart: unless-stopped
+    healthcheck:
+      disable: false
