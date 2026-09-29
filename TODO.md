@@ -14,8 +14,8 @@ This resolves the repository addition only: deployment and any move from Proton
 Pass remain unconfirmed and are not performed by adding the stack.
 
 - [ ] **Authentik** 🟢 — Identity provider / SSO (LDAP, SAML, OAuth2); pairs well with
-  Traefik. Not a priority right now; likely to be built on the Kubernetes cluster once
-  it matures, not the Docker host. Pick one of Authentik/Authelia, not both.
+  Traefik. Not a priority right now; the Kubernetes cluster is a learning lab, so the
+  host is not decided yet. Pick one of Authentik/Authelia, not both.
 - [ ] **Authelia** 🟢 — Lightweight auth proxy for 2FA in front of any reverse proxy.
   Same as above; alternative to Authentik, not both.
 - [ ] **CrowdSec** 🔴 — Collaborative IPS / threat intelligence layer. Definitely
