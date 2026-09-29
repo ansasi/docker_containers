@@ -34,6 +34,15 @@
       ],
       matchUpdateTypes: ["major"],
       enabled: false
+    },
+    {
+      description: "Do not update stacks marked Neither (rejected or decommissioned) in README.md",
+      matchFileNames: [
+        "docker-apps/business/erpnext/**",
+        "docker-apps/management/dockge/**",
+        "docker-apps/management/watchtower/**"
+      ],
+      enabled: false
     }
   ]
 }
