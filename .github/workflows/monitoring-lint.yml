@@ -46,6 +46,61 @@ jobs:
           entrypoint: /bin/promtool
           args: test rules docker-apps/monitoring/grafana/tests/homelab.test.yml
 
+      # Provisioned dashboards must use the provisioned data source UIDs; the
+      # ${DS_...} import variables of grafana.com downloads are not filled in.
+      - name: Check Grafana dashboards
+        run: |
+          python3 - <<'EOF'
+          import glob, json, re, sys
+
+          base = "docker-apps/monitoring/grafana/config/grafana"
+          with open(f"{base}/provisioning/datasources/homelab.yml") as f:
+              text = f.read()
+          # "uid:" only appears under "datasources:" (deleteDatasources has none).
+          uids = set(re.findall(r"^\s+uid:\s*(\S+)", text, re.M))
+          names = set(re.findall(r"^\s+- name:\s*(\S+)", text, re.M))
+
+          def ds_uids(node):
+              if isinstance(node, dict):
+                  ds = node.get("datasource")
+                  if isinstance(ds, dict) and ds.get("type") in ("prometheus", "alertmanager"):
+                      yield ds.get("uid", "")
+                  elif isinstance(ds, str) and not ds.startswith("-- "):
+                      # Old dashboards: Grafana resolves the string as name or uid.
+                      yield ds
+                  for v in node.values():
+                      yield from ds_uids(v)
+              elif isinstance(node, list):
+                  for v in node:
+                      yield from ds_uids(v)
+
+          errors, seen = [], {}
+          files = sorted(glob.glob(f"{base}/dashboards/*.json"))
+          for path in files:
+              text = open(path).read()
+              try:
+                  dash = json.loads(text)
+              except ValueError as e:
+                  errors.append(f"{path}: invalid JSON: {e}")
+                  continue
+              if re.search(r"\$\{DS_[A-Za-z0-9_]+\}", text):
+                  errors.append(f"{path}: unreplaced ${{DS_...}} placeholder")
+              uid = dash.get("uid")
+              if not uid:
+                  errors.append(f"{path}: no uid")
+              elif uid in seen:
+                  errors.append(f"{path}: uid {uid} also used by {seen[uid]}")
+              seen[uid] = path
+              # Template variables such as ${ds_prometheus} are fine.
+              for u in set(ds_uids(dash)):
+                  if not u.startswith("$") and u not in uids | names:
+                      errors.append(f"{path}: data source uid {u!r} is not provisioned")
+          print(f"{len(files)} dashboards checked, provisioned data source uids: {sorted(uids)}")
+          for e in errors:
+              print("::error::" + e)
+          sys.exit(1 if errors or not files else 0)
+          EOF
+
       - name: Check Alertmanager config
         uses: docker://prom/alertmanager:v0.34.1
         with:
