@@ -86,8 +86,12 @@ On PBS, *Configuration → Access Control*:
 1. *User Management → Add*: user `prometheus`, realm `pbs`.
 2. *API Token → Add*: user `prometheus@pbs`, token name `monitoring`. Copy the
    secret.
-3. *Permissions → Add → API Token Permission*: path `/`, token
-   `prometheus@pbs!monitoring`, role `Audit`.
+3. *Permissions → Add → User Permission*: path `/`, user `prometheus@pbs`,
+   role `Audit`.
+4. *Permissions → Add → API Token Permission*: path `/`, token
+   `prometheus@pbs!monitoring`, role `Audit`. Both are needed: a PBS token
+   never gets more than its user
+   ([PBS docs](https://pbs.proxmox.com/docs/user-management.html#api-tokens)).
 
 Store the user, token name and secret in Proton Pass.
 
