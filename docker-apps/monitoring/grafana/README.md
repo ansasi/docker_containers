@@ -25,7 +25,44 @@ infrastructure is healthy.
 | `config/prometheus.yml` | Scrape targets. Hosts use their Ansible inventory names as `instance`. |
 | `config/rules/homelab.yml` | Alert rules |
 | `config/alertmanager.yml` | Routing: `critical` → ntfy priority 5 (sound), `warning` and resolved → priority 2 (silent). ntfy formats the messages with inline templates. |
+| `config/grafana/provisioning/` | Grafana data sources (Prometheus, Alertmanager) and the dashboard folder, see [Grafana](#grafana) |
+| `config/grafana/dashboards/` | Dashboard JSON files |
 | `tests/homelab.test.yml` | Unit tests for the alert rules (`promtool test rules tests/homelab.test.yml`). CI runs them with the config checks ([monitoring-lint.yml](../../../.github/workflows/monitoring-lint.yml)). Kept outside `config/rules/`, which Prometheus loads entirely. |
+
+## Grafana
+
+Data sources and dashboards come from git (Grafana
+[provisioning](https://grafana.com/docs/grafana/latest/administration/provisioning/)),
+so a new Grafana volume or a rebuilt `docker1` gets them back.
+
+- **Data sources:** `Prometheus` (UID `prometheus`, default) and `Alertmanager`
+  (UID `alertmanager`; active alerts and silences under *Alerting*). Read at
+  startup only. A data source created by hand with one of these names is
+  replaced, because Grafana does not start when a provisioned name already
+  exists with another UID.
+- **Dashboards:** folder *Homelab*. Grafana re-reads the JSON files every 30
+  seconds. They cannot be saved from the UI: export the JSON (*Share → Export*),
+  replace the file here and commit. *Save as* a copy outside the folder is fine
+  for experiments.
+
+| File | Source | Revision |
+|---|---|---|
+| `node-exporter-full.json` | [Node Exporter Full](https://grafana.com/grafana/dashboards/1860) (1860) | 45 |
+| `proxmox-via-prometheus.json` | [Proxmox via Prometheus](https://grafana.com/grafana/dashboards/10347) (10347), recommended by prometheus-pve-exporter | 5 |
+| `smartctl.json` | [SMARTctl Exporter Dashboard](https://grafana.com/grafana/dashboards/22604) (22604) | 3 |
+| `cadvisor.json` | [Cadvisor exporter](https://grafana.com/grafana/dashboards/14282) (14282) | 1 |
+| `proxmox-backup-server.json` | [pbs-exporter](https://github.com/natrontech/pbs-exporter/tree/main/grafana-dashboard) `grafana-dashboard/pbs-exporter.json` | `5fd0d95` |
+
+To update a grafana.com dashboard, download its latest revision and point it at
+the provisioned data source (provisioning does not fill in import variables):
+
+```bash
+curl -sL https://grafana.com/api/dashboards/1860/revisions/latest/download \
+  | sed 's/${DS_PROMETHEUS}/prometheus/g' > config/grafana/dashboards/node-exporter-full.json
+```
+
+The cAdvisor dashboard's info table is partly empty because cAdvisor runs with
+`--store_container_labels=false`; the graphs are not affected.
 
 ## Alerts
 
@@ -50,8 +87,9 @@ The lab runs on demand, so every rule waits (`for:`) before firing, and
 `PbsBackupTooOld` waits 2 hours so *Repeat missed* backup jobs can run after
 boot. When a host is down, Alertmanager mutes its other alerts.
 
-While the lab is off this stack is off too. The always-on Raspberry Pis are
-covered by an external heartbeat (healthchecks.io), set up in the homelab repo.
+While the lab is off this stack is off too, so nothing watches the always-on
+Raspberry Pis during that time (an external heartbeat is planned, see
+`docs/monitoring.md` in the homelab repo).
 
 ## Setup
 
@@ -86,8 +124,12 @@ On PBS, *Configuration → Access Control*:
 1. *User Management → Add*: user `prometheus`, realm `pbs`.
 2. *API Token → Add*: user `prometheus@pbs`, token name `monitoring`. Copy the
    secret.
-3. *Permissions → Add → API Token Permission*: path `/`, token
-   `prometheus@pbs!monitoring`, role `Audit`.
+3. *Permissions → Add → User Permission*: path `/`, user `prometheus@pbs`,
+   role `Audit`.
+4. *Permissions → Add → API Token Permission*: path `/`, token
+   `prometheus@pbs!monitoring`, role `Audit`. Both are needed: a PBS token
+   never gets more than its user
+   ([PBS docs](https://pbs.proxmox.com/docs/user-management.html#api-tokens)).
 
 Store the user, token name and secret in Proton Pass.
 

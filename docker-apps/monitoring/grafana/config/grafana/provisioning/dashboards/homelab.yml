@@ -1,0 +1,14 @@
+# Dashboards from ../../dashboards/ (JSON files), shown in the "Homelab" folder.
+# Grafana re-reads the folder every 30 s; changes made in the UI cannot be
+# saved over them; change the JSON file in git instead.
+apiVersion: 1
+
+providers:
+  - name: homelab
+    folder: Homelab
+    type: file
+    disableDeletion: true
+    allowUiUpdates: false
+    updateIntervalSeconds: 30
+    options:
+      path: /etc/grafana/dashboards

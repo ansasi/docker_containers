@@ -1,0 +1,35 @@
+# Grafana data sources, loaded at startup (changes need a Grafana restart).
+# The UIDs are fixed so the dashboards in ../../dashboards/ can refer to them.
+apiVersion: 1
+
+# Replace data sources with the same names that were created by hand: Grafana
+# does not start when a provisioned name exists with a different UID.
+deleteDatasources:
+  - name: Prometheus
+    orgId: 1
+  - name: Alertmanager
+    orgId: 1
+
+datasources:
+  - name: Prometheus
+    uid: prometheus
+    type: prometheus
+    access: proxy
+    url: http://prometheus:9090
+    isDefault: true
+    editable: false
+    jsonData:
+      # Same as the scrape interval in ../../../prometheus.yml.
+      timeInterval: 15s
+
+  # Active alerts and silences under Alerting in Grafana. The rules stay in
+  # Prometheus (../../../rules/) and notifications in Alertmanager.
+  - name: Alertmanager
+    uid: alertmanager
+    type: alertmanager
+    access: proxy
+    url: http://alertmanager:9093
+    editable: false
+    jsonData:
+      implementation: prometheus
+      handleGrafanaManagedAlerts: false

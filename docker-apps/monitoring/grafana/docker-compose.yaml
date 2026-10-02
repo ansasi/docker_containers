@@ -23,6 +23,11 @@ services:
     container_name: grafana
     volumes:
       - ${WORKDIR}/data:/var/lib/grafana
+      # Data sources and dashboards from git, see config/grafana/. Only these
+      # two provisioning folders are replaced; the image's others stay.
+      - ./config/grafana/provisioning/datasources:/etc/grafana/provisioning/datasources:ro
+      - ./config/grafana/provisioning/dashboards:/etc/grafana/provisioning/dashboards:ro
+      - ./config/grafana/dashboards:/etc/grafana/dashboards:ro
     networks:
       - grafana-monitoring
       - proxy
