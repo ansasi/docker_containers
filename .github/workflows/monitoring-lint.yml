@@ -84,7 +84,7 @@ jobs:
                   errors.append(f"{path}: invalid JSON: {e}")
                   continue
               if re.search(r"\$\{DS_[A-Za-z0-9_]+\}", text):
-                  errors.append(f"{path}: unreplaced ${{DS_...}} placeholder")
+                  errors.append(f"{path}: unreplaced DS_... import variable, see README")
               uid = dash.get("uid")
               if not uid:
                   errors.append(f"{path}: no uid")
