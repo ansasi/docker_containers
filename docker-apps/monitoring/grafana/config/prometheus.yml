@@ -71,6 +71,15 @@ scrape_configs:
     static_configs:
       - targets: ['cadvisor:8080']
         labels: {instance: 'docker1'}
+    metric_relabel_configs:
+      # cAdvisor also reports the filesystems mounted inside containers, with
+      # the full Docker storage path as `device` (over 200 characters with the
+      # containerd image store). One label above the global
+      # label_value_length_limit fails the whole scrape, so drop these series;
+      # dropping happens before the limit is checked.
+      - source_labels: [__name__, device]
+        regex: 'container_fs_.+;/(var/lib/docker|rootfs)/.+'
+        action: drop
 
   # Proxmox VE API (guests, storage), see the upstream README.
   - job_name: 'pve'
