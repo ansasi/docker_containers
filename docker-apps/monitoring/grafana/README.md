@@ -50,8 +50,9 @@ The lab runs on demand, so every rule waits (`for:`) before firing, and
 `PbsBackupTooOld` waits 2 hours so *Repeat missed* backup jobs can run after
 boot. When a host is down, Alertmanager mutes its other alerts.
 
-While the lab is off this stack is off too. The always-on Raspberry Pis are
-covered by an external heartbeat (healthchecks.io), set up in the homelab repo.
+While the lab is off this stack is off too, so nothing watches the always-on
+Raspberry Pis during that time (an external heartbeat is planned, see
+`docs/monitoring.md` in the homelab repo).
 
 ## Setup
 
