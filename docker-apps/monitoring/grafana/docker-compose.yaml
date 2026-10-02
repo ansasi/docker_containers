@@ -5,14 +5,17 @@ networks:
 
 volumes:
   prometheus:
-    
+  alertmanager:
+
+# ntfy.sh topic URL (e.g. https://ntfy.sh/<long-random-topic>). Treat it as a
+# secret: anyone who knows the topic can read the alerts. Mounted into
+# Alertmanager as /run/secrets/ntfy_url (see config/alertmanager.yml).
+secrets:
+  ntfy_url:
+    environment: NTFY_URL
+
 services:
-  # TODO: Add services:
-  # - Loki
-  # - Promtail
-  # - InfluxDB
-  # - Telegraf
-  # - Graphite
+  # TODO: Logs (Loki + Grafana Alloy) are on the roadmap, see TODO.md.
 
 # --- Grafana Image
   grafana:
@@ -41,8 +44,6 @@ services:
       - traefik.http.routers.grafana-secure.tls.certresolver=cloudflare
       - traefik.http.routers.grafana-secure.service=grafana
       - traefik.http.services.grafana.loadbalancer.server.port=3000
-      # Watchtower labels
-      - com.centurylinklabs.watchtower.enable=true
     restart: unless-stopped
 
 # --- Prometheus Image
@@ -52,17 +53,18 @@ services:
     command:
       - '--config.file=/etc/config/prometheus.yml'
       - '--storage.tsdb.retention.time=7d'
+      # Used for the links in alert notifications.
+      - '--web.external-url=https://prometheus.${DOMAIN}'
     # ports:
     #   - "9090:9090"
     volumes:
       - ./config/prometheus.yml:/etc/config/prometheus.yml:ro
+      - ./config/rules:/etc/config/rules:ro
       - prometheus:/prometheus
     networks:
       - grafana-monitoring
       - proxy
     labels:
-      # Watchtower labels
-      - com.centurylinklabs.watchtower.enable=true
       # Traefik labels
       - traefik.enable=true
       - traefik.docker.network=proxy
@@ -78,14 +80,95 @@ services:
       - traefik.http.services.prometheus.loadbalancer.server.port=9090
     restart: unless-stopped
 
-  node_exporter:
-    image: prom/node-exporter:v1.12.1
-    container_name: node_exporter
+# --- Alertmanager Image
+  # Routes alerts from Prometheus to ntfy.sh. The web UI is used to create
+  # silences (e.g. during maintenance).
+  alertmanager:
+    image: prom/alertmanager:v0.34.1
+    container_name: alertmanager
     command:
-      - '--path.rootfs=/host'
+      - '--config.file=/etc/alertmanager/alertmanager.yml'
+      - '--storage.path=/alertmanager'
+      - '--web.external-url=https://alertmanager.${DOMAIN}'
+    volumes:
+      - ./config/alertmanager.yml:/etc/alertmanager/alertmanager.yml:ro
+      - alertmanager:/alertmanager
+    secrets:
+      - ntfy_url
     networks:
       - grafana-monitoring
-    pid: host
+      - proxy
+    labels:
+      # Traefik labels
+      - traefik.enable=true
+      - traefik.docker.network=proxy
+      - traefik.http.routers.alertmanager.entrypoints=http
+      - traefik.http.routers.alertmanager.rule=Host(`alertmanager.${DOMAIN}`)
+      - traefik.http.middlewares.alertmanager-https-redirect.redirectscheme.scheme=https
+      - traefik.http.routers.alertmanager.middlewares=alertmanager-https-redirect
+      - traefik.http.routers.alertmanager-secure.entrypoints=https
+      - traefik.http.routers.alertmanager-secure.rule=Host(`alertmanager.${DOMAIN}`)
+      - traefik.http.routers.alertmanager-secure.tls=true
+      - traefik.http.routers.alertmanager-secure.tls.certresolver=cloudflare
+      - traefik.http.routers.alertmanager-secure.service=alertmanager
+      - traefik.http.services.alertmanager.loadbalancer.server.port=9093
     restart: unless-stopped
+
+# --- cAdvisor Image
+  # Container metrics for the Docker host this stack runs on. Volumes follow
+  # the upstream docs (docs/running.md).
+  cadvisor:
+    image: ghcr.io/google/cadvisor:v0.60.6
+    container_name: cadvisor
+    command:
+      - '--docker_only=true'
+      - '--housekeeping_interval=30s'
+      # Do not turn every Docker label (e.g. all Traefik labels) into a
+      # Prometheus label.
+      - '--store_container_labels=false'
     volumes:
-      - '/:/host:ro,rslave'
+      - /:/rootfs:ro
+      - /var/run:/var/run:ro
+      - /sys:/sys:ro
+      - /var/lib/docker/:/var/lib/docker:ro
+    devices:
+      - /dev/kmsg
+    # Reading /dev/kmsg (container OOM events) needs CAP_SYSLOG when the host
+    # restricts dmesg (Debian/Ubuntu default).
+    cap_add:
+      - SYSLOG
+    networks:
+      - grafana-monitoring
+    restart: unless-stopped
+
+# --- Proxmox VE exporter Image
+  # Reads the Proxmox VE API with a read-only (PVEAuditor) API token.
+  pve-exporter:
+    image: prompve/prometheus-pve-exporter:3.10.0
+    container_name: pve-exporter
+    environment:
+      PVE_USER: '${PVE_USER:?Set PVE_USER (e.g. prometheus@pve)}'
+      PVE_TOKEN_NAME: '${PVE_TOKEN_NAME:?Set PVE_TOKEN_NAME}'
+      PVE_TOKEN_VALUE: '${PVE_TOKEN_VALUE:?Set PVE_TOKEN_VALUE}'
+      # Proxmox uses its self-signed certificate by default.
+      PVE_VERIFY_SSL: 'false'
+    networks:
+      - grafana-monitoring
+    restart: unless-stopped
+
+# --- Proxmox Backup Server exporter Image
+  # Reads the PBS API with a read-only (Audit) API token.
+  pbs-exporter:
+    image: ghcr.io/natrontech/pbs-exporter:v0.9.4
+    container_name: pbs-exporter
+    user: '65534'
+    environment:
+      PBS_ENDPOINT: 'https://192.168.178.30:8007'
+      PBS_USERNAME: '${PBS_USERNAME:?Set PBS_USERNAME (e.g. prometheus@pbs)}'
+      PBS_API_TOKEN_NAME: '${PBS_API_TOKEN_NAME:?Set PBS_API_TOKEN_NAME}'
+      PBS_API_TOKEN: '${PBS_API_TOKEN:?Set PBS_API_TOKEN}'
+      # PBS uses its self-signed certificate by default.
+      PBS_INSECURE: 'true'
+    networks:
+      - grafana-monitoring
+    restart: unless-stopped

@@ -1,0 +1,67 @@
+# Alertmanager: routes Prometheus alerts to ntfy.sh.
+#
+# The topic URL is not stored here: it is read from /run/secrets/ntfy_url, a
+# Compose secret filled from the NTFY_URL environment variable.
+#
+# ntfy formats the Alertmanager webhook JSON itself with inline templates
+# (X-Template: yes + X-Title/X-Message/X-Priority), so no bridge service is
+# needed. ntfy's built-in `alertmanager` template file is not used because it
+# ignores X-Priority. Priorities: 5 = max (sound + pop-over), 2 = low (silent).
+# A literal "\n" in X-Message becomes a newline.
+
+route:
+  receiver: ntfy-warning
+  group_by: ['alertname', 'instance']
+  group_wait: 30s
+  group_interval: 5m
+  repeat_interval: 24h
+  routes:
+    - receiver: ntfy-critical
+      matchers:
+        - severity = "critical"
+      repeat_interval: 4h
+
+inhibit_rules:
+  # A host that is down: mute everything else about that host.
+  - source_matchers:
+      - alertname = "HostDown"
+    target_matchers:
+      - alertname != "HostDown"
+    equal: ['instance']
+
+receivers:
+  - name: ntfy-critical
+    webhook_configs:
+      - url_file: /run/secrets/ntfy_url
+        # Keep the message well below ntfy's 4096-byte limit.
+        max_alerts: 20
+        http_config:
+          http_headers:
+            X-Template:
+              values: ['yes']
+            X-Title:
+              values: ['{{ if eq .status "resolved" }}[RESOLVED]{{ else }}[FIRING]{{ end }} {{ .groupLabels.alertname }}{{ with .groupLabels.instance }} on {{ . }}{{ end }}']
+            X-Message:
+              values: ['{{ range .alerts }}{{ if eq .status "resolved" }}OK: {{ end }}{{ .annotations.summary }}\n{{ end }}']
+            # Resolved notifications are silent.
+            X-Priority:
+              values: ['{{ if eq .status "resolved" }}2{{ else }}5{{ end }}']
+            X-Tags:
+              values: ['rotating_light']
+
+  - name: ntfy-warning
+    webhook_configs:
+      - url_file: /run/secrets/ntfy_url
+        max_alerts: 20
+        http_config:
+          http_headers:
+            X-Template:
+              values: ['yes']
+            X-Title:
+              values: ['{{ if eq .status "resolved" }}[RESOLVED]{{ else }}[FIRING]{{ end }} {{ .groupLabels.alertname }}{{ with .groupLabels.instance }} on {{ . }}{{ end }}']
+            X-Message:
+              values: ['{{ range .alerts }}{{ if eq .status "resolved" }}OK: {{ end }}{{ .annotations.summary }}\n{{ end }}']
+            X-Priority:
+              values: ['2']
+            X-Tags:
+              values: ['warning']
