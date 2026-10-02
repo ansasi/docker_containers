@@ -25,6 +25,7 @@ infrastructure is healthy.
 | `config/prometheus.yml` | Scrape targets. Hosts use their Ansible inventory names as `instance`. |
 | `config/rules/homelab.yml` | Alert rules |
 | `config/alertmanager.yml` | Routing: `critical` → ntfy priority 5 (sound), `warning` and resolved → priority 2 (silent). ntfy formats the messages with inline templates. |
+| `tests/homelab.test.yml` | Unit tests for the alert rules (`promtool test rules tests/homelab.test.yml`). CI runs them with the config checks ([monitoring-lint.yml](../../../.github/workflows/monitoring-lint.yml)). Kept outside `config/rules/`, which Prometheus loads entirely. |
 
 ## Alerts
 
