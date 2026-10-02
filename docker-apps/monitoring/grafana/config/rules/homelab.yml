@@ -1,0 +1,269 @@
+# Homelab alert rules.
+#
+# The lab runs on demand, so every rule has a `for:` delay that lets hosts and
+# boot-time jobs (e.g. "Repeat missed" backups) settle before anything fires.
+# Severity routing (see ../alertmanager.yml):
+#   critical -> ntfy push with sound
+#   warning  -> silent ntfy push
+#
+# Network filesystems (QNAP shares) are excluded from the per-host disk rules
+# and checked once per share in NasShareAlmostFull.
+
+groups:
+  # ---------------------------------------------------------------------------
+  # Hosts (node_exporter)
+  # ---------------------------------------------------------------------------
+  - name: hosts
+    rules:
+      - alert: HostDown
+        expr: up{job="node_exporter"} == 0
+        for: 5m
+        labels:
+          severity: critical
+        annotations:
+          summary: '{{ $labels.instance }} is down'
+          description: 'node_exporter on {{ $labels.instance }} has not answered for 5 minutes.'
+
+      - alert: HostDiskAlmostFull
+        expr: |
+          (1 - node_filesystem_avail_bytes{fstype!~"tmpfs|ramfs|overlay|squashfs|nsfs|fuse.*|nfs.*|cifs|smb3"}
+                 / node_filesystem_size_bytes{fstype!~"tmpfs|ramfs|overlay|squashfs|nsfs|fuse.*|nfs.*|cifs|smb3"}) > 0.85 <= 0.95
+          and node_filesystem_readonly == 0
+        for: 10m
+        labels:
+          severity: warning
+        annotations:
+          summary: '{{ $labels.instance }}: {{ $labels.mountpoint }} is {{ $value | humanizePercentage }} full'
+          description: 'Filesystem {{ $labels.device }} on {{ $labels.instance }} is between 85% and 95% (HostDiskFull takes over above 95%).'
+
+      - alert: HostDiskFull
+        expr: |
+          (1 - node_filesystem_avail_bytes{fstype!~"tmpfs|ramfs|overlay|squashfs|nsfs|fuse.*|nfs.*|cifs|smb3"}
+                 / node_filesystem_size_bytes{fstype!~"tmpfs|ramfs|overlay|squashfs|nsfs|fuse.*|nfs.*|cifs|smb3"}) > 0.95
+          and node_filesystem_readonly == 0
+        for: 5m
+        labels:
+          severity: critical
+        annotations:
+          summary: '{{ $labels.instance }}: {{ $labels.mountpoint }} is {{ $value | humanizePercentage }} full'
+          description: 'Filesystem {{ $labels.device }} on {{ $labels.instance }} is above 95%.'
+
+      - alert: HostDiskWillFillIn24h
+        expr: |
+          predict_linear(node_filesystem_avail_bytes{fstype!~"tmpfs|ramfs|overlay|squashfs|nsfs|fuse.*|nfs.*|cifs|smb3"}[6h], 24 * 3600) < 0
+          and (node_filesystem_avail_bytes / node_filesystem_size_bytes) < 0.25
+          and node_filesystem_readonly == 0
+        for: 30m
+        labels:
+          severity: warning
+        annotations:
+          summary: '{{ $labels.instance }}: {{ $labels.mountpoint }} will be full within 24h'
+          description: 'At the current rate, {{ $labels.mountpoint }} on {{ $labels.instance }} runs out of space within 24 hours.'
+
+      - alert: NasShareAlmostFull
+        expr: |
+          max by (device) (
+            1 - node_filesystem_avail_bytes{fstype=~"nfs.*|cifs|smb3"}
+                / node_filesystem_size_bytes{fstype=~"nfs.*|cifs|smb3"}
+          ) > 0.85
+        for: 10m
+        labels:
+          severity: warning
+          instance: qnap
+        annotations:
+          summary: 'NAS share {{ $labels.device }} is {{ $value | humanizePercentage }} full'
+          description: 'A QNAP share mounted on one of the hosts is above 85%.'
+
+      - alert: HostMemoryHigh
+        expr: (1 - node_memory_MemAvailable_bytes / node_memory_MemTotal_bytes) > 0.90
+        for: 15m
+        labels:
+          severity: warning
+        annotations:
+          summary: '{{ $labels.instance }}: memory is {{ $value | humanizePercentage }} used'
+          description: 'Less than 10% of memory has been available on {{ $labels.instance }} for 15 minutes.'
+
+      - alert: HostOomKill
+        expr: increase(node_vmstat_oom_kill[15m]) > 0
+        labels:
+          severity: warning
+        annotations:
+          summary: '{{ $labels.instance }}: a process was killed for running out of memory'
+          description: 'The kernel OOM killer ran on {{ $labels.instance }} in the last 15 minutes.'
+
+      # Raspberry Pis only: x86 CPU packages run hotter by design.
+      - alert: RaspberryPiHighTemperature
+        expr: max by (instance) (node_thermal_zone_temp{instance=~"dns1|rpi4"}) > 75
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: '{{ $labels.instance }} is at {{ $value | printf "%.0f" }} °C'
+          description: 'A thermal zone on {{ $labels.instance }} has been above 75 °C for 5 minutes (a Raspberry Pi 4 starts throttling at about 80 °C).'
+
+  # ---------------------------------------------------------------------------
+  # Raspberry Pi (textfile metric written by Ansible from `vcgencmd get_throttled`)
+  # ---------------------------------------------------------------------------
+  - name: raspberry-pi
+    rules:
+      - alert: RaspberryPiThrottled
+        expr: rpi_throttled == 1
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: '{{ $labels.instance }}: {{ $labels.flag }} is active'
+          description: '`vcgencmd get_throttled` reports {{ $labels.flag }} on {{ $labels.instance }} (under_voltage points to the power supply, the others to heat).'
+
+  # ---------------------------------------------------------------------------
+  # Proxmox VE (pve-exporter) and disks (smartctl_exporter)
+  # ---------------------------------------------------------------------------
+  - name: proxmox
+    rules:
+      - alert: ProxmoxGuestDown
+        # Only guests with "Start at boot" enabled are expected to run.
+        expr: |
+          (
+            (pve_up{id=~"qemu/.+|lxc/.+"} == 0)
+            and on (id) (pve_onboot_status == 1)
+          )
+          * on (id) group_left (name) pve_guest_info
+        for: 5m
+        labels:
+          severity: critical
+        annotations:
+          summary: 'Proxmox guest {{ $labels.name }} ({{ $labels.id }}) is not running'
+          description: '{{ $labels.id }} has "Start at boot" enabled but has been stopped for 5 minutes.'
+
+      - alert: ProxmoxStorageAlmostFull
+        # PBS storage is covered by PbsDatastoreAlmostFull.
+        expr: |
+          (pve_disk_usage_bytes{id=~"storage/.+"} / pve_disk_size_bytes{id=~"storage/.+"} > 0.85)
+          * on (id) group_left (storage) pve_storage_info{plugintype!="pbs"}
+        for: 10m
+        labels:
+          severity: warning
+        annotations:
+          summary: 'Proxmox storage {{ $labels.storage }} is {{ $value | humanizePercentage }} full'
+          description: 'Storage {{ $labels.id }} is above 85%.'
+
+      - alert: DiskSmartFailure
+        expr: smartctl_device_smart_status == 0
+        for: 5m
+        labels:
+          severity: critical
+        annotations:
+          summary: '{{ $labels.instance }}: disk {{ $labels.device }} fails its SMART health check'
+          description: 'Replace or back up {{ $labels.device }} on {{ $labels.instance }} soon.'
+
+      - alert: SmartctlNoDevices
+        # The exporter answers but reports no disks: usually missing
+        # permissions, which would otherwise silently disable the SMART alerts.
+        expr: (up{job="smartctl"} == 1) unless on (instance) smartctl_device_smart_status
+        for: 15m
+        labels:
+          severity: warning
+        annotations:
+          summary: '{{ $labels.instance }}: smartctl_exporter reports no disks'
+          description: 'Check `curl http://<host>:9633/metrics | grep smart_status` and the exporter permissions.'
+
+      - alert: DiskNvmeCriticalWarning
+        expr: smartctl_device_critical_warning > 0
+        for: 5m
+        labels:
+          severity: critical
+        annotations:
+          summary: '{{ $labels.instance }}: NVMe {{ $labels.device }} reports a critical warning'
+          description: 'NVMe critical_warning is {{ $value }} on {{ $labels.device }}.'
+
+  # ---------------------------------------------------------------------------
+  # Backups (pbs-exporter)
+  # ---------------------------------------------------------------------------
+  - name: backups
+    rules:
+      - alert: PbsBackupTooOld
+        # Only for guests that still exist in Proxmox (templates excluded); the
+        # guest name comes from Proxmox. The 2h delay gives "Repeat missed"
+        # backup jobs time to run after the lab is powered on.
+        expr: |
+          (
+            (time() - max by (vm_id) (pbs_snapshot_vm_last_timestamp)) > 7 * 86400
+          )
+          * on (vm_id) group_left (name)
+            label_replace(pve_guest_info{template!="1"}, "vm_id", "$1", "id", ".+/([0-9]+)")
+        for: 2h
+        labels:
+          severity: critical
+          instance: pbs1
+        annotations:
+          summary: 'No backup of {{ $labels.name }} ({{ $labels.vm_id }}) for {{ $value | humanizeDuration }}'
+          description: 'The newest PBS snapshot of guest {{ $labels.vm_id }} is older than 7 days.'
+
+      - alert: PbsDatastoreAlmostFull
+        expr: pbs_used / pbs_size > 0.85
+        for: 10m
+        labels:
+          severity: warning
+        annotations:
+          summary: 'PBS datastore {{ $labels.datastore }} is {{ $value | humanizePercentage }} full'
+          description: 'The datastore lives on the QNAP share proxmox_backup.'
+
+      - alert: PbsUnreachable
+        expr: pbs_up == 0
+        for: 10m
+        labels:
+          severity: warning
+        annotations:
+          summary: 'pbs-exporter cannot query the Proxmox Backup Server API'
+          description: 'Check that PBS is running and that the API token is valid.'
+
+  # ---------------------------------------------------------------------------
+  # Containers on docker1 (cAdvisor)
+  # ---------------------------------------------------------------------------
+  - name: containers
+    rules:
+      - alert: ContainerRestartLoop
+        expr: changes(container_start_time_seconds{name!=""}[15m]) > 3
+        labels:
+          severity: warning
+        annotations:
+          summary: '{{ $labels.instance }}: container {{ $labels.name }} keeps restarting'
+          description: '{{ $labels.name }} restarted more than 3 times in 15 minutes.'
+
+      - alert: ContainerOomKilled
+        expr: increase(container_oom_events_total{name!=""}[15m]) > 0
+        labels:
+          severity: warning
+        annotations:
+          summary: '{{ $labels.instance }}: container {{ $labels.name }} ran out of memory'
+          description: 'An OOM event happened in {{ $labels.name }} in the last 15 minutes.'
+
+  # ---------------------------------------------------------------------------
+  # The monitoring itself
+  # ---------------------------------------------------------------------------
+  - name: monitoring
+    rules:
+      - alert: ExporterDown
+        expr: up{job!="node_exporter"} == 0
+        for: 10m
+        labels:
+          severity: warning
+        annotations:
+          summary: '{{ $labels.job }} on {{ $labels.instance }} is not answering'
+          description: 'Prometheus cannot scrape the {{ $labels.job }} target.'
+
+      - alert: PrometheusRuleFailures
+        expr: increase(prometheus_rule_evaluation_failures_total[15m]) > 0
+        labels:
+          severity: warning
+        annotations:
+          summary: 'Prometheus failed to evaluate alert rules'
+          description: 'Rule group {{ $labels.rule_group }} has evaluation failures.'
+
+      - alert: AlertmanagerNotificationsFailing
+        expr: increase(alertmanager_notifications_failed_total[15m]) > 0
+        labels:
+          severity: warning
+        annotations:
+          summary: 'Alertmanager cannot deliver notifications to {{ $labels.integration }}'
+          description: 'Check the ntfy.sh topic URL. This alert may itself not arrive; see https://alertmanager in the meantime.'

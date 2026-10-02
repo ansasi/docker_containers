@@ -1,0 +1,65 @@
+name: Lint Monitoring Config
+
+# Checks the Prometheus scrape config, the alert rules (including their unit
+# tests) and the Alertmanager routing of the central monitoring stack. The
+# images match the ones in docker-apps/monitoring/grafana/docker-compose.yaml.
+
+on:
+  pull_request:
+    paths:
+      - docker-apps/monitoring/grafana/**
+      - .github/workflows/monitoring-lint.yml
+  push:
+    branches:
+      - develop
+    paths:
+      - docker-apps/monitoring/grafana/**
+      - .github/workflows/monitoring-lint.yml
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  monitoring-lint:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+
+      # --syntax-only: rule_files points at the path inside the container.
+      - name: Check Prometheus config
+        uses: docker://prom/prometheus:v3.14.0
+        with:
+          entrypoint: /bin/promtool
+          args: check config --syntax-only docker-apps/monitoring/grafana/config/prometheus.yml
+
+      - name: Check alert rules
+        uses: docker://prom/prometheus:v3.14.0
+        with:
+          entrypoint: /bin/promtool
+          args: check rules docker-apps/monitoring/grafana/config/rules/homelab.yml
+
+      - name: Test alert rules
+        uses: docker://prom/prometheus:v3.14.0
+        with:
+          entrypoint: /bin/promtool
+          args: test rules docker-apps/monitoring/grafana/tests/homelab.test.yml
+
+      - name: Check Alertmanager config
+        uses: docker://prom/alertmanager:v0.34.1
+        with:
+          entrypoint: /bin/amtool
+          args: check-config docker-apps/monitoring/grafana/config/alertmanager.yml
+
+      - name: Critical alerts go to the critical receiver
+        uses: docker://prom/alertmanager:v0.34.1
+        with:
+          entrypoint: /bin/amtool
+          args: config routes test --config.file=docker-apps/monitoring/grafana/config/alertmanager.yml --verify.receivers=ntfy-critical severity=critical
+
+      - name: Warnings go to the warning receiver
+        uses: docker://prom/alertmanager:v0.34.1
+        with:
+          entrypoint: /bin/amtool
+          args: config routes test --config.file=docker-apps/monitoring/grafana/config/alertmanager.yml --verify.receivers=ntfy-warning severity=warning

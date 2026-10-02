@@ -1,0 +1,225 @@
+# Unit tests for config/rules/homelab.yml. Run from the stack folder:
+#   promtool test rules tests/homelab.test.yml
+# This file is outside config/rules/ on purpose: Prometheus loads every *.yml
+# in that folder as a rule file.
+
+rule_files:
+  - ../config/rules/homelab.yml
+
+evaluation_interval: 1m
+
+tests:
+  # HostDown waits 5 minutes; ExporterDown ignores node_exporter.
+  - interval: 1m
+    input_series:
+      - series: 'up{job="node_exporter", instance="rpi4"}'
+        values: '0x10'
+    alert_rule_test:
+      - eval_time: 4m
+        alertname: HostDown
+        exp_alerts: []
+      - eval_time: 6m
+        alertname: HostDown
+        exp_alerts:
+          - exp_labels: {severity: critical, job: node_exporter, instance: rpi4}
+            exp_annotations:
+              summary: 'rpi4 is down'
+              description: 'node_exporter on rpi4 has not answered for 5 minutes.'
+      - eval_time: 15m
+        alertname: ExporterDown
+        exp_alerts: []
+
+  # Local disks: 85-95% is a warning, above 95% critical. NAS shares are only
+  # reported once per share, not per host that mounts them.
+  - interval: 1m
+    input_series:
+      - series: 'node_filesystem_avail_bytes{instance="docker1", job="node_exporter", device="/dev/sda2", fstype="ext4", mountpoint="/"}'
+        values: '10x20'
+      - series: 'node_filesystem_size_bytes{instance="docker1", job="node_exporter", device="/dev/sda2", fstype="ext4", mountpoint="/"}'
+        values: '100x20'
+      - series: 'node_filesystem_readonly{instance="docker1", job="node_exporter", device="/dev/sda2", fstype="ext4", mountpoint="/"}'
+        values: '0x20'
+      - series: 'node_filesystem_avail_bytes{instance="docker1", job="node_exporter", device="/dev/sdb1", fstype="ext4", mountpoint="/data"}'
+        values: '3x20'
+      - series: 'node_filesystem_size_bytes{instance="docker1", job="node_exporter", device="/dev/sdb1", fstype="ext4", mountpoint="/data"}'
+        values: '100x20'
+      - series: 'node_filesystem_readonly{instance="docker1", job="node_exporter", device="/dev/sdb1", fstype="ext4", mountpoint="/data"}'
+        values: '0x20'
+      - series: 'node_filesystem_avail_bytes{instance="docker1", job="node_exporter", device="192.168.178.5:/media", fstype="nfs4", mountpoint="/mnt/qnap/media"}'
+        values: '10x20'
+      - series: 'node_filesystem_size_bytes{instance="docker1", job="node_exporter", device="192.168.178.5:/media", fstype="nfs4", mountpoint="/mnt/qnap/media"}'
+        values: '100x20'
+      - series: 'node_filesystem_readonly{instance="docker1", job="node_exporter", device="192.168.178.5:/media", fstype="nfs4", mountpoint="/mnt/qnap/media"}'
+        values: '0x20'
+      - series: 'node_filesystem_avail_bytes{instance="jellyfin1", job="node_exporter", device="192.168.178.5:/media", fstype="nfs4", mountpoint="/mnt/qnap/media"}'
+        values: '10x20'
+      - series: 'node_filesystem_size_bytes{instance="jellyfin1", job="node_exporter", device="192.168.178.5:/media", fstype="nfs4", mountpoint="/mnt/qnap/media"}'
+        values: '100x20'
+      - series: 'node_filesystem_readonly{instance="jellyfin1", job="node_exporter", device="192.168.178.5:/media", fstype="nfs4", mountpoint="/mnt/qnap/media"}'
+        values: '0x20'
+    alert_rule_test:
+      - eval_time: 15m
+        alertname: HostDiskAlmostFull
+        exp_alerts:
+          - exp_labels: {severity: warning, instance: docker1, job: node_exporter, device: /dev/sda2, fstype: ext4, mountpoint: /}
+            exp_annotations:
+              summary: 'docker1: / is 90% full'
+              description: 'Filesystem /dev/sda2 on docker1 is between 85% and 95% (HostDiskFull takes over above 95%).'
+      - eval_time: 15m
+        alertname: HostDiskFull
+        exp_alerts:
+          - exp_labels: {severity: critical, instance: docker1, job: node_exporter, device: /dev/sdb1, fstype: ext4, mountpoint: /data}
+            exp_annotations:
+              summary: 'docker1: /data is 97% full'
+              description: 'Filesystem /dev/sdb1 on docker1 is above 95%.'
+      - eval_time: 15m
+        alertname: NasShareAlmostFull
+        exp_alerts:
+          - exp_labels: {severity: warning, instance: qnap, device: '192.168.178.5:/media'}
+            exp_annotations:
+              summary: 'NAS share 192.168.178.5:/media is 90% full'
+              description: 'A QNAP share mounted on one of the hosts is above 85%.'
+      # Usage does not change, so nothing is predicted to fill up.
+      - eval_time: 20m
+        alertname: HostDiskWillFillIn24h
+        exp_alerts: []
+
+  # Only guests with "Start at boot" are expected to run.
+  - interval: 1m
+    input_series:
+      - series: 'pve_up{id="qemu/131", instance="proxmox1", job="pve"}'
+        values: '0x10'
+      - series: 'pve_onboot_status{id="qemu/131", node="pve", type="qemu", instance="proxmox1", job="pve"}'
+        values: '1x10'
+      - series: 'pve_guest_info{id="qemu/131", node="pve", name="docker", type="qemu", instance="proxmox1", job="pve"}'
+        values: '1x10'
+      - series: 'pve_up{id="qemu/161", instance="proxmox1", job="pve"}'
+        values: '0x10'
+      - series: 'pve_onboot_status{id="qemu/161", node="pve", type="qemu", instance="proxmox1", job="pve"}'
+        values: '0x10'
+      - series: 'pve_guest_info{id="qemu/161", node="pve", name="k3s-master-01", type="qemu", instance="proxmox1", job="pve"}'
+        values: '1x10'
+      - series: 'pve_up{id="qemu/9000", instance="proxmox1", job="pve"}'
+        values: '0x10'
+      - series: 'pve_guest_info{id="qemu/9000", node="pve", name="ubuntu-template", type="qemu", template="1", instance="proxmox1", job="pve"}'
+        values: '1x10'
+    alert_rule_test:
+      - eval_time: 6m
+        alertname: ProxmoxGuestDown
+        exp_alerts:
+          - exp_labels: {severity: critical, id: qemu/131, name: docker, instance: proxmox1, job: pve}
+            exp_annotations:
+              summary: 'Proxmox guest docker (qemu/131) is not running'
+              description: 'qemu/131 has "Start at boot" enabled but has been stopped for 5 minutes.'
+
+  # PBS storage in Proxmox is left to PbsDatastoreAlmostFull.
+  - interval: 1m
+    input_series:
+      - series: 'pve_disk_usage_bytes{id="storage/pve/local-lvm", instance="proxmox1", job="pve"}'
+        values: '90x20'
+      - series: 'pve_disk_size_bytes{id="storage/pve/local-lvm", instance="proxmox1", job="pve"}'
+        values: '100x20'
+      - series: 'pve_storage_info{id="storage/pve/local-lvm", node="pve", storage="local-lvm", plugintype="lvmthin", content="images,rootdir", instance="proxmox1", job="pve"}'
+        values: '1x20'
+      - series: 'pve_disk_usage_bytes{id="storage/pve/pbs", instance="proxmox1", job="pve"}'
+        values: '90x20'
+      - series: 'pve_disk_size_bytes{id="storage/pve/pbs", instance="proxmox1", job="pve"}'
+        values: '100x20'
+      - series: 'pve_storage_info{id="storage/pve/pbs", node="pve", storage="pbs", plugintype="pbs", content="backup", instance="proxmox1", job="pve"}'
+        values: '1x20'
+    alert_rule_test:
+      - eval_time: 15m
+        alertname: ProxmoxStorageAlmostFull
+        exp_alerts:
+          - exp_labels: {severity: warning, id: storage/pve/local-lvm, storage: local-lvm, instance: proxmox1, job: pve}
+            exp_annotations:
+              summary: 'Proxmox storage local-lvm is 90% full'
+              description: 'Storage storage/pve/local-lvm is above 85%.'
+
+  # Backup age: only guests that still exist and are not templates; one alert
+  # per guest even if it is backed up to several namespaces.
+  - interval: 1m
+    input_series:
+      - series: 'pbs_snapshot_vm_last_timestamp{datastore="NAS", namespace="", vm_id="131", vm_name="docker", instance="pbs1", job="pbs"}'
+        values: '0x12000'
+      - series: 'pbs_snapshot_vm_last_timestamp{datastore="NAS", namespace="old", vm_id="131", vm_name="docker", instance="pbs1", job="pbs"}'
+        values: '-3600x12000'
+      - series: 'pbs_snapshot_vm_last_timestamp{datastore="NAS", namespace="", vm_id="140", vm_name="deleted", instance="pbs1", job="pbs"}'
+        values: '0x12000'
+      - series: 'pbs_snapshot_vm_last_timestamp{datastore="NAS", namespace="", vm_id="9000", vm_name="ubuntu-template", instance="pbs1", job="pbs"}'
+        values: '0x12000'
+      - series: 'pve_guest_info{id="qemu/131", node="pve", name="docker", type="qemu", instance="proxmox1", job="pve"}'
+        values: '1x12000'
+      - series: 'pve_guest_info{id="qemu/9000", node="pve", name="ubuntu-template", type="qemu", template="1", instance="proxmox1", job="pve"}'
+        values: '1x12000'
+    alert_rule_test:
+      - eval_time: 7d
+        alertname: PbsBackupTooOld
+        exp_alerts: []
+      - eval_time: 8d
+        alertname: PbsBackupTooOld
+        exp_alerts:
+          - exp_labels: {severity: critical, instance: pbs1, vm_id: '131', name: docker}
+            exp_annotations:
+              summary: 'No backup of docker (131) for 8d 0h 0m 0s'
+              description: 'The newest PBS snapshot of guest 131 is older than 7 days.'
+
+  # smartctl_exporter answers but sees no disks (usually missing permissions).
+  - interval: 1m
+    input_series:
+      - series: 'up{job="smartctl", instance="proxmox1"}'
+        values: '1x20'
+    alert_rule_test:
+      - eval_time: 16m
+        alertname: SmartctlNoDevices
+        exp_alerts:
+          - exp_labels: {severity: warning, job: smartctl, instance: proxmox1}
+            exp_annotations:
+              summary: 'proxmox1: smartctl_exporter reports no disks'
+              description: 'Check `curl http://<host>:9633/metrics | grep smart_status` and the exporter permissions.'
+
+  - interval: 1m
+    input_series:
+      - series: 'up{job="smartctl", instance="proxmox1"}'
+        values: '1x20'
+      - series: 'smartctl_device_smart_status{device="nvme0", instance="proxmox1", job="smartctl"}'
+        values: '1x20'
+    alert_rule_test:
+      - eval_time: 16m
+        alertname: SmartctlNoDevices
+        exp_alerts: []
+      - eval_time: 16m
+        alertname: DiskSmartFailure
+        exp_alerts: []
+
+  # A container restarting every minute; a stable one stays quiet.
+  - interval: 1m
+    input_series:
+      - series: 'container_start_time_seconds{name="flaky", id="/system.slice/docker-a.scope", image="example/flaky:1", instance="docker1", job="cadvisor"}'
+        values: '0+60x20'
+      - series: 'container_start_time_seconds{name="stable", id="/system.slice/docker-b.scope", image="example/stable:1", instance="docker1", job="cadvisor"}'
+        values: '0x20'
+    alert_rule_test:
+      - eval_time: 16m
+        alertname: ContainerRestartLoop
+        exp_alerts:
+          - exp_labels: {severity: warning, name: flaky, id: /system.slice/docker-a.scope, image: 'example/flaky:1', instance: docker1, job: cadvisor}
+            exp_annotations:
+              summary: 'docker1: container flaky keeps restarting'
+              description: 'flaky restarted more than 3 times in 15 minutes.'
+
+  # Raspberry Pi throttling flag from the textfile collector.
+  - interval: 1m
+    input_series:
+      - series: 'rpi_throttled{flag="under_voltage", instance="rpi4", job="node_exporter"}'
+        values: '1x10'
+      - series: 'rpi_throttled{flag="throttled", instance="rpi4", job="node_exporter"}'
+        values: '0x10'
+    alert_rule_test:
+      - eval_time: 6m
+        alertname: RaspberryPiThrottled
+        exp_alerts:
+          - exp_labels: {severity: warning, flag: under_voltage, instance: rpi4, job: node_exporter}
+            exp_annotations:
+              summary: 'rpi4: under_voltage is active'
+              description: '`vcgencmd get_throttled` reports under_voltage on rpi4 (under_voltage points to the power supply, the others to heat).'

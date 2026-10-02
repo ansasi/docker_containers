@@ -32,8 +32,11 @@ Pass remain unconfirmed and are not performed by adding the stack.
 
 ## Monitoring
 
-- [ ] **Beszel** 🟡 — Lightweight hub-and-agent server + Docker monitoring (low resource
-  usage). Want to learn more before deciding vs. Grafana/Netdata.
+- [ ] **Logs: Loki + Grafana Alloy** 🟡 — Central log collection, searchable in the existing
+  Grafana. Use Alloy as the collector (Promtail is end-of-life). Planned, not started.
+- [ ] **Beszel** 🟢 — Lightweight hub-and-agent server + Docker monitoring (low resource
+  usage). Maybe later as a quick overview; metrics and alerting are consolidated on
+  Prometheus + Grafana + Alertmanager.
 - [ ] **Speedtest Tracker** 🟡 — Self-hosted internet speed test history dashboard.
   Needs evaluation.
 
@@ -63,8 +66,8 @@ Pass remain unconfirmed and are not performed by adding the stack.
 
 ## Communication
 
-- [ ] **Ntfy** 🟡 — Simple pub/sub push notification server for scripts and alerts.
-  Evaluate alongside the observability apps above (Beszel, Speedtest Tracker).
+- [ ] **Ntfy (self-hosted)** 🟢 — Alerts use the hosted ntfy.sh for now, because a
+  self-hosted server would be off whenever the lab is off. Revisit if the lab runs 24/7.
 
 ## Search & RSS
 
