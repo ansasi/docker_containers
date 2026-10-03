@@ -29,19 +29,19 @@ jobs:
 
       # --syntax-only: rule_files points at the path inside the container.
       - name: Check Prometheus config
-        uses: docker://prom/prometheus:v3.14.0
+        uses: docker://prom/prometheus:v3.15.0
         with:
           entrypoint: /bin/promtool
           args: check config --syntax-only docker-apps/monitoring/grafana/config/prometheus.yml
 
       - name: Check alert rules
-        uses: docker://prom/prometheus:v3.14.0
+        uses: docker://prom/prometheus:v3.15.0
         with:
           entrypoint: /bin/promtool
           args: check rules docker-apps/monitoring/grafana/config/rules/homelab.yml
 
       - name: Test alert rules
-        uses: docker://prom/prometheus:v3.14.0
+        uses: docker://prom/prometheus:v3.15.0
         with:
           entrypoint: /bin/promtool
           args: test rules docker-apps/monitoring/grafana/tests/homelab.test.yml
