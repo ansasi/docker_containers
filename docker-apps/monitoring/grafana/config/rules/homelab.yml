@@ -109,6 +109,10 @@ groups:
       - alert: RaspberryPiThrottled
         expr: rpi_throttled == 1
         for: 5m
+        # Under-voltage tends to come back every few minutes under load. Stay
+        # firing until an hour without it: one notification per episode
+        # instead of a FIRING/RESOLVED pair each time.
+        keep_firing_for: 1h
         labels:
           severity: warning
         annotations:

@@ -208,6 +208,31 @@ tests:
               summary: 'docker1: container flaky keeps restarting'
               description: 'flaky restarted more than 3 times in 15 minutes.'
 
+  # Raspberry Pi throttling flag: short gaps do not resolve the alert, an hour
+  # without throttling does.
+  - interval: 1m
+    input_series:
+      - series: 'rpi_throttled{flag="under_voltage", instance="rpi4", job="node_exporter"}'
+        values: '1x10 0x20 1x10 0x80'
+    alert_rule_test:
+      - eval_time: 25m
+        alertname: RaspberryPiThrottled
+        exp_alerts:
+          - exp_labels: {severity: warning, flag: under_voltage, instance: rpi4, job: node_exporter}
+            exp_annotations:
+              summary: 'rpi4: under_voltage is active'
+              description: '`vcgencmd get_throttled` reports under_voltage on rpi4 (under_voltage points to the power supply, the others to heat).'
+      - eval_time: 90m
+        alertname: RaspberryPiThrottled
+        exp_alerts:
+          - exp_labels: {severity: warning, flag: under_voltage, instance: rpi4, job: node_exporter}
+            exp_annotations:
+              summary: 'rpi4: under_voltage is active'
+              description: '`vcgencmd get_throttled` reports under_voltage on rpi4 (under_voltage points to the power supply, the others to heat).'
+      - eval_time: 105m
+        alertname: RaspberryPiThrottled
+        exp_alerts: []
+
   # Raspberry Pi throttling flag from the textfile collector.
   - interval: 1m
     input_series:
