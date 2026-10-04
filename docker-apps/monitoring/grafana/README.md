@@ -75,7 +75,7 @@ The cAdvisor dashboard's info table is partly empty because cAdvisor runs with
 | Hosts | `HostMemoryHigh` (> 90% for 15 min), `HostOomKill` | warning |
 | Hosts | `HostFilesystemReadOnly` (root filesystem remounted read-only, e.g. a failing SD card) | critical |
 | Raspberry Pi | `RaspberryPiHighTemperature` (> 75 °C), `RaspberryPiThrottled` (throttling without under-voltage, i.e. heat) | warning |
-| Raspberry Pi | `RaspberryPiUnderVoltage` (not for rpi4, see below), `RaspberryPiRebooted` (uptime < 1 h) | warning |
+| Raspberry Pi | `RaspberryPiUnderVoltage` (not for rpi4, see below) | warning |
 | Proxmox | `ProxmoxGuestDown` (guest with *Start at boot* is stopped) | critical |
 | Proxmox | `ProxmoxStorageAlmostFull` (> 85%) | warning |
 | Proxmox | `DiskSmartFailure`, `DiskNvmeCriticalWarning` | critical |
@@ -91,9 +91,9 @@ boot. When a host is down, Alertmanager mutes its other alerts.
 
 rpi4 runs on a 5.0 V power supply that cannot hold the Pi 4's minimum voltage
 under load. That was accepted (2026-10-04), so it has no under-voltage alert;
-`RaspberryPiRebooted` and `HostFilesystemReadOnly` report the damage it could
-cause (brownout resets, SD card errors). Remove `instance!="rpi4"` from
-`RaspberryPiUnderVoltage` after replacing the supply with a 5.1 V one.
+`HostFilesystemReadOnly` reports the most likely damage (SD card errors).
+Remove `instance!="rpi4"` from `RaspberryPiUnderVoltage` after replacing the
+supply with a 5.1 V one.
 
 While the lab is off this stack is off too, so nothing watches the always-on
 Raspberry Pis during that time (an external heartbeat is planned, see
