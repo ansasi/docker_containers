@@ -60,6 +60,17 @@ groups:
           summary: '{{ $labels.instance }}: {{ $labels.mountpoint }} will be full within 24h'
           description: 'At the current rate, {{ $labels.mountpoint }} on {{ $labels.instance }} runs out of space within 24 hours.'
 
+      - alert: HostFilesystemReadOnly
+        # Linux remounts a filesystem read-only after I/O errors: the usual
+        # sign of a failing SD card or disk.
+        expr: node_filesystem_readonly{mountpoint="/"} == 1
+        for: 5m
+        labels:
+          severity: critical
+        annotations:
+          summary: '{{ $labels.instance }}: root filesystem is read-only'
+          description: 'Linux usually does this after I/O errors on {{ $labels.device }}. Check `journalctl -k | grep -iE "I/O error|EXT4-fs error"` on {{ $labels.instance }}; on a Raspberry Pi suspect the SD card.'
+
       - alert: NasShareAlmostFull
         expr: |
           max by (device) (
@@ -106,14 +117,36 @@ groups:
   # ---------------------------------------------------------------------------
   - name: raspberry-pi
     rules:
-      - alert: RaspberryPiThrottled
-        expr: rpi_throttled == 1
+      # The power supply cannot keep the Pi at 4.63 V or more. rpi4 is left out
+      # on purpose: it runs on a 5.0 V supply that dips many times an hour under
+      # load, accepted on 2026-10-04. HostFilesystemReadOnly watches the most
+      # likely consequence (SD card errors) instead.
+      - alert: RaspberryPiUnderVoltage
+        expr: rpi_throttled{flag="under_voltage", instance!="rpi4"} == 1
         for: 5m
+        # Under-voltage comes and goes under load. Stay firing until an hour
+        # without it: one notification per episode, not one per dip.
+        keep_firing_for: 1h
+        labels:
+          severity: warning
+        annotations:
+          summary: '{{ $labels.instance }}: under-voltage'
+          description: '`vcgencmd get_throttled` reports under-voltage on {{ $labels.instance }}: the power supply or its cable cannot deliver enough current.'
+
+      # Throttling for other reasons, i.e. heat. Under-voltage throttles the CPU
+      # by itself, so throttling is ignored while it was seen in the last 15
+      # minutes (the flags are sampled once a minute, dips can be shorter).
+      - alert: RaspberryPiThrottled
+        expr: |
+          rpi_throttled{flag=~"throttled|freq_capped|soft_temp_limit"} == 1
+          unless on (instance) (max_over_time(rpi_throttled{flag="under_voltage"}[15m]) == 1)
+        for: 5m
+        keep_firing_for: 1h
         labels:
           severity: warning
         annotations:
           summary: '{{ $labels.instance }}: {{ $labels.flag }} is active'
-          description: '`vcgencmd get_throttled` reports {{ $labels.flag }} on {{ $labels.instance }} (under_voltage points to the power supply, the others to heat).'
+          description: '`vcgencmd get_throttled` reports {{ $labels.flag }} on {{ $labels.instance }} without under-voltage, so most likely heat. Check its temperature graph.'
 
   # ---------------------------------------------------------------------------
   # Proxmox VE (pve-exporter) and disks (smartctl_exporter)
