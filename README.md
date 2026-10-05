@@ -38,7 +38,7 @@ scope of the Compose stacks in this repository:
 | [Jellyfin](docker-apps/media/jellyfin) | Used & maintained | Active in a dedicated LXC for direct iGPU access. |
 | [Plex](docker-apps/media/plex) | Maintained only | Deferred and currently superseded by Jellyfin. |
 | [Grafana](docker-apps/monitoring/grafana) | Used & maintained | Central monitoring stack (Grafana, Prometheus, Alertmanager, exporters) for the main Docker host; the Datia copy is being retired. |
-| [Netdata](docker-apps/monitoring/netdata) | Neither | Rejected before deployment; node_exporter and the central Prometheus cover the Raspberry Pi 4. |
+| [Netdata](docker-apps/monitoring/netdata) | Maintained only | Deferred: previously ran on the Raspberry Pi 4, then replaced by node_exporter and the central Prometheus. Kept as an all-in-one alternative to Prometheus + Grafana. |
 | [Uptime Kuma](docker-apps/monitoring/uptime-kuma) | Used & maintained | Service reachability checks; consolidating on the main Docker host, the Datia copy is being retired. |
 | [Pi-hole and dnsproxy](docker-apps/networking/pihole) | Used & maintained | Active on the Raspberry Pi Zero DNS host. |
 | [Technitium](docker-apps/networking/technitium) | Maintained only | Deferred while Pi-hole remains the DNS service. |
