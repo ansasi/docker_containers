@@ -18,7 +18,7 @@ services:
       ###########################
       HOMEPAGE_VAR_PIHOLE_KEY: '${HOMEPAGE_VAR_PIHOLE_KEY}'
     volumes:
-      # Config is managed by Ansible (homelab repo: ansible/roles/homepage) and
+      # Config is managed by Ansible (homelab repo: ansible/playbooks/files/homepage/config)
       # synced to ${WORKDIR}/config on the host, not tracked in this repo.
       - ${WORKDIR}/config:/app/config
       - /var/run/docker.sock:/var/run/docker.sock:ro
