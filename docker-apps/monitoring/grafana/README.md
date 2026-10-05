@@ -22,7 +22,7 @@ infrastructure is healthy.
 
 | File | Purpose |
 |---|---|
-| `config/prometheus.yml` | Scrape targets. Hosts use their Ansible inventory names as `instance`. |
+| `config/prometheus.yml` | Scrape targets. Hosts use their Ansible inventory names as `instance`. The Raspberry Pis are not scraped here: they push (see [The Raspberry Pis push their metrics](#the-raspberry-pis-push-their-metrics)). |
 | `config/rules/homelab.yml` | Alert rules |
 | `config/alertmanager.yml` | Routing: `critical` → ntfy priority 5 (sound), `warning` and resolved → priority 2 (silent). ntfy formats the messages with inline templates. |
 | `config/grafana/provisioning/` | Grafana data sources (Prometheus, Alertmanager) and the dashboard folder, see [Grafana](#grafana) |
@@ -68,7 +68,7 @@ The cAdvisor dashboard's info table is partly empty because cAdvisor runs with
 
 | Group | Alert | Severity |
 |---|---|---|
-| Hosts | `HostDown` (5 min) | critical |
+| Hosts | `HostDown` (5 min), `HostMetricsMissing` (a Pi pushes nothing for 15 min) | critical |
 | Hosts | `HostDiskAlmostFull` (> 85%), `HostDiskFull` (> 95%) | warning, critical |
 | Hosts | `HostDiskWillFillIn24h` | warning |
 | Hosts | `NasShareAlmostFull` (QNAP shares, > 85%) | warning |
@@ -95,9 +95,29 @@ under load. That was accepted (2026-10-04), so it has no under-voltage alert;
 Remove `instance!="rpi4"` from `RaspberryPiUnderVoltage` after replacing the
 supply with a 5.1 V one.
 
-While the lab is off this stack is off too, so nothing watches the always-on
-Raspberry Pis during that time (an external heartbeat is planned, see
-`docs/monitoring.md` in the homelab repo).
+### The Raspberry Pis push their metrics
+
+dns1 and rpi4 are always on, this stack is not. So each Pi runs **vmagent**
+(installed by Ansible, homelab repo `ansible/roles/vmagent`): it scrapes the
+Pi's own node_exporter every 15 s with the same labels Prometheus would use
+(`job="node_exporter"`, `instance="dns1"`/`"rpi4"`) and pushes the data to
+`https://prometheus.<domain>/api/v1/write`. While this stack is off, vmagent
+keeps the data on the Pi (up to 500 MB, about a week) and sends it when
+Prometheus is back, so the graphs have no gaps.
+
+- Prometheus runs with `--web.enable-remote-write-receiver`, and
+  `out_of_order_time_window: 7d` in `prometheus.yml` so it accepts the late
+  samples (without it, Prometheus rejects them as too old).
+- Traefik only lets the Pis' addresses (`192.168.178.10`, `.15`) use
+  `/api/v1/write` (router `prometheus-write`, middleware `ipAllowList`); other
+  clients get `403`. Reading Prometheus is unchanged.
+- `HostMetricsMissing` fires when a Pi sends nothing for 15 minutes: if a Pi
+  dies, its `up` series disappears instead of becoming 0, so `HostDown` alone
+  would stay silent.
+
+Alerts still only run while this stack is on: nothing alerts about the Pis
+while the lab is off (an external heartbeat is planned, see
+`docs/monitoring.md` in the homelab repo). The history, though, is complete.
 
 ## Setup
 

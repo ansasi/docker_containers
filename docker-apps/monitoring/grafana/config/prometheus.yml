@@ -14,6 +14,13 @@ global:
   # external_labels:
   #  monitor: 'codelab-monitor'
 
+# The Raspberry Pis push their metrics (vmagent, remote write) and send what
+# they collected while this stack was off when it is back. Accept those late
+# samples for as long as data is kept (retention 7d, docker-compose.yaml).
+storage:
+  tsdb:
+    out_of_order_time_window: 7d
+
 # Alert rules, see rules/*.yml.
 rule_files:
   - /etc/config/rules/*.yml
@@ -37,7 +44,7 @@ scrape_configs:
     static_configs:
       - targets: ['alertmanager:9093']
 
-  # node_exporter on every host, installed by Ansible (homelab repo).
+  # node_exporter on every host except the Pis, installed by Ansible (homelab repo).
   # Hosts with many network interfaces (Proxmox) exceed the global sample_limit.
   - job_name: 'node_exporter'
     sample_limit: 10000
@@ -54,10 +61,9 @@ scrape_configs:
         labels: {instance: 'vault1'}
       - targets: ['192.168.178.50:9100']
         labels: {instance: 'jellyfin1'}
-      - targets: ['192.168.178.10:9100']
-        labels: {instance: 'dns1'}
-      - targets: ['192.168.178.15:9100']
-        labels: {instance: 'rpi4'}
+      # dns1 and rpi4 are not scraped here: vmagent on each Pi scrapes its own
+      # node_exporter with the same job and instance labels and pushes the
+      # data, so nothing is lost while this stack is off.
 
   # Disk health of the Proxmox host, installed by Ansible (homelab repo).
   - job_name: 'smartctl'
