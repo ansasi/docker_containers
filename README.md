@@ -33,7 +33,6 @@ scope of the Compose stacks in this repository:
 | [Dockge](docker-apps/management/dockge) | Neither | Rejected in favor of Portainer. |
 | [Homepage](docker-apps/management/homepage) | Used & maintained | Active on the main Docker host. |
 | [Portainer](docker-apps/management/portainer) | Used & maintained | Active on the Docker, Datia, and Hermes hosts. |
-| [Watchtower](docker-apps/management/watchtower) | Neither | Decommissioned in favor of Renovate and reviewed deployments. |
 | [ARRs](docker-apps/media/arrs) | Used & maintained | Active on the main Docker host. |
 | [Audiobookshelf](docker-apps/media/audiobookshelf) | Used & maintained | Used through an interim LXC deployment; migration to Docker is planned. |
 | [Calibre-Web](docker-apps/media/calibre-web) | Used & maintained | Active on the main Docker host. |
