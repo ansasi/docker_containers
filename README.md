@@ -30,7 +30,6 @@ scope of the Compose stacks in this repository:
 | [Home Assistant](docker-apps/automation/homeassistant) | Maintained only | Deferred until there are IoT devices to manage. |
 | [ERPNext](docker-apps/business/erpnext) | Neither | Rejected as too heavy and complex; Twenty covers the requirement. |
 | [Twenty](docker-apps/business/twenty) | Used & maintained | Used through an interim LXC deployment; migration to Docker is planned. |
-| [Dockge](docker-apps/management/dockge) | Neither | Rejected in favor of Portainer. |
 | [Homepage](docker-apps/management/homepage) | Used & maintained | Active on the main Docker host. |
 | [Portainer](docker-apps/management/portainer) | Used & maintained | Active on the Docker, Datia, and Hermes hosts. |
 | [ARRs](docker-apps/media/arrs) | Used & maintained | Active on the main Docker host. |

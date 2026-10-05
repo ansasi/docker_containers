@@ -47,8 +47,7 @@
     {
       description: "Do not update stacks marked Neither (rejected or decommissioned) in README.md",
       matchFileNames: [
-        "docker-apps/business/erpnext/**",
-        "docker-apps/management/dockge/**"
+        "docker-apps/business/erpnext/**"
       ],
       enabled: false
     }
