@@ -100,8 +100,6 @@ services:
       - "traefik.http.routers.paperless-secure.tls.certresolver=cloudflare"
       - "traefik.http.routers.paperless-secure.service=paperless" 
       - "traefik.http.services.paperless.loadbalancer.server.port=8000"
-      # Watchtower labels
-      - "com.centurylinklabs.watchtower.enable=false"
 
   paperless-gotenberg:
     image: docker.io/gotenberg/gotenberg:8.37

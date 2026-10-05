@@ -33,9 +33,6 @@ services:
       gluetun:
         condition: service_healthy
         restart: true
-    labels:
-      # Watchtower labels
-      - com.centurylinklabs.watchtower.enable=false
 
   # qBitmanage - qBittorrent manager - Used to run automated tasks for qBittorrent
 
@@ -66,8 +63,6 @@ services:
       - traefik.http.routers.seerr-jellyfin-secure.tls=true
       - traefik.http.routers.seerr-jellyfin-secure.tls.certresolver=cloudflare
       - traefik.http.services.seerr-jellyfin.loadbalancer.server.port=5055
-      # Watchtower labels
-      - com.centurylinklabs.watchtower.enable=false
     healthcheck:
       test: wget --no-verbose --tries=1 --spider http://localhost:5055/api/v1/status || exit 1
       start_period: 20s
@@ -95,9 +90,6 @@ services:
     security_opt:
       - no-new-privileges:true
     labels:
-      # Watchtower labels
-      - com.centurylinklabs.watchtower.enable=false
-
       # Traefik labels
       - traefik.enable=true
       - traefik.docker.network=proxy
@@ -144,8 +136,6 @@ services:
       - traefik.http.routers.radarr-secure.tls.certresolver=cloudflare
       - traefik.http.routers.radarr-secure.service=radarr
       - traefik.http.services.radarr.loadbalancer.server.port=7878
-      # Watchtower labels
-      - com.centurylinklabs.watchtower.enable=false
 
   ###--- Radarr Anime - Library Manager for Anime Movie content management ---###
   ### Enable this container to get separate instance for Anime Movie content ###
@@ -179,8 +169,6 @@ services:
       - traefik.http.routers.radarr-anime-secure.tls.certresolver=cloudflare
       - traefik.http.routers.radarr-anime-secure.service=radarr-anime
       - traefik.http.services.radarr-anime.loadbalancer.server.port=7878
-      # Watchtower labels
-      - com.centurylinklabs.watchtower.enable=false
 
   # ###--- Radarr 4K - Library Manager for Movie 4K content management ---###
   # ### Enable this container to get separate instance for 4K Movie content ###
@@ -214,8 +202,6 @@ services:
   #     - traefik.http.routers.radarr-4k-secure.tls.certresolver=cloudflare
   #     - traefik.http.routers.radarr-4k-secure.service=radarr-4k
   #     - traefik.http.services.radarr-4k.loadbalancer.server.port=7878
-  #     # Watchtower labels
-  #     - com.centurylinklabs.watchtower.enable=false
 
 
 
@@ -255,8 +241,6 @@ services:
       - traefik.http.routers.sonarr-secure.tls.certresolver=cloudflare
       - traefik.http.routers.sonarr-secure.service=sonarr
       - traefik.http.services.sonarr.loadbalancer.server.port=8989
-      # Watchtower labels
-      - com.centurylinklabs.watchtower.enable=false
 
 ###--- Sonarr Anime - Library Manager for Anime content management ---###
   ### Enable this container to get separate instance for Anime content ###
@@ -290,8 +274,6 @@ services:
       - traefik.http.routers.sonarr-anime-secure.tls.certresolver=cloudflare
       - traefik.http.routers.sonarr-anime-secure.service=sonarr-anime
       - traefik.http.services.sonarr-anime.loadbalancer.server.port=8989
-      # Watchtower labels
-      - com.centurylinklabs.watchtower.enable=false
 
   # ###--- Sonarr 4K - Library Manager for TV 4K content management ---###
   # ### Enable this container to get separate instance for 4K TV content ###
@@ -325,8 +307,6 @@ services:
   #     - traefik.http.routers.sonarr-4k-secure.tls.certresolver=cloudflare
   #     - traefik.http.routers.sonarr-4k-secure.service=sonarr-4k
   #     - traefik.http.services.sonarr-4k.loadbalancer.server.port=8989
-  #     # Watchtower labels
-  #     - com.centurylinklabs.watchtower.enable=false
 
   # Bazarr - Library Manager for Subtitle management
   bazarr:
@@ -360,8 +340,6 @@ services:
       - traefik.http.routers.bazarr-secure.tls.certresolver=cloudflare
       - traefik.http.routers.bazarr-secure.service=bazarr
       - traefik.http.services.bazarr.loadbalancer.server.port=6767
-      # Watchtower labels
-      - com.centurylinklabs.watchtower.enable=false
     
   bazarr-anime:
     image: linuxserver/bazarr:1.6.2
@@ -394,8 +372,6 @@ services:
       - traefik.http.routers.bazarr-anime-secure.tls.certresolver=cloudflare
       - traefik.http.routers.bazarr-anime-secure.service=bazarr-anime
       - traefik.http.services.bazarr-anime.loadbalancer.server.port=6767
-      # Watchtower labels
-      - com.centurylinklabs.watchtower.enable=false
 
 
   # Readarr - Library Manager for Books / Epubs content management
@@ -418,9 +394,6 @@ services:
       gluetun:
         condition: service_healthy
         restart: true
-    labels:
-      # Watchtower labels
-      - com.centurylinklabs.watchtower.enable=false
 
   # Gluetun - VPN Client - Used to connect to VPN services
   gluetun:
@@ -458,9 +431,6 @@ services:
     networks:
       - proxy
     labels:
-      # Watchtower labels
-      - com.centurylinklabs.watchtower.enable=false
-
       # Traefik labels
       - "traefik.enable=true"
       - "traefik.docker.network=proxy"

@@ -36,6 +36,4 @@ services:
       - traefik.http.routers.jellyfin-secure.tls=true
       - traefik.http.routers.jellyfin-secure.tls.certresolver=cloudflare
       - traefik.http.services.jellyfin.loadbalancer.server.port=8096
-      # Watchtower labels
-      - com.centurylinklabs.watchtower.enable=true
     restart: unless-stopped

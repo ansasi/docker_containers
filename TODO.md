@@ -30,6 +30,13 @@ Pass remain unconfirmed and are not performed by adding the stack.
 - [ ] **NetBird** 🟡 — WireGuard-based overlay network / mesh VPN alternative to
   Tailscale. Preferred (open source), but not finalized.
 
+## Management
+
+- [ ] **Dockge** 🟢 — Lightweight manager for Compose stacks; a nice alternative to
+  Portainer. Not used: Portainer covers it today, and an earlier evaluation found it
+  not mature enough. Its old Compose stack was removed (see git history); revisit if
+  Portainer becomes a burden.
+
 ## Monitoring
 
 - [ ] **Logs: Loki + Grafana Alloy** 🟡 — Central log collection, searchable in the existing
