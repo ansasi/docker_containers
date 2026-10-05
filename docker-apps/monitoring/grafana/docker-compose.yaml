@@ -87,9 +87,11 @@ services:
       - traefik.http.routers.prometheus-secure.tls.certresolver=cloudflare
       - traefik.http.routers.prometheus-secure.service=prometheus
       - traefik.http.services.prometheus.loadbalancer.server.port=9090
-      # Remote write (/api/v1/write) only from the Raspberry Pis (dns1, rpi4):
-      # anyone else gets 403, so no other device can push fake metrics. This
-      # router's longer rule takes priority over prometheus-secure.
+      # Remote write (/api/v1/write) only from the Raspberry Pis: dns1
+      # (192.168.178.10) and rpi4 (192.168.178.15). Anyone else gets 403, so no
+      # other device can push fake metrics. This router's longer rule takes
+      # priority over prometheus-secure. If a Pi's address changes, update
+      # sourcerange. See README.md, "Who can push: the allow-list".
       - traefik.http.routers.prometheus-write.entrypoints=https
       - traefik.http.routers.prometheus-write.rule=Host(`prometheus.${DOMAIN}`) && Path(`/api/v1/write`)
       - traefik.http.routers.prometheus-write.tls=true

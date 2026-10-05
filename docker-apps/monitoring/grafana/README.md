@@ -108,9 +108,7 @@ Prometheus is back, so the graphs have no gaps.
 - Prometheus runs with `--web.enable-remote-write-receiver`, and
   `out_of_order_time_window: 7d` in `prometheus.yml` so it accepts the late
   samples (without it, Prometheus rejects them as too old).
-- Traefik only lets the Pis' addresses (`192.168.178.10`, `.15`) use
-  `/api/v1/write` (router `prometheus-write`, middleware `ipAllowList`); other
-  clients get `403`. Reading Prometheus is unchanged.
+- Only the Pis may push: see [Who can push: the allow-list](#who-can-push-the-allow-list).
 - `HostMetricsMissing` fires when a Pi sends nothing for 15 minutes: if a Pi
   dies, its `up` series disappears instead of becoming 0, so `HostDown` alone
   would stay silent.
@@ -118,6 +116,64 @@ Prometheus is back, so the graphs have no gaps.
 Alerts still only run while this stack is on: nothing alerts about the Pis
 while the lab is off (an external heartbeat is planned, see
 `docs/monitoring.md` in the homelab repo). The history, though, is complete.
+
+#### Who can push: the allow-list
+
+Prometheus has no login: anyone on the LAN can read it, and with the receiver
+on, anyone could also write to it. Written data is trusted like scraped data,
+so a buggy or compromised device could push made-up values, hiding a real
+problem or raising false alerts. So Traefik only accepts writes from the Pis.
+
+| Address | Host |
+|---|---|
+| `192.168.178.10` | `dns1` (Pi Zero 2 W) |
+| `192.168.178.15` | `rpi4` (Pi 4) |
+
+How it works (labels on the `prometheus` service in `docker-compose.yaml`):
+
+- Router `prometheus-write` matches `Host(prometheus.<DOMAIN>) && Path(/api/v1/write)`.
+  Traefik gives a longer rule a higher priority, so writes take this router
+  instead of `prometheus-secure`.
+- Its middleware `prometheus-write-allowlist`
+  ([`ipAllowList`](https://doc.traefik.io/traefik/middlewares/http/ipallowlist/))
+  passes only the addresses above. Everyone else gets `403 Forbidden` and the
+  request never reaches Prometheus.
+- Everything else (UI, queries, Grafana, the alert links) goes through
+  `prometheus-secure` as before, with no restriction.
+
+What it does **not** do:
+
+- It checks addresses, not identities. A device that takes one of these
+  addresses passes, and everything on the Pis can write, including the Hermes
+  agents on `rpi4`.
+- It is not a replacement for authentication. Once an SSO proxy is in place
+  (Authelia/Authentik, see [TODO.md](../../../TODO.md)), protect Prometheus with
+  it and give vmagent credentials.
+
+Keep it in sync:
+
+- The Pis' addresses must not change. If one does, update `sourcerange` here
+  and the homelab inventory (`ansible/inventory/hosts.ini`) together, then
+  deploy this stack. Until then that Pi gets `403` and keeps its data on disk
+  (up to about a week).
+- To add a host that pushes, add its address to `sourcerange`.
+
+Check and troubleshoot:
+
+```bash
+# From a machine that is not a Pi: must print 403
+curl -s -o /dev/null -w '%{http_code}\n' -X POST https://prometheus.<DOMAIN>/api/v1/write
+
+# On a Pi: successful pushes count as status_code="2XX", refused ones "4XX"
+curl -s 127.0.0.1:8429/metrics | grep vmagent_remotewrite_requests_total
+# The log names the exact status code of a refused push
+journalctl -u vmagent -n 20
+```
+
+- A Pi gets `403`: its address is not in the list.
+- The Pis get `403` too: Traefik does not see their real address (e.g. a
+  Docker or proxy address instead). Check the client address in the Traefik
+  logs before widening the list.
 
 ## Setup
 
