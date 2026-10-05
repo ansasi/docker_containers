@@ -24,13 +24,14 @@ groups:
           summary: '{{ $labels.instance }} is down'
           description: 'node_exporter on {{ $labels.instance }} has not answered for 5 minutes.'
 
-      # rpi4 pushes its metrics (vmagent). If the Pi or its vmagent stops,
+      # The Pis push their metrics (vmagent). If a Pi or its vmagent stops,
       # nothing arrives at all, so `up` is missing instead of 0 and HostDown
       # cannot fire. While this stack was off, the backlog arrives within
       # minutes of starting, before the 10 minutes are up.
       - alert: HostMetricsMissing
         expr: |
-          absent_over_time(up{job="node_exporter", instance="rpi4"}[5m])
+          absent_over_time(up{job="node_exporter", instance="dns1"}[5m])
+          or absent_over_time(up{job="node_exporter", instance="rpi4"}[5m])
         for: 10m
         labels:
           severity: critical
