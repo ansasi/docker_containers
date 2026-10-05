@@ -29,27 +29,6 @@ tests:
         alertname: ExporterDown
         exp_alerts: []
 
-  # HostMetricsMissing: the Pis push their metrics. dns1 stops sending after
-  # 5m (last sample at 5m); rpi4 keeps sending. Absent from 10m (5m window),
-  # firing 10m later.
-  - interval: 1m
-    input_series:
-      - series: 'up{job="node_exporter", instance="dns1"}'
-        values: '1x5 _x30'
-      - series: 'up{job="node_exporter", instance="rpi4"}'
-        values: '1x35'
-    alert_rule_test:
-      - eval_time: 15m
-        alertname: HostMetricsMissing
-        exp_alerts: []
-      - eval_time: 21m
-        alertname: HostMetricsMissing
-        exp_alerts:
-          - exp_labels: {severity: critical, job: node_exporter, instance: dns1}
-            exp_annotations:
-              summary: 'dns1 sends no metrics'
-              description: 'No data from vmagent on dns1 for 15 minutes: the Pi, its network or vmagent is down.'
-
   # Local disks: 85-95% is a warning, above 95% critical. NAS shares are only
   # reported once per share, not per host that mounts them.
   - interval: 1m

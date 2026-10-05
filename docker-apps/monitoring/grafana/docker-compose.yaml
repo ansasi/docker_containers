@@ -58,10 +58,6 @@ services:
     command:
       - '--config.file=/etc/config/prometheus.yml'
       - '--storage.tsdb.retention.time=7d'
-      # Accept metrics pushed by vmagent on the always-on Raspberry Pis
-      # (homelab repo, ansible/roles/vmagent): they keep collecting while this
-      # stack is off and send the backlog when it is back.
-      - '--web.enable-remote-write-receiver'
       # Used for the links in alert notifications.
       - '--web.external-url=https://prometheus.${DOMAIN}'
     # ports:
@@ -87,18 +83,6 @@ services:
       - traefik.http.routers.prometheus-secure.tls.certresolver=cloudflare
       - traefik.http.routers.prometheus-secure.service=prometheus
       - traefik.http.services.prometheus.loadbalancer.server.port=9090
-      # Remote write (/api/v1/write) only from the Raspberry Pis: dns1
-      # (192.168.178.10) and rpi4 (192.168.178.15). Anyone else gets 403, so no
-      # other device can push fake metrics. This router's longer rule takes
-      # priority over prometheus-secure. If a Pi's address changes, update
-      # sourcerange. See README.md, "Who can push: the allow-list".
-      - traefik.http.routers.prometheus-write.entrypoints=https
-      - traefik.http.routers.prometheus-write.rule=Host(`prometheus.${DOMAIN}`) && Path(`/api/v1/write`)
-      - traefik.http.routers.prometheus-write.tls=true
-      - traefik.http.routers.prometheus-write.tls.certresolver=cloudflare
-      - traefik.http.routers.prometheus-write.service=prometheus
-      - traefik.http.routers.prometheus-write.middlewares=prometheus-write-allowlist
-      - traefik.http.middlewares.prometheus-write-allowlist.ipallowlist.sourcerange=192.168.178.10/32,192.168.178.15/32
     restart: unless-stopped
 
 # --- Alertmanager Image
