@@ -41,6 +41,17 @@ Pass remain unconfirmed and are not performed by adding the stack.
 
 - [ ] **Logs: Loki + Grafana Alloy** 🟡 — Central log collection, searchable in the existing
   Grafana. Use Alloy as the collector (Promtail is end-of-life). Planned, not started.
+- [ ] **Keep rpi4's metrics while the lab is off** 🟢 — Prometheus on `docker1` pulls,
+  so the always-on Raspberry Pis have gaps in their graphs while `docker1` is off.
+  Tried in October 2026 and reverted: vmagent on rpi4 pushing to Prometheus
+  (`--web.enable-remote-write-receiver`, `out_of_order_time_window: 7d`, Traefik
+  `ipAllowList` on `/api/v1/write`, a `HostMetricsMissing` alert for a host that
+  stops pushing); see PRs #576 and #579 and the homelab vmagent PRs in git history.
+  Too many moving parts for the benefit. Learned: the Raspberry Pi firmware turns
+  off the memory cgroup on both Pis (no `MemoryMax`, Docker memory limits not
+  enforced); leave dns1 (only DNS, 512 MB) out. Revisit together with
+  Loki + Grafana Alloy: Alloy can also push metrics with a disk buffer, so one
+  agent would cover both.
 - [ ] **Beszel** 🟢 — Lightweight hub-and-agent server + Docker monitoring (low resource
   usage). Maybe later as a quick overview; metrics and alerting are consolidated on
   Prometheus + Grafana + Alertmanager.
