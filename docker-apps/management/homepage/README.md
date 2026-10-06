@@ -23,6 +23,6 @@ folder, e.g.:
 
 ```sh
 WORKDIR=/home/<user>/docker_volumes/management/homepage \
-DOMAIN=docker.datia.me \
+DOMAIN=docker.example.com \
 docker compose up -d
 ```

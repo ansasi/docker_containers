@@ -24,7 +24,10 @@ Traefik is a popular reverse proxy that integrates well with Docker to manage an
    5. Click on `Create Token`.
    6. Select `Edit DNS Zone`.
    7. Select the desired zone.
-4. Add the Cloudflare API token to `.env` as `CF_DNS_API_TOKEN`.
+4. Add the Cloudflare API token to `.env` as `CF_DNS_API_TOKEN`, and the email
+   for the Let's Encrypt account as `CF_API_EMAIL`. Traefik's static
+   configuration is inline in `docker-compose.yaml` so Compose can fill in that
+   email.
 5. Run `docker compose config` and then `docker compose up -d` to start Traefik.
 
 *Note: `Nextcloud AIO` configuration is configured in `config.yml` file, as it does not yet allow Traefik labels*
