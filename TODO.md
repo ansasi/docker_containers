@@ -30,6 +30,10 @@ Pass remain unconfirmed and are not performed by adding the stack.
 - [ ] **NetBird** 🟡 — WireGuard-based overlay network / mesh VPN alternative to
   Tailscale. Preferred (open source), but not finalized.
 
+Remote access uses the FritzBox's built-in WireGuard VPN for now. The WireGuard Easy
+(wg-easy) stack was removed in October 2026 instead of migrating it to v15 (see git
+history); Tailscale or NetBird is the planned replacement for external access.
+
 ## Management
 
 - [ ] **Dockge** 🟢 — Lightweight manager for Compose stacks; a nice alternative to
