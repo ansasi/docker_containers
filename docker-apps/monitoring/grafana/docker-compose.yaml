@@ -149,7 +149,7 @@ services:
 # --- Proxmox VE exporter Image
   # Reads the Proxmox VE API with a read-only (PVEAuditor) API token.
   pve-exporter:
-    image: prompve/prometheus-pve-exporter:3.10.0
+    image: prompve/prometheus-pve-exporter:3.10.1
     container_name: pve-exporter
     environment:
       PVE_USER: '${PVE_USER:?Set PVE_USER (e.g. prometheus@pve)}'
