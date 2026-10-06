@@ -58,5 +58,5 @@ and host changes in the homelab inventory as well.
 
 All compose files in `docker-apps` are checked in the `compose-lint` workflow.
 The workflow runs `docker compose config --quiet` for each `docker-compose.yaml`
-on every pull request, every push to `develop`, and manual runs. This validates
+on every pull request, every push to `master`, and manual runs. This validates
 and resolves each Compose model, but does not pull images or start containers.
