@@ -15,7 +15,9 @@ Pass remain unconfirmed and are not performed by adding the stack.
 
 - [ ] **Authentik** 🟢 — Identity provider / SSO (LDAP, SAML, OAuth2); pairs well with
   Traefik. Not a priority right now; the Kubernetes cluster is a learning lab, so the
-  host is not decided yet. Pick one of Authentik/Authelia, not both.
+  host is not decided yet. Pick one of Authentik/Authelia, not both. Once it exists,
+  put the Prometheus and Alertmanager routes behind it; they are LAN/VPN-only and
+  have no login until then (anyone who reaches Alertmanager can silence alerts).
 - [ ] **Authelia** 🟢 — Lightweight auth proxy for 2FA in front of any reverse proxy.
   Same as above; alternative to Authentik, not both.
 - [ ] **CrowdSec** 🟢 — Collaborative IPS / threat intelligence layer. Low priority
