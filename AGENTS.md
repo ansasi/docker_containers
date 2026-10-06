@@ -25,7 +25,7 @@ AGENTS.md in the affected directory before editing.
   ports, mounts, environment contracts, and integrations unless changing them
   is explicitly part of the approved task.
 - Do not add optional features or hardening merely because they are available.
-- Inspect current develop and existing PRs before starting. Reuse relevant work
+- Inspect current master and existing PRs before starting. Reuse relevant work
   instead of opening duplicate or conflicting upgrade PRs.
 - Preserve user changes in a dirty worktree. Never overwrite unrelated edits.
 
@@ -86,8 +86,9 @@ AGENTS.md in the affected directory before editing.
 
 ## Git and PR workflow
 
-- Use a descriptive branch and target develop unless an explicitly documented
-  dependency requires a stacked PR. Do not push directly to develop.
+- Use a descriptive branch and target master unless an explicitly documented
+  dependency requires a stacked PR. Do not push directly to master. master is
+  the only long-lived branch and is what the homelab hosts deploy.
 - Keep each PR focused. For stacked PRs, state the prerequisite, merge order,
   and need to retarget/retest after the base PR lands.
 - Include purpose, exact scope, upstream references where relevant, runtime

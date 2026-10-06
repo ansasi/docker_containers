@@ -11,7 +11,7 @@ on:
       - .github/workflows/monitoring-lint.yml
   push:
     branches:
-      - develop
+      - master
     paths:
       - docker-apps/monitoring/grafana/**
       - .github/workflows/monitoring-lint.yml
