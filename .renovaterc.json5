@@ -34,6 +34,22 @@
       ],
       matchUpdateTypes: ["major"],
       enabled: false
+    },
+    {
+      description: "Update the Immich server and machine-learning images together",
+      matchDatasources: ["docker"],
+      matchPackageNames: [
+        "ghcr.io/immich-app/immich-server",
+        "ghcr.io/immich-app/immich-machine-learning"
+      ],
+      groupName: "immich"
+    },
+    {
+      description: "Do not update stacks marked Neither (rejected or decommissioned) in README.md",
+      matchFileNames: [
+        "docker-apps/business/erpnext/**"
+      ],
+      enabled: false
     }
   ]
 }

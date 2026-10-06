@@ -9,17 +9,21 @@ Priority legend: 🔴 High · 🟡 Medium · 🟢 Low · ⚫ Resolved (not neede
 
 ## Security & Authentication
 
-- [ ] **Vaultwarden** ⚫ — Bitwarden-compatible self-hosted password manager. Not needed —
-  using Proton Pass for secrets/vaults instead, which already isolates homelab
-  credentials without adding infra to maintain.
+Vaultwarden now has a [Compose stack and guide](docker-apps/security/vaultwarden/README.md).
+This resolves the repository addition only: deployment and any move from Proton
+Pass remain unconfirmed and are not performed by adding the stack.
+
 - [ ] **Authentik** 🟢 — Identity provider / SSO (LDAP, SAML, OAuth2); pairs well with
-  Traefik. Not a priority right now; likely to be built on the Kubernetes cluster once
-  it matures, not the Docker host. Pick one of Authentik/Authelia, not both.
+  Traefik. Not a priority right now; the Kubernetes cluster is a learning lab, so the
+  host is not decided yet. Pick one of Authentik/Authelia, not both. Once it exists,
+  put the Prometheus and Alertmanager routes behind it; they are LAN/VPN-only and
+  have no login until then (anyone who reaches Alertmanager can silence alerts).
 - [ ] **Authelia** 🟢 — Lightweight auth proxy for 2FA in front of any reverse proxy.
   Same as above; alternative to Authentik, not both.
-- [ ] **CrowdSec** 🔴 — Collaborative IPS / threat intelligence layer. Definitely
-  important, but time-to-deploy is unknown — treat as a research spike before
-  committing to a date.
+- [ ] **CrowdSec** 🟢 — Collaborative IPS / threat intelligence layer. Low priority
+  while nothing is exposed to the internet (LAN/VPN access only); revisit if a
+  service is published. A July 2026 draft (Traefik bouncer plugin) exists on the
+  `claude/crowdsec-docker-setup-acfk4x` branch.
 
 ## Networking
 
@@ -28,10 +32,35 @@ Priority legend: 🔴 High · 🟡 Medium · 🟢 Low · ⚫ Resolved (not neede
 - [ ] **NetBird** 🟡 — WireGuard-based overlay network / mesh VPN alternative to
   Tailscale. Preferred (open source), but not finalized.
 
+Remote access uses the FritzBox's built-in WireGuard VPN for now. The WireGuard Easy
+(wg-easy) stack was removed in October 2026 instead of migrating it to v15 (see git
+history); Tailscale or NetBird is the planned replacement for external access.
+
+## Management
+
+- [ ] **Dockge** 🟢 — Lightweight manager for Compose stacks; a nice alternative to
+  Portainer. Not used: Portainer covers it today, and an earlier evaluation found it
+  not mature enough. Its old Compose stack was removed (see git history); revisit if
+  Portainer becomes a burden.
+
 ## Monitoring
 
-- [ ] **Beszel** 🟡 — Lightweight hub-and-agent server + Docker monitoring (low resource
-  usage). Want to learn more before deciding vs. Grafana/Netdata.
+- [ ] **Logs: Loki + Grafana Alloy** 🟡 — Central log collection, searchable in the existing
+  Grafana. Use Alloy as the collector (Promtail is end-of-life). Planned, not started.
+- [ ] **Keep rpi4's metrics while the lab is off** 🟢 — Prometheus on `docker1` pulls,
+  so the always-on Raspberry Pis have gaps in their graphs while `docker1` is off.
+  Tried in October 2026 and reverted: vmagent on rpi4 pushing to Prometheus
+  (`--web.enable-remote-write-receiver`, `out_of_order_time_window: 7d`, Traefik
+  `ipAllowList` on `/api/v1/write`, a `HostMetricsMissing` alert for a host that
+  stops pushing); see PRs #576 and #579 and the homelab vmagent PRs in git history.
+  Too many moving parts for the benefit. Learned: the Raspberry Pi firmware turns
+  off the memory cgroup on both Pis (no `MemoryMax`, Docker memory limits not
+  enforced); leave dns1 (only DNS, 512 MB) out. Revisit together with
+  Loki + Grafana Alloy: Alloy can also push metrics with a disk buffer, so one
+  agent would cover both.
+- [ ] **Beszel** 🟢 — Lightweight hub-and-agent server + Docker monitoring (low resource
+  usage). Maybe later as a quick overview; metrics and alerting are consolidated on
+  Prometheus + Grafana + Alertmanager.
 - [ ] **Speedtest Tracker** 🟡 — Self-hosted internet speed test history dashboard.
   Needs evaluation.
 
@@ -61,8 +90,8 @@ Priority legend: 🔴 High · 🟡 Medium · 🟢 Low · ⚫ Resolved (not neede
 
 ## Communication
 
-- [ ] **Ntfy** 🟡 — Simple pub/sub push notification server for scripts and alerts.
-  Evaluate alongside the observability apps above (Beszel, Speedtest Tracker).
+- [ ] **Ntfy (self-hosted)** 🟢 — Alerts use the hosted ntfy.sh for now, because a
+  self-hosted server would be off whenever the lab is off. Revisit if the lab runs 24/7.
 
 ## Search & RSS
 

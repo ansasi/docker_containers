@@ -5,7 +5,7 @@ networks:
 services:
 # --- Uptime Kuma Image
   uptime-kuma:
-    image: louislam/uptime-kuma:2.5.3
+    image: louislam/uptime-kuma:2.5.5
     container_name: uptime-kuma
     volumes:
       - ${WORKDIR}/data:/app/data
@@ -28,7 +28,5 @@ services:
       - traefik.http.routers.uptime-kuma-secure.tls.certresolver=cloudflare
       - traefik.http.routers.uptime-kuma-secure.service=uptime-kuma
       - traefik.http.services.uptime-kuma.loadbalancer.server.port=3001
-      # Watchtower labels
-      - com.centurylinklabs.watchtower.enable=true
     networks:
       - proxy

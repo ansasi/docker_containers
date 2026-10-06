@@ -4,7 +4,7 @@ networks:
 
 services:
   homepage:
-    image: gethomepage/homepage:v2.2.0
+    image: gethomepage/homepage:v2.4.0
     container_name: homepage
     environment:
       HOMEPAGE_ALLOWED_HOSTS: 'homepage.${DOMAIN},localhost:3001'
@@ -18,7 +18,7 @@ services:
       ###########################
       HOMEPAGE_VAR_PIHOLE_KEY: '${HOMEPAGE_VAR_PIHOLE_KEY}'
     volumes:
-      # Config is managed by Ansible (homelab repo: ansible/roles/homepage) and
+      # Config is managed by Ansible (homelab repo: ansible/playbooks/files/homepage/config)
       # synced to ${WORKDIR}/config on the host, not tracked in this repo.
       - ${WORKDIR}/config:/app/config
       - /var/run/docker.sock:/var/run/docker.sock:ro
@@ -36,8 +36,6 @@ services:
       - traefik.http.routers.homepage-secure.tls.certresolver=cloudflare
       - traefik.http.routers.homepage-secure.service=homepage
       - traefik.http.services.homepage.loadbalancer.server.port=3000
-      # Watchtower labels
-      - com.centurylinklabs.watchtower.enable=true
     networks:
       - proxy
     restart: unless-stopped

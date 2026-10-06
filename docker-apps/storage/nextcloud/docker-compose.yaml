@@ -9,12 +9,14 @@ volumes:
 services:
   nextcloud-postgres:
     # Note: Check the recommend version here: https://docs.nextcloud.com/server/latest/admin_manual/installation/system_requirements.html#server
-    image: postgres:17.11-alpine
+    image: postgres:18.6-alpine
     container_name: nextcloud-postgres
     networks:
       - nextcloud
     volumes:
-      - ${WORKDIR}/nextcloud-pg:/var/lib/postgresql/data
+      # PostgreSQL 18+ keeps its data in /var/lib/postgresql/18/docker, so mount the parent
+      # directory (not /var/lib/postgresql/data). See https://hub.docker.com/_/postgres
+      - ${WORKDIR}/nextcloud-pg:/var/lib/postgresql
     environment:
       POSTGRES_DB: nextcloud_db
       POSTGRES_USER: nextcloud_user
@@ -22,14 +24,14 @@ services:
     restart: unless-stopped
 
   nextcloud-redis:
-    image: redis:8.2.2-alpine
+    image: redis:8.10.2-alpine
     container_name: nextcloud-redis
     networks:
       - nextcloud
     restart: unless-stopped
 
   nextcloud:
-    image: nextcloud:32.0.14
+    image: nextcloud:35.0.1
     container_name: nextcloud
     environment:
       POSTGRES_PASSWORD: '${NEXTCLOUD_DB_PASSWORD}'
@@ -38,9 +40,14 @@ services:
       POSTGRES_HOST: nextcloud-postgres # This is the name of the service in the docker-compose file
       NEXTCLOUD_ADMIN_USER: '${NEXTCLOUD_ADMIN_USER}'
       NEXTCLOUD_ADMIN_PASSWORD: '${NEXTCLOUD_ADMIN_PASSWORD}'
-      NEXTCLOUD_TRUSTED_DOMAINS: '${DOMAIN}'
+      NEXTCLOUD_TRUSTED_DOMAINS: 'nextcloud.${DOMAIN}'
+      REDIS_HOST: nextcloud-redis
+      # Behind Traefik: read the client IP, host and protocol from the X-Forwarded-* headers.
+      # See https://github.com/nextcloud/docker#using-the-image-behind-a-reverse-proxy-and-specifying-the-server-host-and-protocol
+      APACHE_DISABLE_REWRITE_IP: '1'
       TRUSTED_PROXIES: '192.168.0.0/16 172.16.0.0/12'
-      # OVERWRITEPROTOCOL: 'https'
+      OVERWRITEPROTOCOL: 'https'
+      OVERWRITECLIURL: 'https://nextcloud.${DOMAIN}'
     volumes:
       - nextcloud:/var/www/html
     # ports:
@@ -58,9 +65,29 @@ services:
       - traefik.http.routers.nextcloud-secure.tls=true
       - traefik.http.routers.nextcloud-secure.tls.certresolver=cloudflare
       - traefik.http.routers.nextcloud-secure.service=nextcloud
+      # CalDAV/CardDAV discovery, see https://docs.nextcloud.com/server/latest/admin_manual/configuration_server/reverse_proxy_configuration.html
+      - traefik.http.middlewares.nextcloud-dav-redirect.redirectregex.permanent=true
+      - traefik.http.middlewares.nextcloud-dav-redirect.redirectregex.regex=https://(.*)/.well-known/(?:card|cal)dav
+      - traefik.http.middlewares.nextcloud-dav-redirect.redirectregex.replacement=https://$${1}/remote.php/dav
+      - traefik.http.routers.nextcloud-secure.middlewares=nextcloud-dav-redirect
       - traefik.http.services.nextcloud.loadbalancer.server.port=80
     networks:
       - proxy
+      - nextcloud
+    restart: unless-stopped
+    depends_on:
+      - nextcloud-postgres
+      - nextcloud-redis
+
+  # Runs Nextcloud's background jobs every 5 minutes (the recommended "Cron" mode).
+  # Image and volumes must match the nextcloud service.
+  nextcloud-cron:
+    image: nextcloud:35.0.1
+    container_name: nextcloud-cron
+    entrypoint: /cron.sh
+    volumes:
+      - nextcloud:/var/www/html
+    networks:
       - nextcloud
     restart: unless-stopped
     depends_on:

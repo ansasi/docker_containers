@@ -14,8 +14,17 @@ global:
   # external_labels:
   #  monitor: 'codelab-monitor'
 
-# # A scrape configuration containing exactly one endpoint to scrape:
-# # Here it's Prometheus itself.
+# Alert rules, see rules/*.yml.
+rule_files:
+  - /etc/config/rules/*.yml
+
+alerting:
+  alertmanagers:
+    - static_configs:
+        - targets: ['alertmanager:9093']
+
+# Targets use the Ansible inventory host names as the `instance` label, so the
+# alerts read "docker1", "rpi4", ... instead of IP:port.
 scrape_configs:
   # The job name is added as a label `job=<job_name>` to any timeseries scraped from this config.
   - job_name: 'prometheus'
@@ -24,12 +33,77 @@ scrape_configs:
     static_configs:
       - targets: ['localhost:9090']
 
-  # Example job for node_exporter
-  - job_name: 'node_exporter'
+  - job_name: 'alertmanager'
     static_configs:
-      - targets: ['node_exporter:9100']
+      - targets: ['alertmanager:9093']
 
-#   # Example job for cadvisor
-#   - job_name: 'cadvisor'
-#     static_configs:
-#       - targets: ['cadvisor:8080']
+  # node_exporter on every host, installed by Ansible (homelab repo).
+  # Hosts with many network interfaces (Proxmox) exceed the global sample_limit.
+  - job_name: 'node_exporter'
+    sample_limit: 10000
+    static_configs:
+      - targets: ['192.168.178.20:9100']
+        labels: {instance: 'proxmox1'}
+      - targets: ['192.168.178.30:9100']
+        labels: {instance: 'pbs1'}
+      - targets: ['192.168.178.31:9100']
+        labels: {instance: 'docker1'}
+      - targets: ['192.168.178.32:9100']
+        labels: {instance: 'datia1'}
+      - targets: ['192.168.178.33:9100']
+        labels: {instance: 'vault1'}
+      - targets: ['192.168.178.50:9100']
+        labels: {instance: 'jellyfin1'}
+      - targets: ['192.168.178.10:9100']
+        labels: {instance: 'dns1'}
+      - targets: ['192.168.178.15:9100']
+        labels: {instance: 'rpi4'}
+
+  # Disk health of the Proxmox host, installed by Ansible (homelab repo).
+  - job_name: 'smartctl'
+    static_configs:
+      - targets: ['192.168.178.20:9633']
+        labels: {instance: 'proxmox1'}
+
+  # Containers on docker1.
+  - job_name: 'cadvisor'
+    sample_limit: 20000
+    static_configs:
+      - targets: ['cadvisor:8080']
+        labels: {instance: 'docker1'}
+    metric_relabel_configs:
+      # cAdvisor also reports the filesystems mounted inside containers, with
+      # the full Docker storage path as `device` (over 200 characters with the
+      # containerd image store). One label above the global
+      # label_value_length_limit fails the whole scrape, so drop these series;
+      # dropping happens before the limit is checked.
+      - source_labels: [__name__, device]
+        regex: 'container_fs_.+;/(var/lib/docker|rootfs)/.+'
+        action: drop
+
+  # Proxmox VE API (guests, storage), see the upstream README.
+  - job_name: 'pve'
+    scrape_interval: 60s
+    sample_limit: 5000
+    metrics_path: /pve
+    params:
+      module: [default]
+      cluster: ['1']
+      node: ['1']
+    static_configs:
+      - targets: ['192.168.178.20']
+    relabel_configs:
+      - source_labels: [__address__]
+        target_label: __param_target
+      - target_label: instance
+        replacement: 'proxmox1'
+      - target_label: __address__
+        replacement: 'pve-exporter:9221'
+
+  # Proxmox Backup Server API (datastore usage, last backup per guest).
+  - job_name: 'pbs'
+    scrape_interval: 60s
+    sample_limit: 5000
+    static_configs:
+      - targets: ['pbs-exporter:10019']
+        labels: {instance: 'pbs1'}

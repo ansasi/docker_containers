@@ -9,10 +9,10 @@ The Homepage config files (`settings.yaml`, `services.yaml`, `widgets.yaml`,
 managed by Ansible in the homelab repo:
 
 ```
-homelab/ansible/roles/homepage/files/config/
+homelab/ansible/playbooks/files/homepage/config/
 ```
 
-On deploy, the `homepage` Ansible role syncs those files to `${WORKDIR}/config`
+On deploy, the Homepage block in `playbooks/docker.yml` syncs those files to `${WORKDIR}/config`
 on the host, and this compose file mounts that directory into the container
 (`${WORKDIR}/config:/app/config`). Edit the dashboard there, not here.
 

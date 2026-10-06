@@ -29,24 +29,22 @@ scope of the Compose stacks in this repository:
 | [Open WebUI](docker-apps/ai/openwebui) | Maintained only | Deferred with the local AI stack. |
 | [Home Assistant](docker-apps/automation/homeassistant) | Maintained only | Deferred until there are IoT devices to manage. |
 | [ERPNext](docker-apps/business/erpnext) | Neither | Rejected as too heavy and complex; Twenty covers the requirement. |
-| [Twenty](docker-apps/business/twenty) | Used & maintained | Used through an interim LXC deployment; migration to Docker or Kubernetes is planned. |
-| [Dockge](docker-apps/management/dockge) | Neither | Rejected in favor of Portainer. |
+| [Twenty](docker-apps/business/twenty) | Used & maintained | Used through an interim LXC deployment; migration to Docker is planned. |
 | [Homepage](docker-apps/management/homepage) | Used & maintained | Active on the main Docker host. |
 | [Portainer](docker-apps/management/portainer) | Used & maintained | Active on the Docker, Datia, and Hermes hosts. |
-| [Watchtower](docker-apps/management/watchtower) | Neither | Decommissioned in favor of Renovate and reviewed deployments. |
 | [ARRs](docker-apps/media/arrs) | Used & maintained | Active on the main Docker host. |
-| [Audiobookshelf](docker-apps/media/audiobookshelf) | Used & maintained | Used through an interim LXC deployment; migration to Docker or Kubernetes is planned. |
+| [Audiobookshelf](docker-apps/media/audiobookshelf) | Used & maintained | Used through an interim LXC deployment; migration to Docker is planned. |
 | [Calibre-Web](docker-apps/media/calibre-web) | Used & maintained | Active on the main Docker host. |
 | [Jellyfin](docker-apps/media/jellyfin) | Used & maintained | Active in a dedicated LXC for direct iGPU access. |
 | [Plex](docker-apps/media/plex) | Maintained only | Deferred and currently superseded by Jellyfin. |
-| [Grafana](docker-apps/monitoring/grafana) | Used & maintained | Active on the Docker and Datia hosts. |
-| [Netdata](docker-apps/monitoring/netdata) | Maintained only | Deferred while Grafana and Uptime Kuma cover monitoring. |
-| [Uptime Kuma](docker-apps/monitoring/uptime-kuma) | Used & maintained | Active on the Docker and Datia hosts. |
+| [Grafana](docker-apps/monitoring/grafana) | Used & maintained | Central monitoring stack (Grafana, Prometheus, Alertmanager, exporters) for the main Docker host; the Datia copy is being retired. |
+| [Netdata](docker-apps/monitoring/netdata) | Maintained only | Deferred: previously ran on the Raspberry Pi 4, then replaced by node_exporter and the central Prometheus. Kept as an all-in-one alternative to Prometheus + Grafana. |
+| [Uptime Kuma](docker-apps/monitoring/uptime-kuma) | Used & maintained | Service reachability checks; consolidating on the main Docker host, the Datia copy is being retired. |
 | [Pi-hole and dnsproxy](docker-apps/networking/pihole) | Used & maintained | Active on the Raspberry Pi Zero DNS host. |
 | [Technitium](docker-apps/networking/technitium) | Maintained only | Deferred while Pi-hole remains the DNS service. |
 | [Traefik](docker-apps/networking/traefik) | Used & maintained | Active on the Docker, Datia, and Hermes hosts. |
 | [UpSnap](docker-apps/networking/upsnap) | Used & maintained | Active on the Raspberry Pi Zero DNS host. |
-| [WireGuard Easy](docker-apps/networking/wireguard) | Maintained only | Deferred while the FritzBox WireGuard service is used. |
+| [Vaultwarden](docker-apps/security/vaultwarden/README.md) | Maintained only | New-install template with setup and backup/restore guide; deployment unconfirmed. Does not replace Proton Pass. |
 | [Immich](docker-apps/storage/immich) | Used & maintained | Active on the main Docker host. |
 | [Nextcloud](docker-apps/storage/nextcloud) | Maintained only | Deferred while Proton Docs and Drive are used. |
 | [Nextcloud AIO](docker-apps/storage/nextcloud-aio) | Maintained only | Deferred while Proton Docs and Drive are used. |
