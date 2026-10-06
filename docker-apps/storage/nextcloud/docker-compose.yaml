@@ -9,12 +9,14 @@ volumes:
 services:
   nextcloud-postgres:
     # Note: Check the recommend version here: https://docs.nextcloud.com/server/latest/admin_manual/installation/system_requirements.html#server
-    image: postgres:17.11-alpine
+    image: postgres:18.6-alpine
     container_name: nextcloud-postgres
     networks:
       - nextcloud
     volumes:
-      - ${WORKDIR}/nextcloud-pg:/var/lib/postgresql/data
+      # PostgreSQL 18+ keeps its data in /var/lib/postgresql/18/docker, so mount the parent
+      # directory (not /var/lib/postgresql/data). See https://hub.docker.com/_/postgres
+      - ${WORKDIR}/nextcloud-pg:/var/lib/postgresql
     environment:
       POSTGRES_DB: nextcloud_db
       POSTGRES_USER: nextcloud_user
