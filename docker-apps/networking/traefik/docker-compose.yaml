@@ -3,6 +3,69 @@ networks:
   proxy:
     external: true
 
+# Traefik's static configuration. It lives here instead of a separate file so
+# Compose can fill in the ACME email from the environment: Traefik cannot read
+# environment variables inside its configuration file.
+configs:
+  traefik-static:
+    content: |
+      global:
+        checkNewVersion: false
+        sendAnonymousUsage: false
+
+      log:
+        level: INFO
+
+      api:
+        dashboard: true
+
+      entryPoints:
+        http:
+          address: ":80"
+          http:
+            # middlewares:
+            #   - ip-allowlist@file
+            redirections:
+              entryPoint:
+                to: https
+                scheme: https
+          transport:
+            respondingTimeouts:
+              readTimeout: 0s
+        https:
+          address: ":443"
+          # http:
+          #   middlewares:
+          #     - ip-allowlist@file
+          transport:
+            respondingTimeouts:
+              readTimeout: 0s
+
+      certificatesResolvers:
+        cloudflare:
+          acme:
+            email: ${CF_API_EMAIL:?Set the CF_API_EMAIL environment variable in your .env file.}
+            storage: /etc/traefik/certs/cloudflare-acme.json
+            caServer: 'https://acme-v02.api.letsencrypt.org/directory' # prod (default)
+            # caServer: 'https://acme-staging-v02.api.letsencrypt.org/directory' # staging
+            dnsChallenge:
+              provider: cloudflare
+              resolvers:
+                - 1.1.1.1:53
+                - 1.0.0.1:53
+
+      # serversTransport:
+      #   insecureSkipVerify: true
+
+      providers:
+        docker:
+          endpoint: "unix:///var/run/docker.sock"
+          exposedByDefault: false
+          watch: true
+        file:
+          directory: /etc/traefik/config
+          watch: true
+
 services:
   traefik:
     image: traefik:v3.7.13
@@ -16,9 +79,11 @@ services:
     volumes:
       - /etc/localtime:/etc/localtime:ro
       - /var/run/docker.sock:/var/run/docker.sock:ro
-      - ./traefik-config/traefik.yml:/etc/traefik/traefik.yml:ro
       # - ./traefik-config/config.yml:/etc/traefik/config/config.yml # In case we need some pre-configuration that we cannot create with labels.
       - ./certs:/etc/traefik/certs/
+    configs:
+      - source: traefik-static
+        target: /etc/traefik/traefik.yml
     networks:
       - proxy
     labels:

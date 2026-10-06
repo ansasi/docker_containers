@@ -19,6 +19,7 @@ jobs:
     env:
       # Placeholders used only while interpolating Compose files for linting.
       # No services are started by this workflow.
+      CF_API_EMAIL: ci@example.invalid
       DOMAIN: example.invalid
       NAS_STORAGE_LOCATION: /mnt/ci-nas
       NTFY_URL: https://ntfy.invalid/compose-lint-placeholder

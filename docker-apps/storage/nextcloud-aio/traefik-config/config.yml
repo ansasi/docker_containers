@@ -1,16 +1,17 @@
 # Traefik configuration for Nextcloud AIO with secure headers and HTTPS redirection
+# Replace nc.example.com with your Nextcloud hostname (nc.${DOMAIN}).
 http:
   routers:
     nextcloud:
       entrypoints:
         - "https"
-      rule: "Host(`nc.datia.me`)"
+      rule: "Host(`nc.example.com`)"
       middlewares:
         - https-redirect
         - nextcloud-secure-headers
       tls:
         domains:
-          - main: "nc.datia.me"
+          - main: "nc.example.com"
       service: nextcloud
   services:
     nextcloud:
