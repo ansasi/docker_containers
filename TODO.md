@@ -75,6 +75,20 @@ history); Tailscale or NetBird is the planned replacement for external access.
 - [ ] **IT-Tools** 🟢 — Collection of developer / sysadmin utility tools in the browser.
   Needs time investment.
 
+## Media
+
+- [ ] **Subtitles with Whisper** 🟡 — Generate subtitles for all films and shows with
+  Whisper (speech-to-text) on the workstation's NVIDIA RTX 4070 (12 GB), run on demand:
+  no homelab host has a suitable GPU (Jellyfin's iGPU is for transcoding). Options to
+  evaluate: Bazarr's [Whisper provider](https://wiki.bazarr.media/Additional-Configuration/Whisper-Provider)
+  with `whisper-asr-webservice` (faster-whisper, GPU image) on the workstation, so the
+  existing Bazarr (`media/arrs`) requests subtitles for what is missing; or Subgen
+  (Whisper, triggered by Jellyfin). The workstation needs the NVIDIA Container Toolkit
+  and access to the media library on the NAS (see the NAS items in the homelab
+  `TODO.md`). Process the existing library once, then only new items. Notes from
+  Bazarr's docs: Whisper subtitles get a fixed score (lower Bazarr's minimum score to
+  accept them), and Whisper translates only into English.
+
 ## Development
 
 - [ ] **Gitea** 🔴 — Lightweight self-hosted Git service. Needed because GitHub Actions
