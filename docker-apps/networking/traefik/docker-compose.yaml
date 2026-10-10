@@ -68,7 +68,7 @@ configs:
 
 services:
   traefik:
-    image: traefik:v3.7.13
+    image: traefik:v3.7.14
     container_name: traefik
     ports:
       - "80:80"
