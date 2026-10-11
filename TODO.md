@@ -7,22 +7,26 @@ this file only tracks apps that are still candidates to add.
 
 Priority legend: 🔴 High · 🟡 Medium · 🟢 Low · ⚫ Resolved (not needed)
 
+Where new apps go (owner decision, 2026-10): the planned apps are onboarded in
+the k3s cluster (homelab repository, `k8s/`), not as new stacks here. The apps
+running on Docker today stay as they are and move last.
+
 ## Security & Authentication
 
 Vaultwarden now has a [Compose stack and guide](docker-apps/security/vaultwarden/README.md).
 This resolves the repository addition only: deployment and any move from Proton
 Pass remain unconfirmed and are not performed by adding the stack.
 
-- [ ] **Authentik** 🟢 — Identity provider / SSO (LDAP, SAML, OAuth2); pairs well with
-  Traefik. Not a priority right now; the Kubernetes cluster is a learning lab, so the
-  host is not decided yet. Pick one of Authentik/Authelia, not both. Once it exists,
-  put the Prometheus and Alertmanager routes behind it; they are LAN/VPN-only and
-  have no login until then (anyone who reaches Alertmanager can silence alerts).
-- [ ] **Authelia** 🟢 — Lightweight auth proxy for 2FA in front of any reverse proxy.
+- [ ] **Authentik** 🔴 — Identity provider / SSO (LDAP, SAML, OAuth2); pairs well with
+  Traefik. Next, in the k3s cluster (owner decision, 2026-10). Pick one of
+  Authentik/Authelia, not both. Once it exists, put the Prometheus and Alertmanager
+  routes behind it; they are LAN/VPN-only and have no login until then (anyone who
+  reaches Alertmanager can silence alerts).
+- [ ] **Authelia** 🔴 — Lightweight auth proxy for 2FA in front of any reverse proxy.
   Same as above; alternative to Authentik, not both.
-- [ ] **CrowdSec** 🟢 — Collaborative IPS / threat intelligence layer. Low priority
-  while nothing is exposed to the internet (LAN/VPN access only); revisit if a
-  service is published. A July 2026 draft (Traefik bouncer plugin) exists on the
+- [ ] **CrowdSec** 🔴 — Collaborative IPS / threat intelligence layer. Next, in the k3s
+  cluster (owner decision, 2026-10), although nothing is exposed to the internet yet
+  (LAN/VPN access only). A July 2026 Docker draft (Traefik bouncer plugin) exists on the
   `claude/crowdsec-docker-setup-acfk4x` branch.
 
 ## Networking
@@ -91,16 +95,16 @@ history); Tailscale or NetBird is the planned replacement for external access.
 
 ## Development
 
-- [ ] **Gitea** 🔴 — Lightweight self-hosted Git service. Needed because GitHub Actions
-  can't reach the homelab, and the homelab doesn't run 24/7 (it's powered on/used on
-  demand), so it can't act as an always-on git remote by itself either. Was postponed
-  in favor of GitLab, but GitLab is too heavy to run on-demand. Also intended to close
-  the gap left by decommissioning Watchtower: deploy the updates that Renovate (already
-  active, see `.renovaterc.json5`) opens PRs for, instead of relying on Watchtower's
-  blind auto-pull. **Open decision:** how repos stay pushable while the homelab is off —
-  e.g. keep GitHub/GitLab.com as the primary remote and mirror to Gitea when the homelab
-  is up, vs. self-hosted runners that only register while online. Also want self-hosted
-  repos backed up to GitHub or GitLab.
+- [ ] **Gitea** 🟢 — Lightweight self-hosted Git service. **Later, maybe** (owner decision,
+  2026-10). Its main purpose was deploying the updates Renovate opens PRs for (the gap
+  left by Watchtower), and that does not need a self-hosted Git server: Flux deploys the
+  k3s apps from GitHub, the Docker apps move to k3s over time, and Docker deploys stay a
+  manual Ansible run until then. GitHub stays the main remote: the cluster rebuilds from
+  Git, so its main Git server cannot run inside it, and the lab is off most of the time.
+  If it comes back: GitHub-primary repositories as read-only pull mirrors, Gitea as the
+  main remote only for new personal repositories (push-mirrored to GitHub as a backup),
+  HTTPS first, SSH later. GitLab was ruled out: its baseline is 8 vCPU / 16 GB (the k3s
+  workers have 4 vCPU / 8 GB) and pull mirroring needs a paid tier.
 
 ## Communication
 
