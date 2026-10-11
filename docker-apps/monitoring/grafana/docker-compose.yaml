@@ -119,33 +119,6 @@ services:
       - traefik.http.services.alertmanager.loadbalancer.server.port=9093
     restart: unless-stopped
 
-# --- cAdvisor Image
-  # Container metrics for the Docker host this stack runs on. Volumes follow
-  # the upstream docs (docs/running.md).
-  cadvisor:
-    image: ghcr.io/google/cadvisor:v0.60.6
-    container_name: cadvisor
-    command:
-      - '--docker_only=true'
-      - '--housekeeping_interval=30s'
-      # Do not turn every Docker label (e.g. all Traefik labels) into a
-      # Prometheus label.
-      - '--store_container_labels=false'
-    volumes:
-      - /:/rootfs:ro
-      - /var/run:/var/run:ro
-      - /sys:/sys:ro
-      - /var/lib/docker/:/var/lib/docker:ro
-    devices:
-      - /dev/kmsg
-    # Reading /dev/kmsg (container OOM events) needs CAP_SYSLOG when the host
-    # restricts dmesg (Debian/Ubuntu default).
-    cap_add:
-      - SYSLOG
-    networks:
-      - grafana-monitoring
-    restart: unless-stopped
-
 # --- Proxmox VE exporter Image
   # Reads the Proxmox VE API with a read-only (PVEAuditor) API token.
   pve-exporter:

@@ -251,27 +251,6 @@ groups:
           description: 'Check that PBS is running and that the API token is valid.'
 
   # ---------------------------------------------------------------------------
-  # Containers on docker1 (cAdvisor)
-  # ---------------------------------------------------------------------------
-  - name: containers
-    rules:
-      - alert: ContainerRestartLoop
-        expr: changes(container_start_time_seconds{name!=""}[15m]) > 3
-        labels:
-          severity: warning
-        annotations:
-          summary: '{{ $labels.instance }}: container {{ $labels.name }} keeps restarting'
-          description: '{{ $labels.name }} restarted more than 3 times in 15 minutes.'
-
-      - alert: ContainerOomKilled
-        expr: increase(container_oom_events_total{name!=""}[15m]) > 0
-        labels:
-          severity: warning
-        annotations:
-          summary: '{{ $labels.instance }}: container {{ $labels.name }} ran out of memory'
-          description: 'An OOM event happened in {{ $labels.name }} in the last 15 minutes.'
-
-  # ---------------------------------------------------------------------------
   # The monitoring itself
   # ---------------------------------------------------------------------------
   - name: monitoring

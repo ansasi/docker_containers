@@ -192,22 +192,6 @@ tests:
         alertname: DiskSmartFailure
         exp_alerts: []
 
-  # A container restarting every minute; a stable one stays quiet.
-  - interval: 1m
-    input_series:
-      - series: 'container_start_time_seconds{name="flaky", id="/system.slice/docker-a.scope", image="example/flaky:1", instance="docker1", job="cadvisor"}'
-        values: '0+60x20'
-      - series: 'container_start_time_seconds{name="stable", id="/system.slice/docker-b.scope", image="example/stable:1", instance="docker1", job="cadvisor"}'
-        values: '0x20'
-    alert_rule_test:
-      - eval_time: 16m
-        alertname: ContainerRestartLoop
-        exp_alerts:
-          - exp_labels: {severity: warning, name: flaky, id: /system.slice/docker-a.scope, image: 'example/flaky:1', instance: docker1, job: cadvisor}
-            exp_annotations:
-              summary: 'docker1: container flaky keeps restarting'
-              description: 'flaky restarted more than 3 times in 15 minutes.'
-
   # Under-voltage: dns1 alerts, rpi4 (accepted 5.0 V supply) does not. Short
   # gaps do not resolve the alert, an hour without under-voltage does.
   - interval: 1m

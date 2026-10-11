@@ -8,7 +8,6 @@ host (`docker1`)** and watches every other host over the LAN.
 | Grafana | Dashboards (`grafana.<DOMAIN>`) |
 | Prometheus | Collects metrics and evaluates the alert rules (`prometheus.<DOMAIN>`) |
 | Alertmanager | Sends alerts to ntfy.sh; silences for maintenance (`alertmanager.<DOMAIN>`) |
-| cAdvisor | Container metrics of `docker1` |
 | pve-exporter | Proxmox VE API: guests, storage |
 | pbs-exporter | Proxmox Backup Server API: datastore usage, last backup per guest |
 
@@ -47,11 +46,20 @@ so a new Grafana volume or a rebuilt `docker1` gets them back.
 
 | File | Source | Revision |
 |---|---|---|
+| `homelab-overview.json` | Own, see below | |
 | `node-exporter-full.json` | [Node Exporter Full](https://grafana.com/grafana/dashboards/1860) (1860) | 45 |
-| `proxmox-via-prometheus.json` | [Proxmox via Prometheus](https://grafana.com/grafana/dashboards/10347) (10347), recommended by prometheus-pve-exporter | 5 |
 | `smartctl.json` | [SMARTctl Exporter Dashboard](https://grafana.com/grafana/dashboards/22604) (22604) | 3 |
-| `cadvisor.json` | [Cadvisor exporter](https://grafana.com/grafana/dashboards/14282) (14282) | 1 |
-| `proxmox-backup-server.json` | [pbs-exporter](https://github.com/natrontech/pbs-exporter/tree/main/grafana-dashboard) `grafana-dashboard/pbs-exporter.json` | `5fd0d95` |
+
+*Homelab overview* answers "is everything OK?" on one page: firing alerts,
+every host (status, CPU, memory, fullest disk, temperature), every Proxmox
+guest with the age of its newest backup, and how full the Proxmox storages, the
+PBS datastore and the QNAP shares are. Its colours follow the alert thresholds.
+Click a host to open it in Node Exporter Full.
+
+There are no Proxmox VE or PBS dashboards: their web interfaces show guests,
+storage and backups in more detail and with more history than Prometheus keeps
+(7 days). pve-exporter and pbs-exporter are here for the alerts and the
+overview.
 
 To update a grafana.com dashboard, download its latest revision and point it at
 the provisioned data source (provisioning does not fill in import variables):
@@ -60,9 +68,6 @@ the provisioned data source (provisioning does not fill in import variables):
 curl -sL https://grafana.com/api/dashboards/1860/revisions/latest/download \
   | sed 's/${DS_PROMETHEUS}/prometheus/g' > config/grafana/dashboards/node-exporter-full.json
 ```
-
-The cAdvisor dashboard's info table is partly empty because cAdvisor runs with
-`--store_container_labels=false`; the graphs are not affected.
 
 ## Alerts
 
@@ -82,7 +87,6 @@ The cAdvisor dashboard's info table is partly empty because cAdvisor runs with
 | Proxmox | `SmartctlNoDevices` (exporter sees no disks) | warning |
 | Backups | `PbsBackupTooOld` (newest snapshot of an existing guest > 7 days) | critical |
 | Backups | `PbsDatastoreAlmostFull` (> 85%), `PbsUnreachable` | warning |
-| Containers | `ContainerRestartLoop`, `ContainerOomKilled` | warning |
 | Monitoring | `ExporterDown`, `PrometheusRuleFailures`, `AlertmanagerNotificationsFailing` | warning |
 
 The lab runs on demand, so every rule waits (`for:`) before firing, and
