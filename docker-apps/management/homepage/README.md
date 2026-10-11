@@ -16,6 +16,22 @@ On deploy, the Homepage block in `playbooks/docker.yml` syncs those files to `${
 on the host, and this compose file mounts that directory into the container
 (`${WORKDIR}/config:/app/config`). Edit the dashboard there, not here.
 
+## Widget credentials
+
+Widgets that log in to a service get their credentials as environment
+variables, referenced as `{{HOMEPAGE_VAR_...}}` in `services.yaml`. Ansible sets
+them from Proton Pass; how to create the tokens is in the homelab repo
+(`docs/homepage.md`).
+
+| Variable | Widget |
+|---|---|
+| `HOMEPAGE_VAR_PIHOLE_KEY` | Pi-hole |
+| `HOMEPAGE_VAR_PVE_TOKEN_ID`, `HOMEPAGE_VAR_PVE_TOKEN_SECRET` | Proxmox VE: read-only API token (`PVEAuditor`) |
+| `HOMEPAGE_VAR_PBS_TOKEN_ID`, `HOMEPAGE_VAR_PBS_TOKEN_SECRET` | Proxmox Backup Server: read-only API token (`Audit`) |
+
+A variable that is not set leaves its widget showing an error; the rest of the
+page works.
+
 ## Running manually
 
 `WORKDIR` must point at a directory that already contains a populated `config/`
