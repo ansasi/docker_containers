@@ -17,6 +17,12 @@ services:
       # Credentials for Widgets #
       ###########################
       HOMEPAGE_VAR_PIHOLE_KEY: '${HOMEPAGE_VAR_PIHOLE_KEY}'
+      # Read-only Proxmox VE (PVEAuditor) and PBS (Audit) API tokens:
+      # token ID (user@realm!token) and secret
+      HOMEPAGE_VAR_PVE_TOKEN_ID: '${HOMEPAGE_VAR_PVE_TOKEN_ID}'
+      HOMEPAGE_VAR_PVE_TOKEN_SECRET: '${HOMEPAGE_VAR_PVE_TOKEN_SECRET}'
+      HOMEPAGE_VAR_PBS_TOKEN_ID: '${HOMEPAGE_VAR_PBS_TOKEN_ID}'
+      HOMEPAGE_VAR_PBS_TOKEN_SECRET: '${HOMEPAGE_VAR_PBS_TOKEN_SECRET}'
     volumes:
       # Config is managed by Ansible (homelab repo: ansible/playbooks/files/homepage/config)
       # synced to ${WORKDIR}/config on the host, not tracked in this repo.
