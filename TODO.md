@@ -19,11 +19,14 @@ Pass remain unconfirmed and are not performed by adding the stack.
 
 - [ ] **Authentik** 🔴 — Identity provider / SSO (LDAP, SAML, OAuth2); pairs well with
   Traefik. Next, in the k3s cluster (owner decision, 2026-10). Pick one of
-  Authentik/Authelia, not both. Once it exists, put the Prometheus and Alertmanager
+  Authentik, Authelia or Keycloak. Once it exists, put the Prometheus and Alertmanager
   routes behind it; they are LAN/VPN-only and have no login until then (anyone who
   reaches Alertmanager can silence alerts).
 - [ ] **Authelia** 🔴 — Lightweight auth proxy for 2FA in front of any reverse proxy.
   Same as above; alternative to Authentik, not both.
+- [ ] **Keycloak** 🔴 — Identity provider (OIDC, SAML); third candidate in the SSO
+  decision (owner decision, 2026-10). Heavier than Authentik or Authelia, but the one
+  many companies use; mirceanton/home-ops runs it with the Keycloak operator.
 - [ ] **CrowdSec** 🔴 — Collaborative IPS / threat intelligence layer. Next, in the k3s
   cluster (owner decision, 2026-10), although nothing is exposed to the internet yet
   (LAN/VPN access only). A July 2026 Docker draft (Traefik bouncer plugin) exists on the
@@ -35,6 +38,10 @@ Pass remain unconfirmed and are not performed by adding the stack.
   one, not both.
 - [ ] **NetBird** 🟡 — WireGuard-based overlay network / mesh VPN alternative to
   Tailscale. Preferred (open source), but not finalized.
+- [ ] **Technitium DNS Server** 🟢 — Possible replacement for Pi-hole, later (owner
+  decision, 2026-10: not yet). Until the DNS server is decided, no investment in
+  Pi-hole high availability (a second instance with keepalived and sync, as Techno Tim
+  runs it) or in ExternalDNS (automatic DNS records for the k3s apps).
 
 Remote access uses the FritzBox's built-in WireGuard VPN for now. The WireGuard Easy
 (wg-easy) stack was removed in October 2026 instead of migrating it to v15 (see git
@@ -51,6 +58,9 @@ history); Tailscale or NetBird is the planned replacement for external access.
 
 - [ ] **Logs: Loki + Grafana Alloy** 🟡 — Central log collection, searchable in the existing
   Grafana. Use Alloy as the collector (Promtail is end-of-life). Planned, not started.
+  Alternative to evaluate when this starts: VictoriaLogs (lighter; onedr0p/home-ops).
+- [ ] **Gatus** 🟢 — Health checks and status page defined in configuration files: an
+  alternative to Uptime-Kuma, so monitoring is all code (onedr0p/home-ops).
 - [ ] **Keep rpi4's metrics while the lab is off** 🟢 — Prometheus on `docker1` pulls,
   so the always-on Raspberry Pis have gaps in their graphs while `docker1` is off.
   Tried in October 2026 and reverted: vmagent on rpi4 pushing to Prometheus
@@ -92,6 +102,15 @@ history); Tailscale or NetBird is the planned replacement for external access.
   `TODO.md`). Process the existing library once, then only new items. Notes from
   Bazarr's docs: Whisper subtitles get a fixed score (lower Bazarr's minimum score to
   accept them), and Whisper translates only into English.
+- [ ] **Recyclarr** 🟢 — Keeps Sonarr's and Radarr's quality profiles in line with the
+  TRaSH Guides, from a configuration file (onedr0p/home-ops). Add it when the ARR stack
+  moves to the k3s cluster.
+
+## Home Automation
+
+- [ ] **Home Assistant** 🟢 — Home automation hub (onedr0p, mirceanton and Techno Tim
+  run it). No smart-home devices yet, so not useful in the short term; revisit when
+  there are some.
 
 ## Development
 
