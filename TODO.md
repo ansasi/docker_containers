@@ -34,10 +34,11 @@ Pass remain unconfirmed and are not performed by adding the stack.
 
 ## Networking
 
-- [ ] **Tailscale** 🟡 — Zero-config WireGuard mesh VPN. Alternative to NetBird; pick
-  one, not both.
-- [ ] **NetBird** 🟡 — WireGuard-based overlay network / mesh VPN alternative to
-  Tailscale. Preferred (open source), but not finalized.
+- [ ] **Tailscale** 🟡 — Zero-config WireGuard mesh VPN. Alternative to NetBird (the
+  planned choice); pick one, not both.
+- [ ] **NetBird** 🔴 — WireGuard-based overlay network / mesh VPN alternative to
+  Tailscale. Preferred (open source). Planned in the k3s cluster after Audiobookshelf,
+  before the apps running on Docker move (owner decision, 2026-10).
 - [ ] **Technitium DNS Server** 🟢 — Possible replacement for Pi-hole, later (owner
   decision, 2026-10: not yet). Until the DNS server is decided, no investment in
   Pi-hole high availability (a second instance with keepalived and sync, as Techno Tim
