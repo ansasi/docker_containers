@@ -9,7 +9,8 @@ Priority legend: 🔴 High · 🟡 Medium · 🟢 Low · ⚫ Resolved (not neede
 
 Where new apps go (owner decision, 2026-10): the planned apps are onboarded in
 the k3s cluster (homelab repository, `k8s/`), not as new stacks here. The apps
-running on Docker today stay as they are and move last.
+running on Docker today stay as they are and move last, after the cluster has its
+own monitoring (kube-prometheus-stack, below).
 
 ## Security & Authentication
 
@@ -57,6 +58,14 @@ history); Tailscale or NetBird is the planned replacement for external access.
 
 ## Monitoring
 
+- [ ] **kube-prometheus-stack in the k3s cluster** 🔴 — Prometheus, Alertmanager and
+  kube-state-metrics in the cluster, with the alert rules next to each app and alerts
+  to ntfy.sh like the stack here. **Critical, required before any app running on
+  Docker moves to the cluster** (owner decision, 2026-10-12): Paperless's first file
+  backup stayed `Pending` and nothing reported it (homelab `docs/incidents.md`). First
+  alerts: VolSync out of sync or absent, CloudNativePG backup age and WAL archiving,
+  pods not ready for 15 minutes, Flux not Ready. The Prometheus stack on `docker1`
+  keeps watching the hosts (onedr0p and mirceanton run kube-prometheus-stack).
 - [ ] **Logs: Loki + Grafana Alloy** 🟡 — Central log collection, searchable in the existing
   Grafana. Use Alloy as the collector (Promtail is end-of-life). Planned, not started.
   Alternative to evaluate when this starts: VictoriaLogs (lighter; onedr0p/home-ops).
