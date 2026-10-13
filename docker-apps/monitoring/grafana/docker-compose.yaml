@@ -19,7 +19,7 @@ services:
 
 # --- Grafana Image
   grafana:
-    image: grafana/grafana:13.2.3
+    image: grafana/grafana:13.2.4
     container_name: grafana
     volumes:
       - ${WORKDIR}/data:/var/lib/grafana
