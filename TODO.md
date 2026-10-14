@@ -118,6 +118,17 @@ history); Tailscale or NetBird is the planned replacement for external access.
   TRaSH Guides, from a configuration file (onedr0p/home-ops). Add it when the ARR stack
   moves to the k3s cluster.
 
+## Gaming
+
+- [ ] **Minecraft server** 🟡 — Game server, in the k3s cluster during the Kubernetes
+  learning, outside the order of the planned apps (owner request, 2026-10-14; homelab
+  `k8s/README.md`, *Learning path*). The first app that is not a website: its game port
+  (TCP 25565) needs its own MetalLB address or a Gateway API `TCPRoute` through Traefik.
+  The world lives on a volume backed up by VolSync, with a restore drill. To decide when
+  it starts: Java or Bedrock edition (Bedrock uses UDP 19132) and who plays. Reachable
+  only while the lab is on; players from outside the LAN after NetBird. Candidate image:
+  [itzg/minecraft-server](https://docker-minecraft-server.readthedocs.io/).
+
 ## Home Automation
 
 - [ ] **Home Assistant** 🟢 — Home automation hub (onedr0p, mirceanton and Techno Tim
