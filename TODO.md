@@ -10,7 +10,9 @@ Priority legend: 🔴 High · 🟡 Medium · 🟢 Low · ⚫ Resolved (not neede
 Where new apps go (owner decision, 2026-10): the planned apps are onboarded in
 the k3s cluster (homelab repository, `k8s/`), not as new stacks here. The apps
 running on Docker today stay as they are and move last, after the cluster has its
-own monitoring (kube-prometheus-stack, below).
+own monitoring (kube-prometheus-stack, below) and every cluster app that keeps
+data has passed a restore drill (owner decision, 2026-10-14; homelab `README.md`,
+*Restore test checklist*).
 
 ## Security & Authentication
 
