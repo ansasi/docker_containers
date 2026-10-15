@@ -69,13 +69,20 @@ history); Tailscale or NetBird is the planned replacement for external access.
   Docker moves to the cluster** (owner decision, 2026-10-12): Paperless's first file
   backup stayed `Pending` and nothing reported it (homelab `docs/incidents.md`). First
   alerts: VolSync out of sync or absent, CloudNativePG backup age and WAL archiving,
-  pods not ready for 15 minutes, Flux not Ready. The Prometheus stack on `docker1`
-  keeps watching the hosts (onedr0p and mirceanton run kube-prometheus-stack).
+  pods not ready for 15 minutes, Flux not Ready; and the Gatus status page's checks
+  (`gatus_results_endpoint_success`, homelab `docs/gatus.md`). The Prometheus stack on
+  `docker1` keeps watching the hosts (onedr0p and mirceanton run kube-prometheus-stack).
 - [ ] **Logs: Loki + Grafana Alloy** 🟡 — Central log collection, searchable in the existing
   Grafana. Use Alloy as the collector (Promtail is end-of-life). Planned, not started.
   Alternative to evaluate when this starts: VictoriaLogs (lighter; onedr0p/home-ops).
-- [ ] **Gatus** 🟢 — Health checks and status page defined in configuration files: an
-  alternative to Uptime-Kuma, so monitoring is all code (onedr0p/home-ops).
+- [ ] **Gatus** 🔴 — Status page with its checks in Git, replacing Uptime-Kuma (owner
+  decision, 2026-10-15). Onboarded in the k3s cluster (homelab
+  `k8s/apps/observability/gatus`, `docs/gatus.md`): one central file of checks, status
+  page only. Still open: run it side by side with Uptime-Kuma, then remove the
+  `monitoring/uptime-kuma` stack here. Later: alerts through kube-prometheus-stack (a
+  rule on Gatus's metrics, as in onedr0p/home-ops), and the k3s apps' checks split out
+  of the central file, next to each app (onedr0p's `gatus-sidecar`; plan in homelab
+  `docs/gatus.md`).
 - [ ] **Keep rpi4's metrics while the lab is off** 🟢 — Prometheus on `docker1` pulls,
   so the always-on Raspberry Pis have gaps in their graphs while `docker1` is off.
   Tried in October 2026 and reverted: vmagent on rpi4 pushing to Prometheus
