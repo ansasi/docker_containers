@@ -31,7 +31,7 @@ services:
     restart: unless-stopped
 
   nextcloud:
-    image: nextcloud:35.0.1
+    image: nextcloud:35.0.2
     container_name: nextcloud
     environment:
       POSTGRES_PASSWORD: '${NEXTCLOUD_DB_PASSWORD}'
@@ -82,7 +82,7 @@ services:
   # Runs Nextcloud's background jobs every 5 minutes (the recommended "Cron" mode).
   # Image and volumes must match the nextcloud service.
   nextcloud-cron:
-    image: nextcloud:35.0.1
+    image: nextcloud:35.0.2
     container_name: nextcloud-cron
     entrypoint: /cron.sh
     volumes:
