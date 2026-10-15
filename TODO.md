@@ -75,14 +75,6 @@ history); Tailscale or NetBird is the planned replacement for external access.
 - [ ] **Logs: Loki + Grafana Alloy** 🟡 — Central log collection, searchable in the existing
   Grafana. Use Alloy as the collector (Promtail is end-of-life). Planned, not started.
   Alternative to evaluate when this starts: VictoriaLogs (lighter; onedr0p/home-ops).
-- [ ] **Gatus** 🔴 — Status page with its checks in Git, replacing Uptime-Kuma (owner
-  decision, 2026-10-15). Onboarded in the k3s cluster (homelab
-  `k8s/apps/observability/gatus`, `docs/gatus.md`): one central file of checks, status
-  page only. Still open: run it side by side with Uptime-Kuma, then remove the
-  `monitoring/uptime-kuma` stack here. Later: alerts through kube-prometheus-stack (a
-  rule on Gatus's metrics, as in onedr0p/home-ops), and the k3s apps' checks split out
-  of the central file, next to each app (onedr0p's `gatus-sidecar`; plan in homelab
-  `docs/gatus.md`).
 - [ ] **Keep rpi4's metrics while the lab is off** 🟢 — Prometheus on `docker1` pulls,
   so the always-on Raspberry Pis have gaps in their graphs while `docker1` is off.
   Tried in October 2026 and reverted: vmagent on rpi4 pushing to Prometheus

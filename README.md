@@ -39,7 +39,7 @@ scope of the Compose stacks in this repository:
 | [Plex](docker-apps/media/plex) | Maintained only | Deferred and currently superseded by Jellyfin. |
 | [Grafana](docker-apps/monitoring/grafana) | Used & maintained | Central monitoring stack (Grafana, Prometheus, Alertmanager, exporters) for the main Docker host. |
 | [Netdata](docker-apps/monitoring/netdata) | Maintained only | Deferred: previously ran on the Raspberry Pi 4, then replaced by node_exporter and the central Prometheus. Kept as an all-in-one alternative to Prometheus + Grafana. |
-| [Uptime Kuma](docker-apps/monitoring/uptime-kuma) | Used & maintained | Service reachability checks on the main Docker host. |
+| [Uptime Kuma](docker-apps/monitoring/uptime-kuma) | Maintained only | Not used: replaced by Gatus in the homelab k3s cluster (2026-10-15), whose checks are in Git. Kept as a Docker alternative. |
 | [Pi-hole and dnsproxy](docker-apps/networking/pihole) | Used & maintained | Active on the Raspberry Pi Zero DNS host. |
 | [Technitium](docker-apps/networking/technitium) | Maintained only | Deferred while Pi-hole remains the DNS service. |
 | [Traefik](docker-apps/networking/traefik) | Used & maintained | Active on the Docker, Vault, and Hermes hosts. |

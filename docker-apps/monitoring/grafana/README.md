@@ -13,9 +13,9 @@ host (`docker1`)** and watches every other host over the LAN.
 
 `node_exporter` (every host) and `smartctl_exporter` (Proxmox host) are **not**
 part of this stack: they are installed by Ansible in the
-[homelab repo](https://github.com/ansasi/homelab). Uptime Kuma stays a separate
-stack and checks whether services are reachable; this stack checks whether the
-infrastructure is healthy.
+[homelab repo](https://github.com/ansasi/homelab). Whether services are reachable
+is shown by Gatus, a status page in the homelab k3s cluster (homelab
+`docs/gatus.md`); this stack checks whether the infrastructure is healthy.
 
 ## Files
 
@@ -113,8 +113,6 @@ Raspberry Pis during that time (an external heartbeat is planned, see
    (`https://ntfy.sh/<topic>`) in Proton Pass and treat it as a secret.
 3. Subscribe to the topic in the app.
 4. Test it: `curl -d "test from homelab" https://ntfy.sh/<topic>`.
-
-Use the same URL as an ntfy notification in Uptime Kuma.
 
 ### 2. Proxmox VE API token (read-only)
 
