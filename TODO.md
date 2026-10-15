@@ -21,21 +21,31 @@ and runs on the dedicated Vault VM (homelab `ansible/playbooks/vault.yml`,
 `docs/vaultwarden.md`). Moving the homelab secrets from Proton Pass follows the
 migration order in the homelab README roadmap.
 
+Single sign-on is **postponed** (owner decision, 2026-10-15): Authentik stays deployed
+with no app connected, and the choice between Authentik and Authelia stays open.
+
 - [ ] **Authentik** 🔴 — Identity provider / SSO (OIDC, SAML, LDAP, forward-auth). Deployed
-  first, in the k3s cluster (homelab `k8s/apps/security/authentik`, docs/authentik.md):
-  the most used in home-ops repositories and the most complete (UI for users and apps,
-  built-in forward-auth). On trial with Authelia (owner decision, 2026-10-15): only one
-  stays. Apps connect one PR at a time, Paperless-ngx first. Once it exists, put the
-  Prometheus and Alertmanager routes behind it; they are LAN/VPN-only and have no login
-  until then (anyone who reaches Alertmanager can silence alerts).
-- [ ] **Authelia** 🔴 — Lightweight auth proxy for 2FA in front of any reverse proxy
-  (with LLDAP for users). To be tested alongside Authentik in the k3s cluster, then the
-  owner keeps one of the two (owner decision, 2026-10-15).
+  in the k3s cluster (homelab `k8s/apps/security/authentik`, docs/authentik.md) but
+  unused: the most used in home-ops repositories and the most complete (UI for users and
+  apps, users change their own passwords, built-in forward-auth); app settings are made
+  in its UI unless written as blueprints. Paperless-ngx was connected and disconnected
+  the same day (homelab PRs #88 and #91). When SSO resumes, put the Prometheus and
+  Alertmanager routes behind it; they are LAN/VPN-only and have no login until then
+  (anyone who reaches Alertmanager can silence alerts).
+- [ ] **Authelia** 🔴 — Lighter identity provider (OIDC) and forward-auth. A trial in the
+  k3s cluster was prepared and tested but not deployed (homelab PR #90, closed): its
+  configuration, users (a SOPS file of password hashes) and apps all in Git. Without
+  LLDAP, people cannot change their own password (each change is a PR); with LLDAP
+  (users and groups created from Git) they can.
 - [x] **Keycloak** ⚫ — Identity provider (OIDC, SAML). Not needed: the comparison is
   Authentik vs Authelia (2026-10-15); heavier, and needs oauth2-proxy for forward-auth.
-- [ ] **CrowdSec** 🔴 — Collaborative IPS / threat intelligence layer. Next, in the k3s
-  cluster (owner decision, 2026-10), although nothing is exposed to the internet yet
-  (LAN/VPN access only). A July 2026 Docker draft (Traefik bouncer plugin) exists on the
+- [ ] **CrowdSec** 🟢 — Collaborative IPS / threat intelligence layer. Later, only if a
+  service is exposed to the internet (owner decision, 2026-10-15: none is planned).
+  CrowdSec reads logs (Traefik, SSH), not network traffic, and ignores private LAN
+  addresses by default, so with LAN/VPN-only access it adds little, and it would not
+  notice a compromised device on the LAN. For that: IoT on the FritzBox guest network,
+  Pi-hole's query log, or a network IDS (Suricata) with new hardware. A July 2026
+  Docker draft (Traefik bouncer plugin) exists on the
   `claude/crowdsec-docker-setup-acfk4x` branch.
 
 ## Networking
@@ -63,7 +73,8 @@ history); Tailscale or NetBird is the planned replacement for external access.
 
 ## Monitoring
 
-- [ ] **kube-prometheus-stack in the k3s cluster** 🔴 — Prometheus, Alertmanager and
+- [ ] **kube-prometheus-stack in the k3s cluster** 🔴 — **Next** (owner decision,
+  2026-10-15, ahead of CrowdSec). Prometheus, Alertmanager and
   kube-state-metrics in the cluster, with the alert rules next to each app and alerts
   to ntfy.sh like the stack here. **Critical, required before any app running on
   Docker moves to the cluster** (owner decision, 2026-10-12): Paperless's first file
