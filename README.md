@@ -31,18 +31,18 @@ scope of the Compose stacks in this repository:
 | [ERPNext](docker-apps/business/erpnext) | Neither | Rejected as too heavy and complex; Twenty covers the requirement. |
 | [Twenty](docker-apps/business/twenty) | Used & maintained | Used through an interim LXC deployment; migration to Docker is planned. |
 | [Homepage](docker-apps/management/homepage) | Used & maintained | Active on the main Docker host. |
-| [Portainer](docker-apps/management/portainer) | Used & maintained | Active on the Docker, Datia, and Hermes hosts. |
+| [Portainer](docker-apps/management/portainer) | Used & maintained | Active on the Docker and Hermes hosts. |
 | [ARRs](docker-apps/media/arrs) | Used & maintained | Active on the main Docker host. |
 | [Audiobookshelf](docker-apps/media/audiobookshelf) | Used & maintained | Used through an interim LXC deployment; migration to Docker is planned. |
 | [Calibre-Web](docker-apps/media/calibre-web) | Used & maintained | Active on the main Docker host. |
 | [Jellyfin](docker-apps/media/jellyfin) | Used & maintained | Active in a dedicated LXC for direct iGPU access. |
 | [Plex](docker-apps/media/plex) | Maintained only | Deferred and currently superseded by Jellyfin. |
-| [Grafana](docker-apps/monitoring/grafana) | Used & maintained | Central monitoring stack (Grafana, Prometheus, Alertmanager, exporters) for the main Docker host; the Datia copy is being retired. |
+| [Grafana](docker-apps/monitoring/grafana) | Used & maintained | Central monitoring stack (Grafana, Prometheus, Alertmanager, exporters) for the main Docker host. |
 | [Netdata](docker-apps/monitoring/netdata) | Maintained only | Deferred: previously ran on the Raspberry Pi 4, then replaced by node_exporter and the central Prometheus. Kept as an all-in-one alternative to Prometheus + Grafana. |
-| [Uptime Kuma](docker-apps/monitoring/uptime-kuma) | Used & maintained | Service reachability checks; consolidating on the main Docker host, the Datia copy is being retired. |
+| [Uptime Kuma](docker-apps/monitoring/uptime-kuma) | Used & maintained | Service reachability checks on the main Docker host. |
 | [Pi-hole and dnsproxy](docker-apps/networking/pihole) | Used & maintained | Active on the Raspberry Pi Zero DNS host. |
 | [Technitium](docker-apps/networking/technitium) | Maintained only | Deferred while Pi-hole remains the DNS service. |
-| [Traefik](docker-apps/networking/traefik) | Used & maintained | Active on the Docker, Datia, and Hermes hosts. |
+| [Traefik](docker-apps/networking/traefik) | Used & maintained | Active on the Docker and Hermes hosts. |
 | [UpSnap](docker-apps/networking/upsnap) | Used & maintained | Active on the Raspberry Pi Zero DNS host. |
 | [Vaultwarden](docker-apps/security/vaultwarden/README.md) | Maintained only | New-install template with setup and backup/restore guide; deployment unconfirmed. Does not replace Proton Pass. |
 | [Immich](docker-apps/storage/immich) | Used & maintained | Active on the main Docker host. |
