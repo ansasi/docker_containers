@@ -29,12 +29,12 @@ scope of the Compose stacks in this repository:
 | [Open WebUI](docker-apps/ai/openwebui) | Maintained only | Deferred with the local AI stack. |
 | [Home Assistant](docker-apps/automation/homeassistant) | Maintained only | Deferred until there are IoT devices to manage. |
 | [ERPNext](docker-apps/business/erpnext) | Neither | Rejected as too heavy and complex; Twenty covers the requirement. |
-| [Twenty](docker-apps/business/twenty) | Used & maintained | Used through an interim LXC deployment; migration to Docker is planned. |
+| [Twenty](docker-apps/business/twenty) | Maintained only | Runs in the k3s cluster since 2026-10 (homelab `k8s/apps/business/twenty`); this stack is kept viable as a Docker fallback. |
 | [Homepage](docker-apps/management/homepage) | Used & maintained | Active on the main Docker host. |
 | [Portainer](docker-apps/management/portainer) | Used & maintained | Active on the Docker and Hermes hosts. |
 | [ARRs](docker-apps/media/arrs) | Used & maintained | Active on the main Docker host. |
-| [Audiobookshelf](docker-apps/media/audiobookshelf) | Used & maintained | Used through an interim LXC deployment; migration to Docker is planned. |
-| [Calibre-Web](docker-apps/media/calibre-web) | Used & maintained | Active on the main Docker host. |
+| [Audiobookshelf](docker-apps/media/audiobookshelf) | Used & maintained | Used through an interim LXC deployment; it moves to the k3s cluster next, starting fresh (homelab roadmap). |
+| [Calibre-Web](docker-apps/media/calibre-web) | Maintained only | Moved from the main Docker host to the k3s cluster in 2026-10 (homelab `k8s/apps/media/calibre-web`); this stack is kept viable as a Docker fallback. |
 | [Jellyfin](docker-apps/media/jellyfin) | Used & maintained | Active in a dedicated LXC for direct iGPU access. |
 | [Plex](docker-apps/media/plex) | Maintained only | Deferred and currently superseded by Jellyfin. |
 | [Grafana](docker-apps/monitoring/grafana) | Used & maintained | Central monitoring stack (Grafana, Prometheus, Alertmanager, exporters) for the main Docker host. |
@@ -42,13 +42,13 @@ scope of the Compose stacks in this repository:
 | [Uptime Kuma](docker-apps/monitoring/uptime-kuma) | Used & maintained | Service reachability checks on the main Docker host. |
 | [Pi-hole and dnsproxy](docker-apps/networking/pihole) | Used & maintained | Active on the Raspberry Pi Zero DNS host. |
 | [Technitium](docker-apps/networking/technitium) | Maintained only | Deferred while Pi-hole remains the DNS service. |
-| [Traefik](docker-apps/networking/traefik) | Used & maintained | Active on the Docker and Hermes hosts. |
+| [Traefik](docker-apps/networking/traefik) | Used & maintained | Active on the Docker, Vault, and Hermes hosts. |
 | [UpSnap](docker-apps/networking/upsnap) | Used & maintained | Active on the Raspberry Pi Zero DNS host. |
-| [Vaultwarden](docker-apps/security/vaultwarden/README.md) | Maintained only | New-install template with setup and backup/restore guide; deployment unconfirmed. Does not replace Proton Pass. |
+| [Vaultwarden](docker-apps/security/vaultwarden/README.md) | Used & maintained | Active on the dedicated Vault VM (homelab `ansible/playbooks/vault.yml`) for the homelab's own secrets; personal passwords stay in Proton Pass. |
 | [Immich](docker-apps/storage/immich) | Used & maintained | Active on the main Docker host. |
 | [Nextcloud](docker-apps/storage/nextcloud) | Maintained only | Deferred while Proton Docs and Drive are used. |
 | [Nextcloud AIO](docker-apps/storage/nextcloud-aio) | Maintained only | Deferred while Proton Docs and Drive are used. |
-| [Paperless-ngx](docker-apps/storage/paperless-ngx) | Used & maintained | Used through an interim LXC deployment for evaluation. |
+| [Paperless-ngx](docker-apps/storage/paperless-ngx) | Maintained only | Runs in the k3s cluster since 2026-10 (homelab `k8s/apps/documents/paperless`); this stack is kept viable as a Docker fallback. |
 | [Restic](docker-apps/storage/restic) | Maintained only | Not currently used, but retained for a possible future backup workflow. |
 
 Update this table whenever a stack changes maintenance scope. Record deployment

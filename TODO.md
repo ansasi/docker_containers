@@ -16,9 +16,10 @@ data has passed a restore drill (owner decision, 2026-10-14; homelab `README.md`
 
 ## Security & Authentication
 
-Vaultwarden now has a [Compose stack and guide](docker-apps/security/vaultwarden/README.md).
-This resolves the repository addition only: deployment and any move from Proton
-Pass remain unconfirmed and are not performed by adding the stack.
+Vaultwarden has a [Compose stack and guide](docker-apps/security/vaultwarden/README.md)
+and runs on the dedicated Vault VM (homelab `ansible/playbooks/vault.yml`,
+`docs/vaultwarden.md`). Moving the homelab secrets from Proton Pass follows the
+migration order in the homelab README roadmap.
 
 - [ ] **Authentik** 🔴 — Identity provider / SSO (OIDC, SAML, LDAP, forward-auth). Deployed
   first, in the k3s cluster (homelab `k8s/apps/security/authentik`, docs/authentik.md):
