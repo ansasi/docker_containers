@@ -48,8 +48,6 @@ scrape_configs:
         labels: {instance: 'pbs1'}
       - targets: ['192.168.178.31:9100']
         labels: {instance: 'docker1'}
-      - targets: ['192.168.178.32:9100']
-        labels: {instance: 'datia1'}
       - targets: ['192.168.178.33:9100']
         labels: {instance: 'vault1'}
       - targets: ['192.168.178.50:9100']
