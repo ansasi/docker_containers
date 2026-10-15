@@ -20,16 +20,18 @@ Vaultwarden now has a [Compose stack and guide](docker-apps/security/vaultwarden
 This resolves the repository addition only: deployment and any move from Proton
 Pass remain unconfirmed and are not performed by adding the stack.
 
-- [ ] **Authentik** 🔴 — Identity provider / SSO (LDAP, SAML, OAuth2); pairs well with
-  Traefik. Next, in the k3s cluster (owner decision, 2026-10). Pick one of
-  Authentik, Authelia or Keycloak. Once it exists, put the Prometheus and Alertmanager
-  routes behind it; they are LAN/VPN-only and have no login until then (anyone who
-  reaches Alertmanager can silence alerts).
-- [ ] **Authelia** 🔴 — Lightweight auth proxy for 2FA in front of any reverse proxy.
-  Same as above; alternative to Authentik, not both.
-- [ ] **Keycloak** 🔴 — Identity provider (OIDC, SAML); third candidate in the SSO
-  decision (owner decision, 2026-10). Heavier than Authentik or Authelia, but the one
-  many companies use; mirceanton/home-ops runs it with the Keycloak operator.
+- [ ] **Authentik** 🔴 — Identity provider / SSO (OIDC, SAML, LDAP, forward-auth). Deployed
+  first, in the k3s cluster (homelab `k8s/apps/security/authentik`, docs/authentik.md):
+  the most used in home-ops repositories and the most complete (UI for users and apps,
+  built-in forward-auth). On trial with Authelia (owner decision, 2026-10-15): only one
+  stays. Apps connect one PR at a time, Paperless-ngx first. Once it exists, put the
+  Prometheus and Alertmanager routes behind it; they are LAN/VPN-only and have no login
+  until then (anyone who reaches Alertmanager can silence alerts).
+- [ ] **Authelia** 🔴 — Lightweight auth proxy for 2FA in front of any reverse proxy
+  (with LLDAP for users). To be tested alongside Authentik in the k3s cluster, then the
+  owner keeps one of the two (owner decision, 2026-10-15).
+- [x] **Keycloak** ⚫ — Identity provider (OIDC, SAML). Not needed: the comparison is
+  Authentik vs Authelia (2026-10-15); heavier, and needs oauth2-proxy for forward-auth.
 - [ ] **CrowdSec** 🔴 — Collaborative IPS / threat intelligence layer. Next, in the k3s
   cluster (owner decision, 2026-10), although nothing is exposed to the internet yet
   (LAN/VPN access only). A July 2026 Docker draft (Traefik bouncer plugin) exists on the
