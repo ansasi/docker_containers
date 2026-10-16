@@ -127,8 +127,34 @@ October 2026 instead of migrating it to v15 (see git history).
 
 - [ ] **Memos** 🟢 — Lightweight self-hosted micro-journal / note-taking (Twitter-like
   feed). Needs time investment.
-- [ ] **Outline** 🟢 — Knowledge base and team wiki with real-time collaboration. Needs
-  time investment.
+- [ ] **Document space for the agents** 🟢 — Where Hermes, Claude Code and ChatGPT (and
+  the owner) write: homelab notes, recipes, research. Later (owner decision, 2026-10-16:
+  documented, not implemented yet). The homelab docs stay in Git; this is for what is
+  not in Git. Compared on 2026-10-16:
+  - **Outline** (v1.11.0) — the best fit. A wiki server in Markdown, with an MCP
+    endpoint built into the server (`/mcp`, Streamable HTTP, OAuth or API key) and a
+    REST API. Needs PostgreSQL (CloudNativePG), Redis and a volume for files. No email
+    + password login: OIDC (Authentik, which would end the SSO pause) or SMTP for email
+    sign-in links. The agents' API keys work without either.
+  - **AFFiNE** (v0.27.4) — docs and whiteboards, local-first. PostgreSQL and Redis,
+    heavier (2 GiB memory limit at mirceanton). Personal access tokens were removed in
+    0.27, so agents go through a community MCP server that logs in with a local
+    account's password (mirceanton's setup).
+  - **Anytype** — local-first, encrypted, peer to peer. Its API runs inside the desktop
+    app or a headless client, the official MCP server speaks only stdio, and
+    self-hosting means its own sync servers (a community bundle). Not a server an agent
+    on `rpi4` can write to.
+  - To decide when it starts: Hermes on `rpi4` runs 24/7 and the lab does not, so its
+    writes fail while the lab is off. ChatGPT and claude.ai connect to MCP servers from
+    their own cloud, so they would need it on the internet (not planned); Hermes and
+    Claude Code reach it on the LAN or through the FritzBox WireGuard. Recipes may fit a
+    dedicated app (Mealie) better.
+- [ ] **Karakeep** 🟢 — Bookmarks and read-later (formerly Hoarder): links, notes and
+  images, full-page archives, full-text search, a browser extension, mobile apps and an
+  MCP server. Not needed now (owner decision, 2026-10-16: documented only). The app
+  (SQLite) plus Meilisearch and a headless Chrome for crawling: about 1.5–2 GB of RAM,
+  mostly Chrome. AI tags and summaries are optional (an OpenAI-compatible API or
+  Ollama). bjw-s runs it without AI, mirceanton with AI through LiteLLM (v0.33.2).
 - [ ] **IT-Tools** 🟢 — Collection of developer / sysadmin utility tools in the browser.
   Needs time investment.
 
