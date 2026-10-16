@@ -155,6 +155,14 @@ October 2026 instead of migrating it to v15 (see git history).
   (SQLite) plus Meilisearch and a headless Chrome for crawling: about 1.5–2 GB of RAM,
   mostly Chrome. AI tags and summaries are optional (an OpenAI-compatible API or
   Ollama). bjw-s runs it without AI, mirceanton with AI through LiteLLM (v0.33.2).
+- [ ] **Vikunja** 🔴 — Tasks and kanban boards (also lists, Gantt, CalDAV), shared by the
+  owner and their partner. Next in the k3s cluster, after Miniflux (owner decision,
+  2026-10-16).
+- [x] **Homebox** ⚫ — Home inventory (items by location, photos, receipts, warranties,
+  QR labels; the `sysadminsmedia` fork, v0.26.2, after the original was archived): one
+  Go binary with SQLite. Not needed (owner decision, 2026-10-16: documented and
+  skipped): no concrete need, and receipts and manuals belong in Paperless-ngx. To
+  reconsider for warranty or insurance tracking.
 - [ ] **IT-Tools** 🟢 — Collection of developer / sysadmin utility tools in the browser.
   Needs time investment.
 
@@ -215,5 +223,11 @@ October 2026 instead of migrating it to v15 (see git history).
 
 - [ ] **SearXNG** 🔴 — Privacy-respecting self-hosted meta search engine. Private search
   backend for the upcoming Hermes bot integration.
-- [ ] **FreshRSS** 🔴 — Lightweight self-hosted RSS aggregator. No RSS reader today;
-  wanted soon.
+- [ ] **Miniflux** 🔴 — Minimalist RSS reader (Go, PostgreSQL). Replaces FreshRSS, which
+  runs in the k3s cluster with nothing important in it yet (owner decision,
+  2026-10-16): in the k3s cluster next to FreshRSS first, then FreshRSS is removed once
+  the feeds are moved (OPML). Chosen over FreshRSS because it fits the cluster better:
+  it runs non-root with a read-only filesystem (FreshRSS's Apache needs root), uses the
+  same CloudNativePG backups as the other databases, has health and Prometheus
+  endpoints, and its polling adapts to each feed. Given up: FreshRSS's extensions,
+  feeds built from sites without one, and themes.
