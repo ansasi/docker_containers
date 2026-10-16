@@ -5,7 +5,7 @@ AGENTS.md in the affected directory before editing.
 
 ## Scope and sources of truth
 
-- Read [README.md](README.md), [TODO.md](TODO.md), the affected stack's guide,
+- Read [README.md](README.md), the affected stack's guide,
   [.renovaterc.json5](.renovaterc.json5), and relevant workflows before proposing changes.
 - Use the README maintenance matrix for repository scope and the linked homelab
   inventory for deployment locations. Do not assume that a Compose folder is
@@ -14,6 +14,8 @@ AGENTS.md in the affected directory before editing.
 - Maintain deferred stacks only within the requested scope. Do not proactively
   upgrade or repair stacks marked Neither.
 - Do not infer that merging an upgrade PR means it has been deployed.
+- This repository describes its stacks only. Plans, candidate apps and
+  decisions belong in the homelab repository (`ROADMAP.md`, `DECISIONS.md`).
 
 ## Agree before changing
 
