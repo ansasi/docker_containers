@@ -50,20 +50,39 @@ with no app connected, and the choice between Authentik and Authelia stays open.
 
 ## Networking
 
-- [ ] **Tailscale** 🟡 — Zero-config WireGuard mesh VPN. Alternative to NetBird (the
+- [ ] **Tailscale** 🟢 — Zero-config WireGuard mesh VPN. Alternative to NetBird (the
   planned choice); pick one, not both.
-- [ ] **NetBird** 🔴 — WireGuard-based overlay network / mesh VPN alternative to
-  Tailscale. Preferred (open source). Next in the k3s cluster (Audiobookshelf, before
-  it in the order, runs there since 2026-10-16), before the apps running on Docker move
-  (owner decision, 2026-10).
+- [ ] **NetBird** 🟢 — WireGuard-based overlay network / mesh VPN alternative to
+  Tailscale. Preferred (open source). Deferred by the owner on 2026-10-16: for two
+  people and a lab that runs on demand, the FritzBox WireGuard covers remote access, and
+  a routing peer in k3s would be off whenever the lab is. To reconsider with a routing
+  peer on an always-on host (such as `dns1`), where it could replace the FritzBox
+  WireGuard, or for more users or networks that block UDP. The tested k3s
+  implementation is in the closed
+  [homelab PR #107](https://github.com/ansasi/homelab/pull/107).
 - [ ] **Technitium DNS Server** 🟢 — Possible replacement for Pi-hole, later (owner
   decision, 2026-10: not yet). Until the DNS server is decided, no investment in
   Pi-hole high availability (a second instance with keepalived and sync, as Techno Tim
   runs it) or in ExternalDNS (automatic DNS records for the k3s apps).
 
-Remote access uses the FritzBox's built-in WireGuard VPN for now. The WireGuard Easy
-(wg-easy) stack was removed in October 2026 instead of migrating it to v15 (see git
-history); Tailscale or NetBird is the planned replacement for external access.
+Remote access uses the FritzBox's built-in WireGuard VPN (owner decision, 2026-10-16:
+it stays; NetBird deferred, above). The WireGuard Easy (wg-easy) stack was removed in
+October 2026 instead of migrating it to v15 (see git history).
+
+- [ ] **WireGuard clients: split tunnel and Pi-hole** 🟢 — After the move to k3s is
+  finished, not before (owner decision, 2026-10-16: the FritzBox WireGuard configs stay
+  as they are until then). On each phone: `AllowedIPs` only for the home network instead
+  of all traffic, and `DNS` = Pi-hole (`192.168.178.10`) for filtering away from home.
+  On a network that also uses `192.168.178.0/24` (another FritzBox) the home range
+  loses to the local one: list `192.168.178.2/31, .4/30, .8/29, .16/28, .32/27, .64/26`
+  (`.2`–`.127`, all static addresses and MetalLB, without the local router's `.1`)
+  until the LAN is renumbered.
+- [ ] **Renumber the LAN** 🟢 — With the 1 server + 1 worker rebuild (homelab
+  `TODO.md`), optional: an uncommon range such as `10.<n>.1.0/24` (not `192.168.0/1.x`,
+  `10.0.x`, `10.1.x`, or k3s's `10.42`/`10.43`), keeping the last numbers, so the
+  phones need only `AllowedIPs = 10.<n>.1.0/24`. The FritzBox allows it (IPv4 settings);
+  every static address, the NFS host access, UpSnap and the WireGuard connections
+  change with it.
 
 ## Management
 
@@ -138,7 +157,8 @@ history); Tailscale or NetBird is the planned replacement for external access.
   (TCP 25565) needs its own MetalLB address or a Gateway API `TCPRoute` through Traefik.
   The world lives on a volume backed up by VolSync, with a restore drill. To decide when
   it starts: Java or Bedrock edition (Bedrock uses UDP 19132) and who plays. Reachable
-  only while the lab is on; players from outside the LAN after NetBird. Candidate image:
+  only while the lab is on; players from outside the LAN: to decide (FritzBox WireGuard
+  or NetBird). Candidate image:
   [itzg/minecraft-server](https://docker-minecraft-server.readthedocs.io/).
 
 ## Home Automation
