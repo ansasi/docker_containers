@@ -33,7 +33,7 @@ scope of the Compose stacks in this repository:
 | [Homepage](docker-apps/management/homepage) | Used & maintained | Active on the main Docker host. |
 | [Portainer](docker-apps/management/portainer) | Used & maintained | Active on the Docker and Hermes hosts. |
 | [ARRs](docker-apps/media/arrs) | Used & maintained | Active on the main Docker host. |
-| [Audiobookshelf](docker-apps/media/audiobookshelf) | Used & maintained | Used through an interim LXC deployment; it moves to the k3s cluster next, starting fresh (homelab roadmap). |
+| [Audiobookshelf](docker-apps/media/audiobookshelf) | Maintained only | Runs in the k3s cluster since 2026-10 (homelab `k8s/apps/media/audiobookshelf`), started fresh without the data of its interim LXC, which can be removed; this stack is kept viable as a Docker fallback. |
 | [Calibre-Web](docker-apps/media/calibre-web) | Maintained only | Moved from the main Docker host to the k3s cluster in 2026-10 (homelab `k8s/apps/media/calibre-web`); this stack is kept viable as a Docker fallback. |
 | [Jellyfin](docker-apps/media/jellyfin) | Used & maintained | Active in a dedicated LXC for direct iGPU access. |
 | [Plex](docker-apps/media/plex) | Maintained only | Deferred and currently superseded by Jellyfin. |

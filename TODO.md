@@ -53,8 +53,9 @@ with no app connected, and the choice between Authentik and Authelia stays open.
 - [ ] **Tailscale** 🟡 — Zero-config WireGuard mesh VPN. Alternative to NetBird (the
   planned choice); pick one, not both.
 - [ ] **NetBird** 🔴 — WireGuard-based overlay network / mesh VPN alternative to
-  Tailscale. Preferred (open source). Planned in the k3s cluster after Audiobookshelf,
-  before the apps running on Docker move (owner decision, 2026-10).
+  Tailscale. Preferred (open source). Next in the k3s cluster (Audiobookshelf, before
+  it in the order, runs there since 2026-10-16), before the apps running on Docker move
+  (owner decision, 2026-10).
 - [ ] **Technitium DNS Server** 🟢 — Possible replacement for Pi-hole, later (owner
   decision, 2026-10: not yet). Until the DNS server is decided, no investment in
   Pi-hole high availability (a second instance with keepalived and sync, as Techno Tim
@@ -109,8 +110,6 @@ history); Tailscale or NetBird is the planned replacement for external access.
   feed). Needs time investment.
 - [ ] **Outline** 🟢 — Knowledge base and team wiki with real-time collaboration. Needs
   time investment.
-- [ ] **Stirling-PDF** 🟢 — Swiss-army PDF processor (merge, split, OCR, compress).
-  Needs time investment.
 - [ ] **IT-Tools** 🟢 — Collection of developer / sysadmin utility tools in the browser.
   Needs time investment.
 
