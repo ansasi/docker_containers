@@ -156,8 +156,9 @@ October 2026 instead of migrating it to v15 (see git history).
   mostly Chrome. AI tags and summaries are optional (an OpenAI-compatible API or
   Ollama). bjw-s runs it without AI, mirceanton with AI through LiteLLM (v0.33.2).
 - [ ] **Vikunja** 🔴 — Tasks and kanban boards (also lists, Gantt, CalDAV), shared by the
-  owner and their partner. Next in the k3s cluster, after Miniflux (owner decision,
-  2026-10-16).
+  owner and their partner (owner decision, 2026-10-16). Being added to the k3s cluster
+  ([homelab PR #114](https://github.com/ansasi/homelab/pull/114)); remove this entry once
+  it runs.
 - [x] **Homebox** ⚫ — Home inventory (items by location, photos, receipts, warranties,
   QR labels; the `sysadminsmedia` fork, v0.26.2, after the original was archived): one
   Go binary with SQLite. Not needed (owner decision, 2026-10-16: documented and
@@ -223,11 +224,11 @@ October 2026 instead of migrating it to v15 (see git history).
 
 - [ ] **SearXNG** 🔴 — Privacy-respecting self-hosted meta search engine. Private search
   backend for the upcoming Hermes bot integration.
-- [ ] **Miniflux** 🔴 — Minimalist RSS reader (Go, PostgreSQL). Replaces FreshRSS, which
-  runs in the k3s cluster with nothing important in it yet (owner decision,
-  2026-10-16): in the k3s cluster next to FreshRSS first, then FreshRSS is removed once
-  the feeds are moved (OPML). Chosen over FreshRSS because it fits the cluster better:
-  it runs non-root with a read-only filesystem (FreshRSS's Apache needs root), uses the
-  same CloudNativePG backups as the other databases, has health and Prometheus
-  endpoints, and its polling adapts to each feed. Given up: FreshRSS's extensions,
-  feeds built from sites without one, and themes.
+- [ ] **RSS reader: FreshRSS or Miniflux** 🟡 — Both run in the k3s cluster side by
+  side for a trial (owner decision, 2026-10-16); the owner keeps one and the other is
+  removed in its own PR (homelab `docs/miniflux.md`). Miniflux (Go, PostgreSQL) was
+  proposed because it fits the cluster better: it runs non-root with a read-only
+  filesystem (FreshRSS's Apache needs root), uses the same CloudNativePG backups as the
+  other databases, has health and Prometheus endpoints, and its polling adapts to each
+  feed. It would give up FreshRSS's extensions, feeds built from sites without one, and
+  themes.
