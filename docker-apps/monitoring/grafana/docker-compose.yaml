@@ -15,8 +15,6 @@ secrets:
     environment: NTFY_URL
 
 services:
-  # TODO: Logs (Loki + Grafana Alloy) are on the roadmap, see TODO.md.
-
 # --- Grafana Image
   grafana:
     image: grafana/grafana:13.2.4

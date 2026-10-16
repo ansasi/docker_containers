@@ -176,4 +176,4 @@ Alertmanager UI (*New Silence*, matcher `instance="<host>"`).
 - Proxmox and PBS use their self-signed certificates, so both exporters skip TLS
   verification (`PVE_VERIFY_SSL=false`, `PBS_INSECURE=true`).
 - pbs-exporter is tested upstream with PBS 3.x.
-- Logs (Loki + Grafana Alloy) are not collected yet; see [TODO.md](../../../TODO.md).
+- Logs are not collected (no Loki).
