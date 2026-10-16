@@ -100,8 +100,7 @@ Remove `instance!="rpi4"` from `RaspberryPiUnderVoltage` after replacing the
 supply with a 5.1 V one.
 
 While the lab is off this stack is off too, so nothing watches the always-on
-Raspberry Pis during that time (an external heartbeat is planned, see
-`docs/monitoring.md` in the homelab repo).
+Raspberry Pis during that time.
 
 ## Setup
 

@@ -1,9 +1,7 @@
 # ARR stack
 
-Production stack on the main Docker host. Deployment locations are tracked in the
-[homelab inventory](https://github.com/ansasi/homelab#apps--status).
-Jellyfin runs separately in an LXC; its [Compose template](../jellyfin/docker-compose.yaml)
-is maintained here but does not configure that LXC.
+Media automation: downloads, library management and subtitles. Jellyfin is not
+part of this stack (its own [Compose template](../jellyfin/docker-compose.yaml)).
 
 ## Services and connections
 
@@ -33,19 +31,20 @@ Prowlarr. qBittorrent remains on the VPN.
 | Seerr | `http://seerr-jellyfin:5055` | None; Traefik |
 
 Use container ports for app connections, including the anime instances.
-Use `http://prowlarr:9696` as Prowlarr's server URL in its Radarr/Sonarr
-application settings and for any direct API integration on `proxy`. Change
-any saved `http://gluetun:9696` address after the cutover. Prowlarr can
-still reach VPN-routed FlareSolverr at `http://gluetun:8191` when required
-by a tagged indexer. The Prowlarr image, config bind, public port number,
-and hostname route stay the same.
+Prowlarr's server URL in its Radarr/Sonarr application settings is
+`http://prowlarr:9696`. Prowlarr reaches the VPN-routed FlareSolverr at
+`http://gluetun:8191` when a tagged indexer needs it.
+
+Prowlarr stays off the VPN, as [TRaSH](https://trash-guides.info/Prowlarr/prowlarr-setup-proxy/)
+and the [Servarr VPN guide](https://wiki.servarr.com/vpn) recommend: a shared VPN
+exit can be blocked by indexers or flagged as account sharing. If one indexer
+really needs a VPN, use a per-indexer tagged proxy in Prowlarr.
 
 ## Storage contract
 
-`NAS_STORAGE_LOCATION` is the **existing** host directory containing both
-`downloads` and `library`, not either subdirectory. In the migration discussed
-for this installation it is `/mnt/qnap/media/arrs`; verify the live bind sources
-before deployment. Do not create a replacement empty tree if the NAS is offline.
+`NAS_STORAGE_LOCATION` is the host directory containing both `downloads` and
+`library` (on the homelab: `/mnt/qnap/media/arrs`). Do not create an empty
+replacement tree if the NAS is offline.
 
 | Host path relative to `NAS_STORAGE_LOCATION` | Purpose |
 |---|---|
@@ -65,9 +64,8 @@ before deployment. Do not create a replacement empty tree if the NAS is offline.
 | Both Bazarr instances | `${NAS_STORAGE_LOCATION}/library` | `/data/library` |
 | Prowlarr | No media bind | Config only |
 
-Each app retains its existing `${WORKDIR}/<app>/config` directory (`seerr` for
-Seerr); Gluetun retains its named volume. Keep application databases on suitable
-local storage. Do not change `WORKDIR` during this cleanup.
+Each app keeps its config in `${WORKDIR}/<app>/config` (`seerr` for Seerr), on
+local storage; Gluetun uses a named volume.
 
 This follows [TRaSH's Docker storage guidance](https://trash-guides.info/File-and-Folder-Structure/How-to-set-up/Docker/).
 Our names `downloads/torrents` and `library` are intentional: consistency and a
@@ -100,17 +98,14 @@ read/write access as the configured application user is the relevant check.
 | Sonarr Anime | `/data/library/anime-tv` | `sonarr-anime` |
 
 Enable hardlinks and Completed Download Handling in all four apps. Use
-`gluetun:8085` with qBittorrent credentials. Leave Remote Path Mappings empty
-because the client reports the same paths the Arrs see. Review collections,
-Seerr default roots, and any import lists for obsolete roots as well.
-Disabled 4K templates also use `/data`; choose separate roots/categories and
-verify their image versions and integration settings before enabling them.
+`gluetun:8085` with the qBittorrent credentials. Leave Remote Path Mappings empty
+because the client reports the same paths the Arrs see. The disabled 4K
+templates also use `/data`; give them their own roots and categories before
+enabling them.
 
 In qBittorrent, set the default save path to `/data/downloads/torrents`, use
 Automatic Torrent Management, and give each category the corresponding full
-`/data/downloads/torrents/<category>` save path. Audit **existing torrents** as
-well as defaults. Any incomplete, watched, or exported-torrent directory must
-remain accessible after the narrower mount. Never download into `library`.
+`/data/downloads/torrents/<category>` save path. Never download into `library`.
 See [TRaSH qBittorrent setup](https://trash-guides.info/Downloaders/qBittorrent/Basic-Setup/).
 
 For seeding, leave global ratio/time/inactive-time limits disabled and manage
@@ -128,10 +123,9 @@ Leave Bazarr Path Mappings empty and verify its paths start with `/data/library`
 This matches the [Bazarr setup guide](https://wiki.bazarr.media/Getting-Started/Setup-Guide/).
 Check subtitle writing for one movie and episode per instance.
 
-Prowlarr needs four application connections, using the Radarr/Sonarr URLs in
-the table above and their respective API keys. Use Full Sync if Prowlarr is the
-source of truth; understand that it overwrites synchronized indexer settings.
-Test all four connections and the indexers. No media mount is needed.
+Prowlarr needs four application connections, with the Radarr/Sonarr URLs from
+the table above and their API keys. Full Sync overwrites the synchronised
+indexer settings in each app. No media mount is needed.
 
 ## Jellyfin
 
@@ -143,119 +137,22 @@ case: its existing TV path is `/media/TV`.
 | Movies | `/media/movies`, `/media/anime-movies` |
 | Shows | `/media/TV`, `/media/anime-tv` |
 
-For the active LXC, expose the same NAS anime directories through its own mount
-configuration and add those **actual LXC paths** to the existing libraries.
-Its current TV path may be `/media/tv`; do not rename it just to match Docker.
-Editing this repository does not update LXC mounts. Scan only after files and
-mounts are verified. Do not add the torrent tree or the whole mixed library root
-as a Movies folder.
+A Jellyfin outside this template (the homelab's LXC) mounts the same NAS
+folders with its own paths; editing this repository does not change them. Do not
+add the torrent tree or the whole mixed library root as a library folder.
 
-## Prowlarr network cutover
+## Known issues
 
-[TRaSH's Prowlarr proxy guide](https://trash-guides.info/Prowlarr/prowlarr-setup-proxy/)
-and the [Servarr VPN guide](https://wiki.servarr.com/vpn) recommend routing
-the torrent client through a VPN while keeping Prowlarr on a regular network.
-A shared VPN exit can be blocked by indexers or flagged as account sharing.
-If a particular indexer really needs a VPN, configure a per-indexer tagged
-proxy in Prowlarr after checking that indexer's rules. This change does not
-create such a proxy or change existing Prowlarr application settings.
+Compose validation cannot prove NAS availability, ACLs, hardlinks, app settings,
+VPN behaviour or subtitle downloads. Quality profiles, custom formats and naming
+live in the app databases.
 
-Before deployment, back up Prowlarr's `/config` and the deployed Compose
-configuration. Record Prowlarr's current server URL in each of its four
-Radarr/Sonarr application connections and in any other integration. Check
-that `proxy` exists and that the new `prowlarr:9696` service name is reachable
-from the Arr containers. Keep the current image and credentials for rollback.
-
-This moves host port 9696 from Gluetun to Prowlarr; the old Gluetun
-container must release it before Prowlarr is recreated. Plan a short
-interruption for Prowlarr (and possibly VPN-sharing services if Gluetun
-is recreated). Apply the reviewed Compose change with the same project name
-and environment, without pulling images or running the broad homelab Ansible
-playbook. Never use `down -v` or prune volumes. Afterward update the
-Prowlarr server URL from `http://gluetun:9696` to
-`http://prowlarr:9696` in Prowlarr's application entries, as well as any
-saved callbacks. Keep each Radarr/Sonarr application URL pointing to its
-existing service name. Verify the Prowlarr UI through both the host port
-and Traefik, all four application tests/sync, qBittorrent at
-`gluetun:8085`, and every indexer's test/search result. Confirm that
-qBittorrent is still using the VPN and that Prowlarr's requests use the
-host's normal connection; neither is proven by Compose parsing.
-
-If the route or sync fails, restore the previous Compose and recreate
-the affected services using the retained images and same config bind;
-restore saved `gluetun:9696` application URLs. Do not remove the
-Prowlarr config or Gluetun volume.
-
-## Deployment gate and rollback
-
-This is phase two of the migration: removing legacy `/movies`, `/tv`, and
-`/downloads` aliases. The user reported the file moves complete and previously
-verified standard Radarr hardlinks. That does not verify both Bazarr instances,
-all remaining imports, or the current live configuration. Keep the PR draft
-until the following checks are recorded.
-
-1. Capture read-only live mount evidence, for example:
-   ```bash
-   docker inspect --format '{{range .Mounts}}{{println .Source "->" .Destination}}{{end}}' qbittorrent radarr radarr-anime sonarr sonarr-anime bazarr bazarr-anime
-   findmnt -T /mnt/qnap/media/arrs/library/anime-movies
-   ```
-   Compare the bind sources with the existing deployment `.env`; do not publish
-   that file or unfiltered container environment output. Confirm the NAS is
-   mounted and every required source directory exists.
-2. With transitional mounts still present, finish all settings above. Check
-   every existing torrent path, all Arr roots/collections, both Bazarr libraries,
-   Seerr, and any scripts. No dependency may remain on a removed alias.
-3. Back up the deployed Compose, private `.env`, app configs/databases and
-   qBittorrent resume state consistently (app backup or stopped-app copy).
-   Back up the library according to the existing policy. Verify a restore into
-   a separate location; retain the currently running image IDs locally so
-   rollback does not depend on a moving tag.
-4. Validate using the existing deployment environment:
-   ```bash
-   docker compose -f docker-compose.yaml config --quiet
-   ```
-   Required existing variables are `WORKDIR`, `NAS_STORAGE_LOCATION`, `PUID`,
-   `PGID`, `DOMAIN`, `WIREGUARD_PRIVATE_KEY`, and `HOME_SUBNET`. `proxy` and the
-   host's `/dev/net/tun` must exist. No sample credentials belong in Git.
-5. Schedule a brief interruption, pause new grabs and subtitle jobs, and apply
-   the reviewed change using the same project name, working directory and
-   environment as the deployed stack. Reuse existing images; do not combine
-   this cleanup with an image pull/upgrade. Recreate only changed services.
-   Do not run `down -v` or delete any config/media directory. Jellyfin's Docker
-   template is not a command to deploy a second Jellyfin alongside the LXC.
-6. Inspect effective mounts and app health, test download-client connections,
-   then perform one download/import per Arr. From the importing container,
-   compare the real torrent and library files:
-   ```bash
-   docker exec radarr stat -c '%d %i %h %n' '/data/downloads/torrents/radarr/<torrent>/<file>' '/data/library/movies/<movie>/<file>'
-   ```
-   Replace placeholders with actual files; repeat in each other Arr. Matching
-   device and inode with link count at least two proves a hardlink. Verify
-   subtitle writes in both Bazarr instances, Prowlarr sync, Seerr roots, and
-   Jellyfin playback. Resume automation after these checks pass.
-
-If paths disappear or imports fail, pause affected jobs, restore the prior
-Compose and recreate the affected containers with the same configs/images.
-This restores aliases without moving media back. Keep application paths on
-`/data/...`, which the transitional Compose already supports. Restore app
-backups only if needed and while those apps are stopped; account for changes
-made since backup. No database/image migration is part of this PR.
-
-## Review boundaries and existing follow-ups
-
-The storage model can be checked statically; Compose validation cannot prove
-NAS availability, ACLs, actual hardlinks, application settings, VPN behavior,
-or subtitle downloads. Quality profiles, custom formats, naming, and quality
-sizes live in app databases and need their own TRaSH review.
-
-- qBittorrent still uses `latest` (existing Renovate TODO). Do not pull it as
-  part of this storage rollout; choose a version separately after checking
-  tracker compatibility and the running version.
+- qBittorrent still uses `latest` (Renovate does not pick its version correctly).
+  Choose a version after checking tracker compatibility and the running one.
 - Gluetun retains its existing ping-based healthcheck. A successful ping is not
   proof of VPN isolation or successful app traffic; validate live connectivity.
-- Publishing 6881 on the host is not Proton VPN port forwarding. Verify the
-  provider-forwarded port and qBittorrent's listening port separately; this PR
-  does not change VPN routing or forwarding.
+- Publishing 6881 on the host is not Proton VPN port forwarding: the
+  provider-forwarded port and qBittorrent's listening port are separate.
 - FlareSolverr is retained to preserve existing integrations. TRaSH currently
   [flags it as non-functional](https://trash-guides.info/Prowlarr/prowlarr-setup-flaresolverr/);
   verify actual indexer needs/results rather than assuming bypass works.
