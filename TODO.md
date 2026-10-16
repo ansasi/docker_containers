@@ -69,6 +69,21 @@ Remote access uses the FritzBox's built-in WireGuard VPN (owner decision, 2026-1
 it stays; NetBird deferred, above). The WireGuard Easy (wg-easy) stack was removed in
 October 2026 instead of migrating it to v15 (see git history).
 
+- [ ] **WireGuard clients: split tunnel and Pi-hole** 🟢 — After the move to k3s is
+  finished, not before (owner decision, 2026-10-16: the FritzBox WireGuard configs stay
+  as they are until then). On each phone: `AllowedIPs` only for the home network instead
+  of all traffic, and `DNS` = Pi-hole (`192.168.178.10`) for filtering away from home.
+  On a network that also uses `192.168.178.0/24` (another FritzBox) the home range
+  loses to the local one: list `192.168.178.2/31, .4/30, .8/29, .16/28, .32/27, .64/26`
+  (`.2`–`.127`, all static addresses and MetalLB, without the local router's `.1`)
+  until the LAN is renumbered.
+- [ ] **Renumber the LAN** 🟢 — With the 1 server + 1 worker rebuild (homelab
+  `TODO.md`), optional: an uncommon range such as `10.<n>.1.0/24` (not `192.168.0/1.x`,
+  `10.0.x`, `10.1.x`, or k3s's `10.42`/`10.43`), keeping the last numbers, so the
+  phones need only `AllowedIPs = 10.<n>.1.0/24`. The FritzBox allows it (IPv4 settings);
+  every static address, the NFS host access, UpSnap and the WireGuard connections
+  change with it.
+
 ## Management
 
 - [ ] **Dockge** 🟢 — Lightweight manager for Compose stacks; a nice alternative to
