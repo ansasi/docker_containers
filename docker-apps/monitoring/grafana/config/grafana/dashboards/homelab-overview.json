@@ -682,7 +682,7 @@
       "id": 9,
       "type": "table",
       "title": "Hosts",
-      "description": "Every host with node_exporter. Click a host for its details in Node Exporter Full. Disk: the fullest local filesystem (QNAP shares are under Storage). Temperature: the hottest thermal zone (Raspberry Pis alert above 75 °C).",
+      "description": "Every host with node_exporter. Click a host for its details in Node Exporter Full. Disk: the fullest local filesystem (QNAP shares are under Storage). Temperature: highest CPU hwmon sensor, falling back to thermal zones. The 70/75 \u00b0C colours are Raspberry Pi guidelines, not Minisforum alert thresholds. VMs normally have no physical sensor; QNAP is not scraped yet.",
       "datasource": {
         "type": "prometheus",
         "uid": "prometheus"
@@ -760,7 +760,7 @@
             "uid": "prometheus"
           },
           "refId": "F",
-          "expr": "max by (instance) (node_thermal_zone_temp)",
+          "expr": "max by (instance) (node_hwmon_temp_celsius{job=\"node_exporter\"} * on (instance, chip) group_left (chip_name) node_hwmon_chip_names{job=\"node_exporter\",chip_name=~\"k10temp|coretemp|cpu_thermal\"}) or max by (instance) (node_thermal_zone_temp{job=\"node_exporter\"})",
           "legendFormat": "",
           "instant": true,
           "range": false,
@@ -1647,8 +1647,8 @@
     {
       "id": 13,
       "type": "timeseries",
-      "title": "Raspberry Pi temperature",
-      "description": "Hottest thermal zone of each Raspberry Pi (alert: RaspberryPiHighTemperature above 75 °C).",
+      "title": "Host temperature",
+      "description": "Highest reported CPU hwmon sensor (AMD k10temp, Intel coretemp, cpu_thermal), falling back to the highest thermal-zone reading. Virtual machines usually expose no physical temperature. QNAP is not scraped yet. The dashed 75 \u00b0C guide is for the Raspberry Pis; this does not add a Minisforum alert.",
       "datasource": {
         "type": "prometheus",
         "uid": "prometheus"
@@ -1666,7 +1666,7 @@
             "uid": "prometheus"
           },
           "refId": "A",
-          "expr": "max by (instance) (node_thermal_zone_temp{instance=~\"dns1|rpi4\"})",
+          "expr": "max by (instance) (node_hwmon_temp_celsius{job=\"node_exporter\"} * on (instance, chip) group_left (chip_name) node_hwmon_chip_names{job=\"node_exporter\",chip_name=~\"k10temp|coretemp|cpu_thermal\"}) or max by (instance) (node_thermal_zone_temp{job=\"node_exporter\"})",
           "legendFormat": "{{instance}}"
         }
       ],
