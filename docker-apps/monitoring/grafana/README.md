@@ -56,6 +56,16 @@ guest with the age of its newest backup, and how full the Proxmox storages, the
 PBS datastore and the QNAP shares are. Its colours follow the alert thresholds.
 Click a host to open it in Node Exporter Full.
 
+The Hosts table and Host temperature graph prefer CPU hwmon sensors
+(`k10temp` on the AMD Minisforum, `coretemp` on Intel, `cpu_thermal`), with
+thermal zones as a fallback for the Pis. Disk/NVMe hwmon sensors are excluded.
+The value is the highest reported CPU sensor, which can include AMD's control
+temperature (Tctl). Both collectors are enabled by default in node_exporter;
+the host kernel must expose the sensor. VMs normally have no physical sensor.
+The QNAP has no hardware scrape target yet; see the
+[temperature setup](https://github.com/ansasi/homelab/blob/master/docs/monitoring.md#host-temperatures)
+for checks and the SNMP prerequisite.
+
 There are no Proxmox VE or PBS dashboards: their web interfaces show guests,
 storage and backups in more detail and with more history than Prometheus keeps
 (7 days). pve-exporter and pbs-exporter are here for the alerts and the
