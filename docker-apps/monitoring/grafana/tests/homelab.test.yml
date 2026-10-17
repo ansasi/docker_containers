@@ -267,3 +267,163 @@ tests:
             exp_annotations:
               summary: 'rpi4: root filesystem is read-only'
               description: 'Linux usually does this after I/O errors on /dev/mmcblk0p2. Check `journalctl -k | grep -iE "I/O error|EXT4-fs error"` on rpi4; on a Raspberry Pi suspect the SD card.'
+
+  # Hardware-specific CPU thresholds and notification delays.
+  - name: 'MS-A2: below threshold; exclude NVMe, ACPI and other hosts; keep Pi warning'
+    interval: 1m
+    input_series:
+    - series: node_hwmon_temp_celsius{job="node_exporter",instance="proxmox1",chip="cpu",sensor="temp1"}
+      values: 84x30
+    - series: node_hwmon_temp_celsius{job="node_exporter",instance="proxmox1",chip="cpu",sensor="temp3"}
+      values: 89.9x30
+    - series: node_hwmon_chip_names{job="node_exporter",instance="proxmox1",chip="cpu",chip_name="k10temp"}
+      values: 1x30
+    - series: node_hwmon_temp_celsius{job="node_exporter",instance="proxmox1",chip="nvme",sensor="temp1"}
+      values: 100x30
+    - series: node_hwmon_chip_names{job="node_exporter",instance="proxmox1",chip="nvme",chip_name="nvme"}
+      values: 1x30
+    - series: node_hwmon_temp_celsius{job="node_exporter",instance="docker1",chip="cpu",sensor="temp1"}
+      values: 100x30
+    - series: node_hwmon_chip_names{job="node_exporter",instance="docker1",chip="cpu",chip_name="k10temp"}
+      values: 1x30
+    - series: node_thermal_zone_temp{job="node_exporter",instance="proxmox1",zone="0"}
+      values: 99x30
+    - series: node_thermal_zone_temp{job="node_exporter",instance="rpi4",zone="0"}
+      values: 76x30
+    alert_rule_test:
+    - eval_time: 20m
+      alertname: MinisforumCpuHighTemperature
+      exp_alerts: []
+    - eval_time: 20m
+      alertname: MinisforumCpuCriticalTemperature
+      exp_alerts: []
+    - eval_time: 6m
+      alertname: RaspberryPiHighTemperature
+      exp_alerts:
+      - exp_labels:
+          severity: warning
+          instance: rpi4
+        exp_annotations:
+          summary: rpi4 is at 76 °C
+          description: A thermal zone on rpi4 has been above 75 °C for 5 minutes (a Raspberry Pi 4 starts throttling at about 80 °C).
+  - name: 'MS-A2: exact 90 C waits ten minutes and resolves below threshold'
+    interval: 1m
+    input_series:
+    - series: node_hwmon_temp_celsius{job="node_exporter",instance="proxmox1",chip="cpu",sensor="temp1"}
+      values: 90x11 89x5
+    - series: node_hwmon_chip_names{job="node_exporter",instance="proxmox1",chip="cpu",chip_name="k10temp"}
+      values: 1x30
+    alert_rule_test:
+    - eval_time: 9m
+      alertname: MinisforumCpuHighTemperature
+      exp_alerts: []
+    - eval_time: 10m
+      alertname: MinisforumCpuHighTemperature
+      exp_alerts:
+      - exp_labels:
+          severity: warning
+          instance: proxmox1
+        exp_annotations:
+          summary: 'proxmox1: CPU is at 90 °C'
+          description: The MS-A2 CPU has been at least 90 °C and below 98 °C for 10 minutes. Check CPU load, airflow and fans; brief boost peaks are expected.
+    - eval_time: 11m
+      alertname: MinisforumCpuCriticalTemperature
+      exp_alerts: []
+    - eval_time: 12m
+      alertname: MinisforumCpuHighTemperature
+      exp_alerts: []
+  - name: 'MS-A2: hottest CPU sensor; exact 98 C critical delay and recovery'
+    interval: 1m
+    input_series:
+    - series: node_hwmon_temp_celsius{job="node_exporter",instance="proxmox1",chip="cpu",sensor="temp1"}
+      values: 80x30
+    - series: node_hwmon_temp_celsius{job="node_exporter",instance="proxmox1",chip="cpu",sensor="temp3"}
+      values: 98x5 97x15
+    - series: node_hwmon_chip_names{job="node_exporter",instance="proxmox1",chip="cpu",chip_name="k10temp"}
+      values: 1x30
+    alert_rule_test:
+    - eval_time: 1m
+      alertname: MinisforumCpuCriticalTemperature
+      exp_alerts: []
+    - eval_time: 2m
+      alertname: MinisforumCpuCriticalTemperature
+      exp_alerts:
+      - exp_labels:
+          severity: critical
+          instance: proxmox1
+        exp_annotations:
+          summary: 'proxmox1: CPU is at 98 °C'
+          description: The MS-A2 CPU has been at least 98 °C for 2 minutes, close to the Ryzen 9 7945HX 100 °C maximum. Check cooling and reduce the workload
+            if needed.
+    - eval_time: 5m
+      alertname: MinisforumCpuCriticalTemperature
+      exp_alerts:
+      - exp_labels:
+          severity: critical
+          instance: proxmox1
+        exp_annotations:
+          summary: 'proxmox1: CPU is at 98 °C'
+          description: The MS-A2 CPU has been at least 98 °C for 2 minutes, close to the Ryzen 9 7945HX 100 °C maximum. Check cooling and reduce the workload
+            if needed.
+    - eval_time: 5m
+      alertname: MinisforumCpuHighTemperature
+      exp_alerts: []
+    - eval_time: 6m
+      alertname: MinisforumCpuCriticalTemperature
+      exp_alerts: []
+    - eval_time: 15m
+      alertname: MinisforumCpuHighTemperature
+      exp_alerts: []
+    - eval_time: 16m
+      alertname: MinisforumCpuHighTemperature
+      exp_alerts:
+      - exp_labels:
+          severity: warning
+          instance: proxmox1
+        exp_annotations:
+          summary: 'proxmox1: CPU is at 97 °C'
+          description: The MS-A2 CPU has been at least 90 °C and below 98 °C for 10 minutes. Check CPU load, airflow and fans; brief boost peaks are expected.
+  - name: 'MS-A2: short critical and warning spikes do not notify'
+    interval: 1m
+    input_series:
+    - series: node_hwmon_temp_celsius{job="node_exporter",instance="proxmox1",chip="cpu",sensor="temp1"}
+      values: 99x1 84x4 90x8 84x5
+    - series: node_hwmon_chip_names{job="node_exporter",instance="proxmox1",chip="cpu",chip_name="k10temp"}
+      values: 1x30
+    alert_rule_test:
+    - eval_time: 1m
+      alertname: MinisforumCpuCriticalTemperature
+      exp_alerts: []
+    - eval_time: 2m
+      alertname: MinisforumCpuCriticalTemperature
+      exp_alerts: []
+    - eval_time: 15m
+      alertname: MinisforumCpuHighTemperature
+      exp_alerts: []
+    - eval_time: 16m
+      alertname: MinisforumCpuHighTemperature
+      exp_alerts: []
+    - eval_time: 20m
+      alertname: MinisforumCpuHighTemperature
+      exp_alerts: []
+    - eval_time: 20m
+      alertname: MinisforumCpuCriticalTemperature
+      exp_alerts: []
+  - name: 'MS-A2: missing CPU annotation; no fallback to hot ACPI or NVMe'
+    interval: 1m
+    input_series:
+    - series: node_hwmon_temp_celsius{job="node_exporter",instance="proxmox1",chip="cpu",sensor="temp1"}
+      values: 100x30
+    - series: node_hwmon_temp_celsius{job="node_exporter",instance="proxmox1",chip="nvme",sensor="temp1"}
+      values: 100x30
+    - series: node_hwmon_chip_names{job="node_exporter",instance="proxmox1",chip="nvme",chip_name="nvme"}
+      values: 1x30
+    - series: node_thermal_zone_temp{job="node_exporter",instance="proxmox1",zone="0"}
+      values: 100x30
+    alert_rule_test:
+    - eval_time: 20m
+      alertname: MinisforumCpuHighTemperature
+      exp_alerts: []
+    - eval_time: 20m
+      alertname: MinisforumCpuCriticalTemperature
+      exp_alerts: []

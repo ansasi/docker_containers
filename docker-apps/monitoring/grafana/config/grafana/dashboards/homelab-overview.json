@@ -682,7 +682,7 @@
       "id": 9,
       "type": "table",
       "title": "Hosts",
-      "description": "Every host with node_exporter. Click a host for its details in Node Exporter Full. Disk: the fullest local filesystem (QNAP shares are under Storage). Temperature: highest CPU hwmon sensor, falling back to thermal zones. The 70/75 \u00b0C colours are Raspberry Pi guidelines, not Minisforum alert thresholds. VMs normally have no physical sensor; QNAP is not scraped yet.",
+      "description": "Every host with node_exporter. Click a host for its details in Node Exporter Full. Disk: the fullest local filesystem (QNAP shares are under Storage). Temperature: highest CPU hwmon sensor, falling back to thermal zones. Temperature is uncoloured here; the graph uses hardware-specific thresholds and Firing alerts shows delayed notification state. VMs normally have no physical sensor; QNAP is not scraped yet.",
       "datasource": {
         "type": "prometheus",
         "uid": "prometheus"
@@ -1085,38 +1085,6 @@
               {
                 "id": "decimals",
                 "value": 0
-              },
-              {
-                "id": "thresholds",
-                "value": {
-                  "mode": "absolute",
-                  "steps": [
-                    {
-                      "color": "green",
-                      "value": null
-                    },
-                    {
-                      "color": "orange",
-                      "value": 70
-                    },
-                    {
-                      "color": "red",
-                      "value": 75
-                    }
-                  ]
-                }
-              },
-              {
-                "id": "color",
-                "value": {
-                  "mode": "thresholds"
-                }
-              },
-              {
-                "id": "custom.cellOptions",
-                "value": {
-                  "type": "color-text"
-                }
               },
               {
                 "id": "custom.width",
@@ -1648,7 +1616,7 @@
       "id": 13,
       "type": "timeseries",
       "title": "Host temperature",
-      "description": "Highest reported CPU hwmon sensor (AMD k10temp, Intel coretemp, cpu_thermal), falling back to the highest thermal-zone reading. Virtual machines usually expose no physical temperature. QNAP is not scraped yet. The dashed 75 \u00b0C guide is for the Raspberry Pis; this does not add a Minisforum alert.",
+      "description": "Highest reported CPU hwmon sensor, falling back to thermal zones. proxmox1: orange at 90 °C, red at 98 °C; dns1/rpi4: orange at 70 °C, red at 75 °C. Colours are immediate; Minisforum alerts wait 10/2 minutes and only use k10temp. VMs normally have no physical sensor; QNAP is not scraped yet.",
       "datasource": {
         "type": "prometheus",
         "uid": "prometheus"
@@ -1677,19 +1645,6 @@
           "color": {
             "mode": "palette-classic"
           },
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "red",
-                "value": 75
-              }
-            ]
-          },
           "custom": {
             "drawStyle": "line",
             "lineWidth": 1,
@@ -1697,11 +1652,126 @@
             "showPoints": "never",
             "spanNulls": false,
             "thresholdsStyle": {
-              "mode": "dashed"
+              "mode": "off"
             }
           }
         },
-        "overrides": []
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "proxmox1"
+            },
+            "properties": [
+              {
+                "id": "thresholds",
+                "value": {
+                  "mode": "absolute",
+                  "steps": [
+                    {
+                      "color": "green",
+                      "value": null
+                    },
+                    {
+                      "color": "orange",
+                      "value": 90
+                    },
+                    {
+                      "color": "red",
+                      "value": 98
+                    }
+                  ]
+                }
+              },
+              {
+                "id": "color",
+                "value": {
+                  "mode": "thresholds"
+                }
+              },
+              {
+                "id": "custom.gradientMode",
+                "value": "scheme"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "dns1"
+            },
+            "properties": [
+              {
+                "id": "thresholds",
+                "value": {
+                  "mode": "absolute",
+                  "steps": [
+                    {
+                      "color": "green",
+                      "value": null
+                    },
+                    {
+                      "color": "orange",
+                      "value": 70
+                    },
+                    {
+                      "color": "red",
+                      "value": 75
+                    }
+                  ]
+                }
+              },
+              {
+                "id": "color",
+                "value": {
+                  "mode": "thresholds"
+                }
+              },
+              {
+                "id": "custom.gradientMode",
+                "value": "scheme"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "rpi4"
+            },
+            "properties": [
+              {
+                "id": "thresholds",
+                "value": {
+                  "mode": "absolute",
+                  "steps": [
+                    {
+                      "color": "green",
+                      "value": null
+                    },
+                    {
+                      "color": "orange",
+                      "value": 70
+                    },
+                    {
+                      "color": "red",
+                      "value": 75
+                    }
+                  ]
+                }
+              },
+              {
+                "id": "color",
+                "value": {
+                  "mode": "thresholds"
+                }
+              },
+              {
+                "id": "custom.gradientMode",
+                "value": "scheme"
+              }
+            ]
+          }
+        ]
       },
       "options": {
         "legend": {

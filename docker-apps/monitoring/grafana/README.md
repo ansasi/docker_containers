@@ -93,6 +93,7 @@ curl -sL https://grafana.com/api/dashboards/1860/revisions/latest/download \
 | Raspberry Pi | `RaspberryPiUnderVoltage` (not for rpi4, see below) | warning |
 | Proxmox | `ProxmoxGuestDown` (guest with *Start at boot* is stopped) | critical |
 | Proxmox | `ProxmoxStorageAlmostFull` (> 85%) | warning |
+| Proxmox | `MinisforumCpuHighTemperature` (90–<98 °C for 10 min), `MinisforumCpuCriticalTemperature` (≥98 °C for 2 min) | warning, critical |
 | Proxmox | `DiskSmartFailure`, `DiskNvmeCriticalWarning` | critical |
 | Proxmox | `SmartctlNoDevices` (exporter sees no disks) | warning |
 | Backups | `PbsBackupTooOld` (newest snapshot of an existing guest > 7 days) | critical |
@@ -111,6 +112,54 @@ supply with a 5.1 V one.
 
 While the lab is off this stack is off too, so nothing watches the always-on
 Raspberry Pis during that time.
+
+### Minisforum CPU temperature
+
+`proxmox1` is the MS-A2 with a **Ryzen 9 7945HX**, according to the homelab's
+[hardware notes](https://github.com/ansasi/homelab/blob/master/docs/hardware.md).
+[AMD specifies 100 °C Tjmax](https://www.amd.com/en/products/processors/laptop/ryzen/7000-series/amd-ryzen-9-7945hx.html).
+There is no single idle temperature: ambient temperature, BIOS/fan profile,
+power settings and running VMs change it. Heavy CPU workloads can run in the
+80s and have brief peaks in the low 90s. For context, Notebookcheck measured
+about 84 °C sustained in an MS-A2 with the **9955HX**, not this lab's 7945HX
+([review](https://www.notebookcheck.net/Minisforum-MS-A2-review-Compact-AMD-mini-PC-with-workstation-ambitions-and-GPU-upgrade-option.1062179.0.html)).
+That is a chassis comparison, not a measured baseline for this host.
+
+The alert levels are a homelab monitoring policy, not manufacturer limits:
+
+| CPU reading | Notification |
+|---|---|
+| Below 90 °C | No high-temperature alert |
+| At least 90 °C, below 98 °C, continuously for 10 min | Warning, silent ntfy |
+| At least 98 °C, continuously for 2 min | Critical, ntfy with sound |
+
+The warning band stops at 98 °C so both alerts do not notify for the same
+condition. Short boost peaks do not satisfy the delays. Reaching 90 °C is a
+reason to inspect load and cooling if sustained; it does not prove damage.
+The critical level leaves 2 °C of headroom to AMD's limit. This is monitoring,
+not a replacement for the CPU's own thermal protection; no BIOS, fan or power
+settings are changed.
+
+Only the highest `k10temp` CPU reading on `proxmox1` is used (including Tctl
+and CCD sensors), not NVMe, GPU or ACPI thermal-zone readings. Missing CPU
+metrics do not invent a temperature or trigger these alerts; verify
+`node_hwmon_chip_names{instance="proxmox1",chip_name="k10temp"}` and
+`node_hwmon_temp_celsius{instance="proxmox1"}` in Prometheus after rollout.
+Tctl can be a control temperature; see the
+[kernel driver documentation](https://docs.kernel.org/hwmon/k10temp.html).
+
+The Host temperature graph uses 90/98 °C colours for `proxmox1` and keeps
+70/75 °C for the Pis. Its shared 75 °C guide is removed. The Hosts table
+shows temperature without a shared colour threshold, because one table
+column cannot use different threshold values for each host. The Firing alerts
+panel shows the delayed warning/critical state; graph colours are immediate.
+The Raspberry Pi alert rules remain unchanged.
+
+After merge, update the stack checkout on `docker1` and reload Prometheus's
+rules through the normal controlled deployment. Grafana reloads the JSON
+itself. Check both rules in Prometheus's Rules page and verify the CPU sensor
+series before relying on notifications. Revert and reload the rules to undo;
+no persistent application data changes.
 
 ## Setup
 
