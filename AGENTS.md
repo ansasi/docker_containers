@@ -14,8 +14,11 @@ AGENTS.md in the affected directory before editing.
 - Maintain deferred stacks only within the requested scope. Do not proactively
   upgrade or repair stacks marked Neither.
 - Do not infer that merging an upgrade PR means it has been deployed.
-- This repository describes its stacks only. Plans, candidate apps and
-  decisions belong in the homelab repository (`ROADMAP.md`, `DECISIONS.md`).
+- This repository describes reusable Compose stacks and their environment/config
+  contract only. Deployment inventory, homelab-specific configuration, alert policy,
+  dashboards and operating instructions belong in ansasi/homelab. Follow the
+  Homepage and Grafana pattern: Ansible copies config from that repository.
+  Plans, candidate apps and decisions also belong there (`ROADMAP.md`, `DECISIONS.md`).
 
 ## Agree before changing
 

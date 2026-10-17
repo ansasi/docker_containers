@@ -9,7 +9,7 @@ volumes:
 
 # ntfy.sh topic URL (e.g. https://ntfy.sh/<long-random-topic>). Treat it as a
 # secret: anyone who knows the topic can read the alerts. Mounted into
-# Alertmanager as /run/secrets/ntfy_url (see config/alertmanager.yml).
+# Alertmanager as /run/secrets/ntfy_url (provided in the external monitoring config).
 secrets:
   ntfy_url:
     environment: NTFY_URL
@@ -21,11 +21,11 @@ services:
     container_name: grafana
     volumes:
       - ${WORKDIR}/data:/var/lib/grafana
-      # Data sources and dashboards from git, see config/grafana/. Only these
+      # Ansible supplies ${WORKDIR}/config from the homelab repo. Only these
       # two provisioning folders are replaced; the image's others stay.
-      - ./config/grafana/provisioning/datasources:/etc/grafana/provisioning/datasources:ro
-      - ./config/grafana/provisioning/dashboards:/etc/grafana/provisioning/dashboards:ro
-      - ./config/grafana/dashboards:/etc/grafana/dashboards:ro
+      - ${WORKDIR}/config/grafana/provisioning/datasources:/etc/grafana/provisioning/datasources:ro
+      - ${WORKDIR}/config/grafana/provisioning/dashboards:/etc/grafana/provisioning/dashboards:ro
+      - ${WORKDIR}/config/grafana/dashboards:/etc/grafana/dashboards:ro
     networks:
       - grafana-monitoring
       - proxy
@@ -61,8 +61,8 @@ services:
     # ports:
     #   - "9090:9090"
     volumes:
-      - ./config/prometheus.yml:/etc/config/prometheus.yml:ro
-      - ./config/rules:/etc/config/rules:ro
+      - ${WORKDIR}/config/prometheus.yml:/etc/config/prometheus.yml:ro
+      - ${WORKDIR}/config/rules:/etc/config/rules:ro
       - prometheus:/prometheus
     networks:
       - grafana-monitoring
@@ -94,7 +94,7 @@ services:
       - '--storage.path=/alertmanager'
       - '--web.external-url=https://alertmanager.${DOMAIN}'
     volumes:
-      - ./config/alertmanager.yml:/etc/alertmanager/alertmanager.yml:ro
+      - ${WORKDIR}/config/alertmanager.yml:/etc/alertmanager/alertmanager.yml:ro
       - alertmanager:/alertmanager
     secrets:
       - ntfy_url
@@ -139,7 +139,7 @@ services:
     container_name: pbs-exporter
     user: '65534'
     environment:
-      PBS_ENDPOINT: 'https://192.168.178.30:8007'
+      PBS_ENDPOINT: '${PBS_ENDPOINT:?Set PBS_ENDPOINT (e.g. https://pbs.example.com:8007)}'
       PBS_USERNAME: '${PBS_USERNAME:?Set PBS_USERNAME (e.g. prometheus@pbs)}'
       PBS_API_TOKEN_NAME: '${PBS_API_TOKEN_NAME:?Set PBS_API_TOKEN_NAME}'
       PBS_API_TOKEN: '${PBS_API_TOKEN:?Set PBS_API_TOKEN}'
