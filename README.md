@@ -22,6 +22,7 @@ is maintained:
 | [Hermes](docker-apps/ai/hermes) | Used & maintained |
 | [Ollama](docker-apps/ai/ollama) | Maintained only |
 | [Open WebUI](docker-apps/ai/openwebui) | Maintained only |
+| [Paperclip](docker-apps/ai/paperclip) | Used & maintained |
 | [Home Assistant](docker-apps/automation/homeassistant) | Maintained only |
 | [ERPNext](docker-apps/business/erpnext) | Neither |
 | [Twenty](docker-apps/business/twenty) | Maintained only |
