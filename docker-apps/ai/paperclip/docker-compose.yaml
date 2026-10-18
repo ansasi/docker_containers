@@ -31,8 +31,9 @@ services:
       # Session signing and signed tool approvals; keep both across restarts.
       BETTER_AUTH_SECRET: ${BETTER_AUTH_SECRET}
       PAPERCLIP_TOOL_ACTION_SIGNING_SECRET: ${PAPERCLIP_TOOL_ACTION_SIGNING_SECRET}
-      # The first account to sign up claims the instance; set "true" afterwards.
-      PAPERCLIP_AUTH_DISABLE_SIGN_UP: ${PAPERCLIP_AUTH_DISABLE_SIGN_UP:-false}
+      # Sign-up is closed: nobody can create an account. Only a new install,
+      # which has no account yet, opens it once to create the admin.
+      PAPERCLIP_AUTH_DISABLE_SIGN_UP: ${PAPERCLIP_AUTH_DISABLE_SIGN_UP:-true}
       # Paperclip sends usage telemetry unless this is set.
       DO_NOT_TRACK: "1"
     volumes:
