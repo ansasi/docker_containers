@@ -1,0 +1,85 @@
+---
+# Paperclip: manages a team of AI agents (Claude Code, Codex, Hermes, ...) from
+# one web UI. Based on upstream's docker/docker-compose.yml, with the published
+# image instead of a local build.
+#
+# Agents run as child processes inside the paperclip container, so they can
+# read everything it holds: its data folder (agent logins and workspaces), its
+# environment and the database. The container therefore runs as the host
+# user with no capabilities, and publishes no host ports: only Traefik reaches
+# the UI (https://paperclip.${DOMAIN}), which requires a Paperclip login.
+#
+# The Ansible playbook (homelab: ansible/playbooks/hermes.yml) sets the
+# variables and creates ${WORKDIR}/data owned by PUID:PGID.
+networks:
+  proxy:
+    external: true
+  paperclip:
+    driver: bridge
+
+services:
+  paperclip:
+    container_name: paperclip
+    image: ghcr.io/paperclipai/paperclip:2026.1012.0
+    # The entrypoint skips its root-only UID remap and starts the app directly.
+    user: "${PUID:-1000}:${PGID:-1000}"
+    environment:
+      DATABASE_URL: postgres://paperclip:${PAPERCLIP_DB_PASSWORD}@db:5432/paperclip
+      PAPERCLIP_DEPLOYMENT_MODE: authenticated
+      PAPERCLIP_DEPLOYMENT_EXPOSURE: private
+      PAPERCLIP_PUBLIC_URL: https://paperclip.${DOMAIN}
+      # Session signing and signed tool approvals; keep both across restarts.
+      BETTER_AUTH_SECRET: ${BETTER_AUTH_SECRET}
+      PAPERCLIP_TOOL_ACTION_SIGNING_SECRET: ${PAPERCLIP_TOOL_ACTION_SIGNING_SECRET}
+      # The first account to sign up claims the instance; set "true" afterwards.
+      PAPERCLIP_AUTH_DISABLE_SIGN_UP: ${PAPERCLIP_AUTH_DISABLE_SIGN_UP:-false}
+      # Paperclip sends usage telemetry unless this is set.
+      DO_NOT_TRACK: "1"
+    volumes:
+      - ${WORKDIR}/data:/paperclip
+    # Upstream's values: a ceiling on agent processes, and time for running
+    # agents to settle on shutdown.
+    pids_limit: 2048
+    stop_grace_period: 90s
+    labels:
+      - traefik.enable=true
+      - traefik.docker.network=proxy
+      - traefik.http.routers.paperclip.entrypoints=http
+      - traefik.http.routers.paperclip.rule=Host(`paperclip.${DOMAIN}`)
+      - traefik.http.routers.paperclip-secure.entrypoints=https
+      - traefik.http.routers.paperclip-secure.rule=Host(`paperclip.${DOMAIN}`)
+      - traefik.http.routers.paperclip-secure.tls=true
+      - traefik.http.routers.paperclip-secure.tls.certresolver=cloudflare
+      - traefik.http.routers.paperclip-secure.service=paperclip
+      - traefik.http.services.paperclip.loadbalancer.server.port=3100
+    networks:
+      - paperclip
+      - proxy
+    depends_on:
+      db:
+        condition: service_healthy
+    restart: unless-stopped
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+
+  db:
+    container_name: paperclip-db
+    image: docker.io/library/postgres:17.11-alpine
+    environment:
+      POSTGRES_USER: paperclip
+      POSTGRES_PASSWORD: ${PAPERCLIP_DB_PASSWORD}
+      POSTGRES_DB: paperclip
+    volumes:
+      - ${WORKDIR}/db:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U paperclip -d paperclip"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+    networks:
+      - paperclip
+    restart: unless-stopped
+    security_opt:
+      - no-new-privileges:true
