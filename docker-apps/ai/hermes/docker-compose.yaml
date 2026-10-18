@@ -10,7 +10,7 @@
 #   HERMES_INSTANCE=angel WORKDIR=/…/hermes-angel docker compose -p hermes-angel up -d
 #   HERMES_INSTANCE=marta WORKDIR=/…/hermes-marta docker compose -p hermes-marta up -d
 #
-# The Ansible playbook (homelab: ansible/playbooks/hermes.yml) defines each agent
+# The Ansible playbook (homelab: ansible/playbooks/ai.yml) defines each agent
 # individually and sets these for you.
 #
 # No host ports are published — each agent is reached only through Traefik:

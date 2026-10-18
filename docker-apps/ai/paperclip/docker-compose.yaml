@@ -9,7 +9,7 @@
 # user with no capabilities, and publishes no host ports: only Traefik reaches
 # the UI (https://paperclip.${DOMAIN}), which requires a Paperclip login.
 #
-# The Ansible playbook (homelab: ansible/playbooks/hermes.yml) sets the
+# The Ansible playbook (homelab: ansible/playbooks/ai.yml) sets the
 # variables and creates ${WORKDIR}/data owned by PUID:PGID.
 networks:
   proxy:
