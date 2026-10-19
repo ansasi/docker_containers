@@ -102,7 +102,7 @@ services:
       - "traefik.http.services.paperless.loadbalancer.server.port=8000"
 
   paperless-gotenberg:
-    image: docker.io/gotenberg/gotenberg:8.37
+    image: docker.io/gotenberg/gotenberg:8.38
     restart: unless-stopped
     # The gotenberg chromium route is used to convert .eml files. We do not want to allow external content like tracking pixels or even javascript.
     command:
