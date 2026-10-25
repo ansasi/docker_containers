@@ -20,7 +20,7 @@ networks:
 services:
   paperclip:
     container_name: paperclip
-    image: ghcr.io/paperclipai/paperclip:2026.1012.0
+    image: ghcr.io/paperclipai/paperclip:2026.1023.0
     # The entrypoint skips its root-only UID remap and starts the app directly.
     user: "${PUID:-1000}:${PGID:-1000}"
     environment:
