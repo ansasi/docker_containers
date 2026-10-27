@@ -378,6 +378,7 @@ services:
   # Readarr - Library Manager for Books / Epubs content management
     
   # FlareSolverr - Proxy for bypassing Cloudflare protection
+  # Off the VPN, like Prowlarr: Cloudflare blocks the Proton VPN exit.
   flaresolverr:
     image: flaresolverr/flaresolverr:v3.5.2
     container_name: flaresolverr
@@ -386,15 +387,12 @@ services:
       TZ: "Europe/Zurich"
     volumes:
       - ${WORKDIR}/flaresolverr/config:/config
-    # ports:
-    #   - 8119:8191
-    network_mode: "service:gluetun"
+    ports:
+      - 8191:8191
+    networks:
+      - proxy
     security_opt:
       - no-new-privileges:true
-    depends_on:
-      gluetun:
-        condition: service_healthy
-        restart: true
 
   # Gluetun - VPN Client - Used to connect to VPN services
   gluetun:
@@ -411,7 +409,6 @@ services:
       - 6881:6881/udp
       # Ports to apps:
       - 8085:8085    # qBittorrent
-      - 8191:8191    # FlareSolverr - used by Prowlarr to bypass Cloudflare
       # Note: This is uncommented as Proton VPN uses its own DNS servers, so it is not possible to resolve to mydomain.com INSIDE the containers that use gluetun as network mode
     volumes:
       - gluetun-data:/gluetun
