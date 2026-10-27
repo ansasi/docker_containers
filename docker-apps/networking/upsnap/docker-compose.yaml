@@ -1,7 +1,8 @@
 services:
   upsnap:
     container_name: upsnap
-    image: ghcr.io/seriousm4x/upsnap:5.7.2
+    # The same image as ghcr.io/seriousm4x/upsnap; Docker Hub gives Renovate release dates.
+    image: seriousm4x/upsnap:5.7.2
     network_mode: host
     restart: unless-stopped
     volumes:
