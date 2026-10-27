@@ -39,8 +39,8 @@
       description: "Update the Immich server and machine-learning images together",
       matchDatasources: ["docker"],
       matchPackageNames: [
-        "altran1502/immich-server",
-        "altran1502/immich-machine-learning"
+        "ghcr.io/immich-app/immich-server",
+        "ghcr.io/immich-app/immich-machine-learning"
       ],
       groupName: "immich"
     },
