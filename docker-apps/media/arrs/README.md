@@ -11,17 +11,17 @@ instances, FlareSolverr, and Gluetun. Radarr/Sonarr 4K are commented templates,
 not enabled services. qBitmanage, SABnzbd, Lidarr, Readarr, Unpackerr, and Jellyfin
 are not deployed by this stack.
 
-The external Docker network is `proxy`, shared with Traefik. qBittorrent and
-FlareSolverr use `network_mode: service:gluetun`; their published ports and
-qBittorrent Traefik labels live on Gluetun. Prowlarr and the other apps connect
-directly to `proxy`; Prowlarr's published port and Traefik labels live on
-Prowlarr. qBittorrent remains on the VPN.
+The external Docker network is `proxy`, shared with Traefik. qBittorrent uses
+`network_mode: service:gluetun`; its published port and Traefik labels live on
+Gluetun. Prowlarr, FlareSolverr and the other apps connect directly to
+`proxy`; Prowlarr's published port and Traefik labels live on Prowlarr.
+qBittorrent is the only app on the VPN.
 
 | Service | Address from another container on `proxy` | Published host port |
 |---|---|---|
 | qBittorrent | `http://gluetun:8085` | 8085 |
 | Prowlarr | `http://prowlarr:9696` | 9696 |
-| FlareSolverr | `http://gluetun:8191` | 8191 |
+| FlareSolverr | `http://flaresolverr:8191` | 8191 |
 | Radarr | `http://radarr:7878` | 7878 |
 | Radarr Anime | `http://radarr-anime:7878` | 7879 |
 | Sonarr | `http://sonarr:8989` | 8989 |
@@ -32,13 +32,19 @@ Prowlarr. qBittorrent remains on the VPN.
 
 Use container ports for app connections, including the anime instances.
 Prowlarr's server URL in its Radarr/Sonarr application settings is
-`http://prowlarr:9696`. Prowlarr reaches the VPN-routed FlareSolverr at
-`http://gluetun:8191` when a tagged indexer needs it.
+`http://prowlarr:9696`. Prowlarr reaches FlareSolverr at
+`http://flaresolverr:8191` when a tagged indexer needs it.
 
 Prowlarr stays off the VPN, as [TRaSH](https://trash-guides.info/Prowlarr/prowlarr-setup-proxy/)
 and the [Servarr VPN guide](https://wiki.servarr.com/vpn) recommend: a shared VPN
 exit can be blocked by indexers or flagged as account sharing. If one indexer
 really needs a VPN, use a per-indexer tagged proxy in Prowlarr.
+
+FlareSolverr is off the VPN too. Cloudflare blocks the Proton VPN exit
+("Cloudflare has blocked this request"), while the same image solves the
+challenge from the home address (tested on 2026-10-27 with 1337x). The VPN
+hid nothing here anyway: Prowlarr contacts the indexer directly first and
+only hands blocked requests to FlareSolverr.
 
 ## Storage contract
 
@@ -155,7 +161,10 @@ live in the app databases.
   provider-forwarded port and qBittorrent's listening port are separate.
 - FlareSolverr is retained to preserve existing integrations. TRaSH currently
   [flags it as non-functional](https://trash-guides.info/Prowlarr/prowlarr-setup-flaresolverr/);
-  verify actual indexer needs/results rather than assuming bypass works.
+  verify actual indexer needs/results rather than assuming bypass works. Test
+  it directly from `docker1`:
+  `curl -s -X POST localhost:8191/v1 -H 'Content-Type: application/json' -d '{"cmd":"request.get","url":"https://1337x.to/","maxTimeout":60000}' | jq -r .message`
+  should print `Challenge solved!`.
 
 Upstream image references: [qBittorrent](https://docs.linuxserver.io/images/docker-qbittorrent/),
 [Radarr](https://docs.linuxserver.io/images/docker-radarr/),
@@ -163,4 +172,4 @@ Upstream image references: [qBittorrent](https://docs.linuxserver.io/images/dock
 [Bazarr](https://docs.linuxserver.io/images/docker-bazarr/), and
 [Jellyfin](https://docs.linuxserver.io/images/docker-jellyfin/).
 Gluetun's [shared-network instructions](https://github.com/qdm12/gluetun-wiki/blob/main/setup/connect-a-container-to-gluetun.md)
-explain why the three VPN-routed services are reached through Gluetun.
+explain why qBittorrent is reached through Gluetun.
