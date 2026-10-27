@@ -6,7 +6,8 @@ networks:
 services:
   homeassistant:
     container_name: homeassistant
-    image: ghcr.io/home-assistant/home-assistant:stable # TODO: Pin a specific version
+    # The same image as ghcr.io/home-assistant/home-assistant; Docker Hub gives Renovate release dates.
+    image: homeassistant/home-assistant:stable # TODO: Pin a specific version
     environment:
       # Run as non-root user
       PUID: ${PUID}

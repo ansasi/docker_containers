@@ -40,7 +40,8 @@ services:
 
   # seerr Image - Request management and media discovery tool
   seerr-jellyfin:
-    image: ghcr.io/seerr-team/seerr:v3.5.1
+    # The same image as ghcr.io/seerr-team/seerr; Docker Hub gives Renovate release dates.
+    image: seerr/seerr:v3.5.1
     container_name: seerr-jellyfin
     environment:
       PGID: "${PGID}"
