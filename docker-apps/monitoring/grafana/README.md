@@ -7,7 +7,7 @@ dashboards, credentials setup and operating instructions live in
 
 ## Configuration
 
-As with Homepage, configuration is managed outside this repository. Ansible
+Configuration is managed outside this repository. Ansible
 copies `homelab/ansible/playbooks/files/grafana/config/` to `${WORKDIR}/config`
 before starting this stack. A manual deployment must supply its own populated
 config tree first:

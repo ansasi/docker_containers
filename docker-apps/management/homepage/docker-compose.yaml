@@ -24,8 +24,8 @@ services:
       HOMEPAGE_VAR_PBS_TOKEN_ID: '${HOMEPAGE_VAR_PBS_TOKEN_ID}'
       HOMEPAGE_VAR_PBS_TOKEN_SECRET: '${HOMEPAGE_VAR_PBS_TOKEN_SECRET}'
     volumes:
-      # Config is managed by Ansible (homelab repo: ansible/playbooks/files/homepage/config)
-      # synced to ${WORKDIR}/config on the host, not tracked in this repo.
+      # Config is not tracked in this repo: the homelab's is in
+      # homelab/k8s/apps/observability/homepage/app/config (see README.md).
       - ${WORKDIR}/config:/app/config
       - /var/run/docker.sock:/var/run/docker.sock:ro
     # ports:

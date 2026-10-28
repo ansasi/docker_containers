@@ -26,7 +26,7 @@ is maintained:
 | [Home Assistant](docker-apps/automation/homeassistant) | Maintained only |
 | [ERPNext](docker-apps/business/erpnext) | Neither |
 | [Twenty](docker-apps/business/twenty) | Maintained only |
-| [Homepage](docker-apps/management/homepage) | Used & maintained |
+| [Homepage](docker-apps/management/homepage) | Maintained only |
 | [Portainer](docker-apps/management/portainer) | Used & maintained |
 | [ARRs](docker-apps/media/arrs) | Used & maintained |
 | [Audiobookshelf](docker-apps/media/audiobookshelf) | Maintained only |
