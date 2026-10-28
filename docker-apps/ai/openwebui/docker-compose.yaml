@@ -6,7 +6,7 @@ networks:
 services:
   openwebui:
     container_name: openwebui
-    image: ghcr.io/open-webui/open-webui:v0.6.18 # Use ghcr.io/open-webui/open-webui:cuda for NVIDIA GPUs
+    image: ghcr.io/open-webui/open-webui:v0.12.4 # Use ghcr.io/open-webui/open-webui:cuda for NVIDIA GPUs
     # # Use this for NVIDIA GPUs
     # deploy:
     #   resources:
@@ -18,6 +18,9 @@ services:
     environment:
       OLLAMA_BASE_URL: ${OLLAMA_DOMAIN:-http://ollama:11434}
       WEBUI_URL: http://localhost:3003 # openwebui.${DOMAIN}
+      # Signs sessions and encrypts stored credentials; must not change between
+      # container recreations (generate once with `openssl rand -hex 32`).
+      WEBUI_SECRET_KEY: "${WEBUI_SECRET_KEY:?Set WEBUI_SECRET_KEY in .env}"
     volumes:
       - ${WORKDIR}/data:/app/backend/data
     ports:
