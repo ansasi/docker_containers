@@ -32,6 +32,7 @@ jobs:
       PVE_TOKEN_VALUE: compose-lint-placeholder
       PVE_USER: ci@pve
       TRAEFIK_DASHBOARD_CREDENTIALS: ci:compose-lint-placeholder
+      WEBUI_SECRET_KEY: compose-lint-placeholder
       WORKDIR: /home/ci-lint
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1

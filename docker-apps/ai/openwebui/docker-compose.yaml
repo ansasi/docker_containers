@@ -18,9 +18,9 @@ services:
     environment:
       OLLAMA_BASE_URL: ${OLLAMA_DOMAIN:-http://ollama:11434}
       WEBUI_URL: http://localhost:3003 # openwebui.${DOMAIN}
-      # Keep the generated secret key in the data volume, so a recreated
-      # container can still decrypt sessions and stored credentials.
-      WEBUI_SECRET_KEY_FILE: /app/backend/data/.webui_secret_key
+      # Signs sessions and encrypts stored credentials; must not change between
+      # container recreations (generate once with `openssl rand -hex 32`).
+      WEBUI_SECRET_KEY: "${WEBUI_SECRET_KEY:?Set WEBUI_SECRET_KEY in .env}"
     volumes:
       - ${WORKDIR}/data:/app/backend/data
     ports:
