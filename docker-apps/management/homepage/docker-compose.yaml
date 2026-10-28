@@ -1,0 +1,47 @@
+networks:
+  proxy:
+    external: true
+
+services:
+  homepage:
+    image: gethomepage/homepage:v2.6.0
+    container_name: homepage
+    environment:
+      HOMEPAGE_ALLOWED_HOSTS: 'homepage.${DOMAIN},localhost:3001'
+      # # Run as non-root user
+      # PUID: ${PUID}
+      # PGID: ${PGID}
+      # LOG_LEVEL: debug
+      HOMEPAGE_VAR_DOMAIN: '${DOMAIN}'
+      ###########################
+      # Credentials for Widgets #
+      ###########################
+      HOMEPAGE_VAR_PIHOLE_KEY: '${HOMEPAGE_VAR_PIHOLE_KEY}'
+      # Read-only Proxmox VE (PVEAuditor) and PBS (Audit) API tokens:
+      # token ID (user@realm!token) and secret
+      HOMEPAGE_VAR_PVE_TOKEN_ID: '${HOMEPAGE_VAR_PVE_TOKEN_ID}'
+      HOMEPAGE_VAR_PVE_TOKEN_SECRET: '${HOMEPAGE_VAR_PVE_TOKEN_SECRET}'
+      HOMEPAGE_VAR_PBS_TOKEN_ID: '${HOMEPAGE_VAR_PBS_TOKEN_ID}'
+      HOMEPAGE_VAR_PBS_TOKEN_SECRET: '${HOMEPAGE_VAR_PBS_TOKEN_SECRET}'
+    volumes:
+      # Config is not tracked in this repo: the homelab's is in
+      # homelab/k8s/apps/observability/homepage/app/config (see README.md).
+      - ${WORKDIR}/config:/app/config
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    # ports:
+    #   - "3001:3000"
+    labels:
+      # Traefik labels
+      - traefik.enable=true
+      - traefik.docker.network=proxy
+      - traefik.http.routers.homepage.entrypoints=http
+      - traefik.http.routers.homepage.rule=Host(`homepage.${DOMAIN}`)
+      - traefik.http.routers.homepage-secure.entrypoints=https
+      - traefik.http.routers.homepage-secure.rule=Host(`homepage.${DOMAIN}`)
+      - traefik.http.routers.homepage-secure.tls=true
+      - traefik.http.routers.homepage-secure.tls.certresolver=cloudflare
+      - traefik.http.routers.homepage-secure.service=homepage
+      - traefik.http.services.homepage.loadbalancer.server.port=3000
+    networks:
+      - proxy
+    restart: unless-stopped
