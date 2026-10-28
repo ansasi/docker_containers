@@ -17,7 +17,7 @@ AGENTS.md in the affected directory before editing.
 - This repository describes reusable Compose stacks and their environment/config
   contract only. Deployment inventory, homelab-specific configuration, alert policy,
   dashboards and operating instructions belong in ansasi/homelab. Follow the
-  Homepage and Grafana pattern: Ansible copies config from that repository.
+  Grafana pattern: Ansible copies config from that repository.
   Plans, candidate apps and decisions also belong there (`ROADMAP.md`, `DECISIONS.md`).
 
 ## Agree before changing
