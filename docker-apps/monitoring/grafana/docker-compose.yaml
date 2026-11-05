@@ -87,7 +87,7 @@ services:
   # Routes alerts from Prometheus to ntfy.sh. The web UI is used to create
   # silences (e.g. during maintenance).
   alertmanager:
-    image: prom/alertmanager:v0.34.1
+    image: prom/alertmanager:v0.34.2
     container_name: alertmanager
     command:
       - '--config.file=/etc/alertmanager/alertmanager.yml'
