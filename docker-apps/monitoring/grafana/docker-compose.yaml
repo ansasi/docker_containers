@@ -135,7 +135,7 @@ services:
 # --- Proxmox Backup Server exporter Image
   # Reads the PBS API with a read-only (Audit) API token.
   pbs-exporter:
-    image: ghcr.io/natrontech/pbs-exporter:v0.9.4
+    image: ghcr.io/natrontech/pbs-exporter:v0.10.0
     container_name: pbs-exporter
     user: '65534'
     environment:
