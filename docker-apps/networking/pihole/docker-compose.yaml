@@ -19,7 +19,10 @@ services:
       - --upstream=https://1.1.1.1/dns-query
       - --upstream=https://1.0.0.1/dns-query
       - --upstream-mode=load_balance
-      - --timeout=10s
+      # Quad9, only when both Cloudflare addresses fail.
+      - --fallback=https://9.9.9.9/dns-query
+      # Short enough that the fallback answers before clients give up (about 5 s).
+      - --timeout=3s
     networks:
       pihole_internal:
         ipv4_address: 172.30.9.2
@@ -49,6 +52,11 @@ services:
       # be forwarded by the router from the Internet.
       FTLCONF_dns_listeningMode: ALL
       FTLCONF_dns_upstreams: 172.30.9.2#5053
+      # Pi-hole is the LAN's only DNS server, so a rate-limited client loses
+      # all names. The default (1000 per 60 s) refused busy LAN clients in
+      # November 2026; 5000 still stops a runaway loop.
+      FTLCONF_dns_rateLimit_count: "5000"
+      FTLCONF_dns_rateLimit_interval: "60"
     volumes:
       - ${WORKDIR:?Set WORKDIR in .env}/etc-pihole:/etc/pihole
       # Pi-hole v6 does not need /etc/dnsmasq.d unless you use custom files.
