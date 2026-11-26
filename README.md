@@ -41,7 +41,7 @@ is maintained:
 | [Traefik](docker-apps/networking/traefik) | Used & maintained |
 | [UpSnap](docker-apps/networking/upsnap) | Used & maintained |
 | [Vaultwarden](docker-apps/security/vaultwarden) | Used & maintained |
-| [Immich](docker-apps/storage/immich) | Used & maintained |
+| [Immich](docker-apps/storage/immich) | Neither |
 | [Nextcloud](docker-apps/storage/nextcloud) | Maintained only |
 | [Nextcloud AIO](docker-apps/storage/nextcloud-aio) | Maintained only |
 | [Paperless-ngx](docker-apps/storage/paperless-ngx) | Maintained only |
