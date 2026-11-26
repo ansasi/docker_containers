@@ -20,6 +20,7 @@ is maintained:
 | Stack | Repository status |
 |---|---|
 | [Hermes](docker-apps/ai/hermes) | Used & maintained |
+| [Hermes backup](docker-apps/ai/hermes-backup) | Used & maintained |
 | [Ollama](docker-apps/ai/ollama) | Maintained only |
 | [Open WebUI](docker-apps/ai/openwebui) | Maintained only |
 | [Paperclip](docker-apps/ai/paperclip) | Used & maintained |

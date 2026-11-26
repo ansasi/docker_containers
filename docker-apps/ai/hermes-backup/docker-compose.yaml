@@ -1,0 +1,63 @@
+---
+# Hermes backup: restic copies the Hermes agents' data folders to an S3
+# repository every night, with resticker (mazzolino/restic).
+#
+# The agents keep their conversations in SQLite (state.db), and a copy taken
+# while an agent writes can come back torn. So the backup stops the agents
+# first (PRE_COMMANDS) and always starts them again afterwards, also when the
+# backup fails (POST_COMMANDS_EXIT). That needs the Docker socket, which is
+# root on the host: this container runs restic and nothing else, and has no
+# Traefik route or published port.
+#
+# The repository is created on the first run if it does not exist yet. Old
+# snapshots are forgotten and pruned after each backup; the bucket's own
+# versioning is what protects the history from this container's key
+# (homelab: docs/hermes.md, Data and backups).
+#
+# WORKDIR is the folder that holds the agents' data folders, mounted read-only.
+# The Ansible playbook (homelab: ansible/playbooks/ai.yml) sets the variables.
+
+services:
+  backup:
+    container_name: hermes-backup
+    image: mazzolino/restic:1.8.2
+    # restic records the hostname in each snapshot; a fixed one keeps them in
+    # one series across container recreations.
+    hostname: hermes-backup
+    environment:
+      BACKUP_CRON: "${HERMES_BACKUP_CRON:-0 0 4 * * *}"
+      RESTIC_REPOSITORY: "${RESTIC_REPOSITORY}"
+      RESTIC_PASSWORD: "${RESTIC_PASSWORD}"
+      AWS_ACCESS_KEY_ID: "${AWS_ACCESS_KEY_ID}"
+      AWS_SECRET_ACCESS_KEY: "${AWS_SECRET_ACCESS_KEY}"
+      # Space-separated folders under /data, e.g. "/data/hermes-angel /data/hermes-marta".
+      RESTIC_BACKUP_SOURCES: "${HERMES_BACKUP_SOURCES}"
+      RESTIC_BACKUP_ARGS: "--exclude-caches"
+      RESTIC_FORGET_ARGS: "--prune --keep-daily 7 --keep-weekly 4 --keep-monthly 6"
+      # Space-separated container names, e.g. "hermes-angel hermes-marta".
+      PRE_COMMANDS: "docker stop ${HERMES_BACKUP_CONTAINERS}"
+      POST_COMMANDS_EXIT: "docker start ${HERMES_BACKUP_CONTAINERS}"
+      TZ: "${TZ:-Europe/Zurich}"
+    volumes:
+      - ${WORKDIR}:/data:ro
+      - /var/run/docker.sock:/var/run/docker.sock
+    restart: unless-stopped
+    security_opt:
+      - no-new-privileges:true
+
+  check:
+    container_name: hermes-backup-check
+    image: mazzolino/restic:1.8.2
+    hostname: hermes-backup
+    environment:
+      # Sundays at 05:00, after the night's backup; reads a tenth of the data.
+      CHECK_CRON: "${HERMES_BACKUP_CHECK_CRON:-0 0 5 * * 0}"
+      RESTIC_CHECK_ARGS: "--read-data-subset=10%"
+      RESTIC_REPOSITORY: "${RESTIC_REPOSITORY}"
+      RESTIC_PASSWORD: "${RESTIC_PASSWORD}"
+      AWS_ACCESS_KEY_ID: "${AWS_ACCESS_KEY_ID}"
+      AWS_SECRET_ACCESS_KEY: "${AWS_SECRET_ACCESS_KEY}"
+      TZ: "${TZ:-Europe/Zurich}"
+    restart: unless-stopped
+    security_opt:
+      - no-new-privileges:true
