@@ -28,20 +28,20 @@ is maintained:
 | [Twenty](docker-apps/business/twenty) | Maintained only |
 | [Homepage](docker-apps/management/homepage) | Maintained only |
 | [Portainer](docker-apps/management/portainer) | Used & maintained |
-| [ARRs](docker-apps/media/arrs) | Used & maintained |
+| [ARRs](docker-apps/media/arrs) | Maintained only |
 | [Audiobookshelf](docker-apps/media/audiobookshelf) | Maintained only |
 | [Calibre-Web](docker-apps/media/calibre-web) | Maintained only |
-| [Jellyfin](docker-apps/media/jellyfin) | Used & maintained |
+| [Jellyfin](docker-apps/media/jellyfin) | Maintained only |
 | [Plex](docker-apps/media/plex) | Maintained only |
-| [Grafana](docker-apps/monitoring/grafana) | Used & maintained |
+| [Grafana](docker-apps/monitoring/grafana) | Maintained only |
 | [Netdata](docker-apps/monitoring/netdata) | Maintained only |
 | [Uptime Kuma](docker-apps/monitoring/uptime-kuma) | Maintained only |
 | [Pi-hole and dnsproxy](docker-apps/networking/pihole) | Used & maintained |
 | [Technitium](docker-apps/networking/technitium) | Maintained only |
 | [Traefik](docker-apps/networking/traefik) | Used & maintained |
 | [UpSnap](docker-apps/networking/upsnap) | Used & maintained |
-| [Vaultwarden](docker-apps/security/vaultwarden) | Used & maintained |
-| [Immich](docker-apps/storage/immich) | Used & maintained |
+| [Vaultwarden](docker-apps/security/vaultwarden) | Maintained only |
+| [Immich](docker-apps/storage/immich) | Maintained only |
 | [Nextcloud](docker-apps/storage/nextcloud) | Maintained only |
 | [Nextcloud AIO](docker-apps/storage/nextcloud-aio) | Maintained only |
 | [Paperless-ngx](docker-apps/storage/paperless-ngx) | Maintained only |
