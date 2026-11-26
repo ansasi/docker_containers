@@ -1,60 +1,83 @@
+---
+# Restic: backs up a folder of the host to a restic repository on a schedule,
+# with resticker (mazzolino/restic), in its standard layout: one service each
+# for backup, prune and check. One file for every backup: each one is its own
+# Compose project, named after RESTIC_INSTANCE, so several run side by side on
+# one host without colliding:
+#
+#   RESTIC_INSTANCE=hermes WORKDIR=/…/ai docker compose -p hermes-backup up -d
+#
+# The Ansible playbooks (homelab) set the variables; the homelab's app guide
+# says what each backup holds and how to restore it. Where resticker has a
+# default, it is kept; schedules and retention default to its README's example.
+#
+# - WORKDIR is mounted read-only at /data; RESTIC_BACKUP_SOURCES picks folders
+#   under it (default: all of /data).
+# - RESTIC_REPOSITORY is any restic repository; for S3 (AWS or QuObjects) also
+#   AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY. A missing repository is
+#   created on start. RESTIC_SKIP_INIT_CHECK=true lets the containers start
+#   while it is unreachable (a NAS that is off), instead of restarting in a
+#   loop.
+# - backup forgets old snapshots after each run (RESTIC_FORGET_ARGS); prune
+#   frees their data on its own schedule; check verifies the repository.
+#   Schedules are resticker's six-field cron (seconds first); give each its
+#   own time, as restic's locks let only one of them write at once.
+# - RESTIC_PRE_COMMANDS and RESTIC_POST_COMMANDS_EXIT run before the backup
+#   and after it, the second one also when the backup fails. A failing
+#   pre-command ends the run and leaves resticker 1.8.2's lock file behind, so
+#   every later backup is skipped until the container restarts: write
+#   pre-commands that cannot fail.
+# - Files are copied while their app runs; the Docker socket is not mounted.
+
+x-restic-env: &restic-env
+  RESTIC_REPOSITORY: "${RESTIC_REPOSITORY}"
+  RESTIC_PASSWORD: "${RESTIC_PASSWORD}"
+  AWS_ACCESS_KEY_ID: "${AWS_ACCESS_KEY_ID:-}"
+  AWS_SECRET_ACCESS_KEY: "${AWS_SECRET_ACCESS_KEY:-}"
+  SKIP_INIT_CHECK: "${RESTIC_SKIP_INIT_CHECK:-false}"
+  TZ: "${TZ:-Europe/Zurich}"
+
 services:
-  restic-backup:
-    image: mazzolino/restic:1.8
-    container_name: restic
-    # hostname: ${HOSTNAME}
+  backup:
+    container_name: ${RESTIC_INSTANCE}-backup
+    image: mazzolino/restic:1.8.2
+    # restic records the hostname in each snapshot; a fixed one keeps them in
+    # one series across container recreations.
+    hostname: ${RESTIC_INSTANCE}-backup
     environment:
-      RUN_ON_STARTUP: "true" # optional
-      BACKUP_CRON: "0 */12 * * *" # this is twice daily, i.e., every 12 hours
-      RESTIC_REPOSITORY: /restic
-      RESTIC_PASSWORD: ${RESTIC_PASSWORD}
-      RESTIC_BACKUP_SOURCES: /mnt/volumes
-      RESTIC_COMPRESSION: auto 
-      RESTIC_BACKUP_ARGS: >-
-        --tag restic-qnap
-        --verbose
-      RESTIC_FORGET_ARGS: >-
-        --keep-last 10
-        --keep-daily 7
-        --keep-weekly 5
-        --keep-monthly 12
-      TZ: Europe/Zurich
+      <<: *restic-env
+      BACKUP_CRON: "${RESTIC_BACKUP_CRON:-0 30 3 * * *}"
+      RESTIC_BACKUP_SOURCES: "${RESTIC_BACKUP_SOURCES:-/data}"
+      RESTIC_BACKUP_ARGS: "${RESTIC_BACKUP_ARGS:-}"
+      RESTIC_FORGET_ARGS: "${RESTIC_FORGET_ARGS:---keep-last 10 --keep-daily 7 --keep-weekly 5 --keep-monthly 12}"
+      PRE_COMMANDS: "${RESTIC_PRE_COMMANDS:-}"
+      POST_COMMANDS_EXIT: "${RESTIC_POST_COMMANDS_EXIT:-}"
     volumes:
-    # For local storage - uncomment below
-      # - ${WORKING_DIR}/restic:/restic
-      # - ${WORKING_DIR}/restic-restore:/tmp-for-restore
-    # For NAS storage
-      - ${NAS_STORAGE_LOCATION}/restic_backup/restic:/restic # change the left hand side to where you want to store the backups
-      - ${NAS_STORAGE_LOCATION}/restic_backup/tmp-for-restore:/tmp-for-restore # USE THIS FOLDER FOR RESTORE - CAN VIEW EACH CONTAINER
-    # The data of your existing containers (i.e., all of the containers in here /docker)
-      - ${WORKDIR_TO_BACKUP:-/home/ubuntu/}:/mnt/volumes:ro
+      - ${WORKDIR}:/data:ro
+    restart: unless-stopped
     security_opt:
       - no-new-privileges:true
 
-  restic-prune:
-    image: mazzolino/restic:1.8
-    container_name: restic-prune
-    # hostname: ${HOSTNAME}
+  prune:
+    container_name: ${RESTIC_INSTANCE}-prune
+    image: mazzolino/restic:1.8.2
+    hostname: ${RESTIC_INSTANCE}-backup
     environment:
-      RUN_ON_STARTUP: "true"
-      PRUNE_CRON: "0 0 4 * * *"
-      RESTIC_REPOSITORY: /restic
-      RESTIC_PASSWORD: ${RESTIC_PASSWORD}
-      TZ: Europe/London
+      <<: *restic-env
+      PRUNE_CRON: "${RESTIC_PRUNE_CRON:-0 0 4 * * *}"
+      RESTIC_PRUNE_ARGS: "${RESTIC_PRUNE_ARGS:-}"
+    restart: unless-stopped
     security_opt:
       - no-new-privileges:true
 
-  restic-check:
-    image: mazzolino/restic:1.8
-    container_name: restic-check
-    # hostname: ${HOSTNAME}
+  check:
+    container_name: ${RESTIC_INSTANCE}-check
+    image: mazzolino/restic:1.8.2
+    hostname: ${RESTIC_INSTANCE}-backup
     environment:
-      RUN_ON_STARTUP: "false"
-      CHECK_CRON: "0 15 5 * * *"
-      RESTIC_CHECK_ARGS: >-
-        --read-data-subset=10%
-      RESTIC_REPOSITORY: /restic
-      RESTIC_PASSWORD: ${RESTIC_PASSWORD}
-      TZ: Europe/London
+      <<: *restic-env
+      CHECK_CRON: "${RESTIC_CHECK_CRON:-0 15 5 * * *}"
+      RESTIC_CHECK_ARGS: "${RESTIC_CHECK_ARGS:---read-data-subset=10%}"
+    restart: unless-stopped
     security_opt:
       - no-new-privileges:true
