@@ -2,9 +2,18 @@
 
 Scheduled [restic](https://restic.net/) backups of a host folder, with
 [resticker](https://github.com/djmaze/resticker) (`mazzolino/restic`). One
-Compose project per backup (`-p <name>`, `RESTIC_INSTANCE`); the variables are
-listed at the top of `docker-compose.yaml`. Where each backup runs, what it
-holds and its restore drill are in the homelab repository's app guides.
+Compose project per backup (`-p <name>`, `RESTIC_INSTANCE`), with resticker's
+three services: `<instance>-backup`, `<instance>-prune` and `<instance>-check`.
+The variables are listed at the top of `docker-compose.yaml`. Where each backup
+runs, what it holds and its restore drill are in the homelab repository's app
+guides.
+
+A backup that runs `docker` in its pre/post commands (to stop an app while it
+is copied) adds the socket with the second file:
+
+```bash
+docker compose -p <name> -f docker-compose.yaml -f docker-compose.docker-socket.yaml up -d
+```
 
 ## Restore
 

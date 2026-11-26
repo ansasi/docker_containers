@@ -1,0 +1,9 @@
+---
+# Add to docker-compose.yaml (docker compose -f docker-compose.yaml -f
+# docker-compose.docker-socket.yaml) for a backup whose pre/post commands run
+# docker, for example to stop an app while it is copied. The socket is root on
+# the host: only the backup service gets it.
+services:
+  backup:
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock

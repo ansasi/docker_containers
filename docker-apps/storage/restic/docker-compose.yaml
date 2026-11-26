@@ -1,32 +1,43 @@
 ---
 # Restic: backs up a folder of the host to a restic repository on a schedule,
-# with resticker (mazzolino/restic). One file for every backup: each one is
-# its own Compose project, named after RESTIC_INSTANCE, so several run side by
-# side on one host without colliding:
+# with resticker (mazzolino/restic), in its standard layout: one service each
+# for backup, prune and check. One file for every backup: each one is its own
+# Compose project, named after RESTIC_INSTANCE, so several run side by side on
+# one host without colliding:
 #
 #   RESTIC_INSTANCE=hermes WORKDIR=/…/ai docker compose -p hermes-backup up -d
 #
 # The Ansible playbooks (homelab) set the variables; the homelab's app guide
-# says what each backup holds and how to restore it.
+# says what each backup holds and how to restore it. Where resticker has a
+# default, it is kept; schedules and retention default to its README's example.
 #
 # - WORKDIR is mounted read-only at /data; RESTIC_BACKUP_SOURCES picks folders
 #   under it (default: all of /data).
 # - RESTIC_REPOSITORY is any restic repository; for S3 (AWS or QuObjects) also
-#   AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY. The repository is created on
-#   the first backup if it does not exist yet. SKIP_INIT_CHECK lets the
-#   containers start while it is unreachable, instead of restarting in a loop.
-# - After each backup, old snapshots are forgotten and pruned
-#   (RESTIC_FORGET_ARGS). The check service reads part of the data weekly.
+#   AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY. A missing repository is
+#   created on start. RESTIC_SKIP_INIT_CHECK=true lets the containers start
+#   while it is unreachable (a NAS that is off), instead of restarting in a
+#   loop.
+# - backup forgets old snapshots after each run (RESTIC_FORGET_ARGS); prune
+#   frees their data on its own schedule; check verifies the repository.
+#   Schedules are resticker's six-field cron (seconds first); give each its
+#   own time, as restic's locks let only one of them write at once.
 # - RESTIC_PRE_COMMANDS and RESTIC_POST_COMMANDS_EXIT run before the backup
-#   and after it, the second one also when the backup fails: for example to
-#   stop an app whose database must not be copied while it writes. A failing
+#   and after it, the second one also when the backup fails. A failing
 #   pre-command ends the run and leaves resticker 1.8.2's lock file behind, so
 #   every later backup is skipped until the container restarts: write
 #   pre-commands that cannot fail.
-# - docker commands in them need the Docker socket, which is root on the host:
-#   set RESTIC_DOCKER_SOCKET=/var/run/docker.sock only for a backup that needs
-#   it. Unset, /dev/null is mounted in its place and docker cannot reach the
-#   host.
+# - docker commands in them (to stop an app whose database must not be copied
+#   while it writes) need the Docker socket, which is root on the host: add
+#   docker-compose.docker-socket.yaml for that backup only.
+
+x-restic-env: &restic-env
+  RESTIC_REPOSITORY: "${RESTIC_REPOSITORY}"
+  RESTIC_PASSWORD: "${RESTIC_PASSWORD}"
+  AWS_ACCESS_KEY_ID: "${AWS_ACCESS_KEY_ID:-}"
+  AWS_SECRET_ACCESS_KEY: "${AWS_SECRET_ACCESS_KEY:-}"
+  SKIP_INIT_CHECK: "${RESTIC_SKIP_INIT_CHECK:-false}"
+  TZ: "${TZ:-Europe/Zurich}"
 
 services:
   backup:
@@ -36,38 +47,39 @@ services:
     # one series across container recreations.
     hostname: ${RESTIC_INSTANCE}-backup
     environment:
-      BACKUP_CRON: "${RESTIC_BACKUP_CRON:-0 0 4 * * *}"
-      SKIP_INIT_CHECK: "true"
-      RESTIC_REPOSITORY: "${RESTIC_REPOSITORY}"
-      RESTIC_PASSWORD: "${RESTIC_PASSWORD}"
-      AWS_ACCESS_KEY_ID: "${AWS_ACCESS_KEY_ID:-}"
-      AWS_SECRET_ACCESS_KEY: "${AWS_SECRET_ACCESS_KEY:-}"
+      <<: *restic-env
+      BACKUP_CRON: "${RESTIC_BACKUP_CRON:-0 30 3 * * *}"
       RESTIC_BACKUP_SOURCES: "${RESTIC_BACKUP_SOURCES:-/data}"
-      RESTIC_BACKUP_ARGS: "${RESTIC_BACKUP_ARGS:---exclude-caches}"
-      RESTIC_FORGET_ARGS: "${RESTIC_FORGET_ARGS:---prune --keep-daily 7 --keep-weekly 4 --keep-monthly 6}"
+      RESTIC_BACKUP_ARGS: "${RESTIC_BACKUP_ARGS:-}"
+      RESTIC_FORGET_ARGS: "${RESTIC_FORGET_ARGS:---keep-last 10 --keep-daily 7 --keep-weekly 5 --keep-monthly 12}"
       PRE_COMMANDS: "${RESTIC_PRE_COMMANDS:-}"
       POST_COMMANDS_EXIT: "${RESTIC_POST_COMMANDS_EXIT:-}"
-      TZ: "${TZ:-Europe/Zurich}"
     volumes:
       - ${WORKDIR}:/data:ro
-      - ${RESTIC_DOCKER_SOCKET:-/dev/null}:/var/run/docker.sock
+    restart: unless-stopped
+    security_opt:
+      - no-new-privileges:true
+
+  prune:
+    container_name: ${RESTIC_INSTANCE}-prune
+    image: mazzolino/restic:1.8.2
+    hostname: ${RESTIC_INSTANCE}-backup
+    environment:
+      <<: *restic-env
+      PRUNE_CRON: "${RESTIC_PRUNE_CRON:-0 0 4 * * *}"
+      RESTIC_PRUNE_ARGS: "${RESTIC_PRUNE_ARGS:-}"
     restart: unless-stopped
     security_opt:
       - no-new-privileges:true
 
   check:
-    container_name: ${RESTIC_INSTANCE}-backup-check
+    container_name: ${RESTIC_INSTANCE}-check
     image: mazzolino/restic:1.8.2
     hostname: ${RESTIC_INSTANCE}-backup
     environment:
-      CHECK_CRON: "${RESTIC_CHECK_CRON:-0 0 5 * * 0}"
-      SKIP_INIT_CHECK: "true"
+      <<: *restic-env
+      CHECK_CRON: "${RESTIC_CHECK_CRON:-0 15 5 * * *}"
       RESTIC_CHECK_ARGS: "${RESTIC_CHECK_ARGS:---read-data-subset=10%}"
-      RESTIC_REPOSITORY: "${RESTIC_REPOSITORY}"
-      RESTIC_PASSWORD: "${RESTIC_PASSWORD}"
-      AWS_ACCESS_KEY_ID: "${AWS_ACCESS_KEY_ID:-}"
-      AWS_SECRET_ACCESS_KEY: "${AWS_SECRET_ACCESS_KEY:-}"
-      TZ: "${TZ:-Europe/Zurich}"
     restart: unless-stopped
     security_opt:
       - no-new-privileges:true
