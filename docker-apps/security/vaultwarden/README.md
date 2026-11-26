@@ -1,8 +1,9 @@
 # Vaultwarden
 
-Bitwarden-compatible password manager. On the homelab it runs on its own VM
-(`vault`), for the homelab's secrets only; how that VM is built and backed up is
-in the homelab repo (`docs/vaultwarden.md`).
+Bitwarden-compatible password manager. The homelab ran it on its own VM
+(`vault`), for the homelab's secrets only, until that VM was removed on
+2026-10-31 (homelab `DECISIONS.md`); the stack is not deployed now and is kept
+working for a Docker host.
 
 ## Configuration
 
