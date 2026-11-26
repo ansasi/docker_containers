@@ -27,9 +27,7 @@
 #   pre-command ends the run and leaves resticker 1.8.2's lock file behind, so
 #   every later backup is skipped until the container restarts: write
 #   pre-commands that cannot fail.
-# - docker commands in them (to stop an app whose database must not be copied
-#   while it writes) need the Docker socket, which is root on the host: add
-#   docker-compose.docker-socket.yaml for that backup only.
+# - Files are copied while their app runs; the Docker socket is not mounted.
 
 x-restic-env: &restic-env
   RESTIC_REPOSITORY: "${RESTIC_REPOSITORY}"

@@ -8,13 +8,6 @@ The variables are listed at the top of `docker-compose.yaml`. Where each backup
 runs, what it holds and its restore drill are in the homelab repository's app
 guides.
 
-A backup that runs `docker` in its pre/post commands (to stop an app while it
-is copied) adds the socket with the second file:
-
-```bash
-docker compose -p <name> -f docker-compose.yaml -f docker-compose.docker-socket.yaml up -d
-```
-
 ## Restore
 
 From the backup container, with the repository and its password already set:
