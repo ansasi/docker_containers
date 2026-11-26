@@ -1,18 +1,22 @@
 ---
 # Hermes backup: restic copies the Hermes agents' data folders to an S3
-# repository every night, with resticker (mazzolino/restic).
+# repository (QuObjects on the NAS, in the homelab) every day, with resticker
+# (mazzolino/restic).
 #
 # The agents keep their conversations in SQLite (state.db), and a copy taken
 # while an agent writes can come back torn. So the backup stops the agents
-# first (PRE_COMMANDS) and always starts them again afterwards, also when the
-# backup fails (POST_COMMANDS_EXIT). That needs the Docker socket, which is
-# root on the host: this container runs restic and nothing else, and has no
-# Traefik route or published port.
+# first and always starts them again afterwards, also when the backup fails
+# (POST_COMMANDS_EXIT). That needs the Docker socket, which is root on the
+# host: this container runs restic and nothing else, and has no Traefik route
+# or published port.
+#
+# Before stopping anything it checks that the S3 server answers
+# (HERMES_BACKUP_CHECK_URL): with a NAS that is off, the agents stay up and
+# that day's backup fails. SKIP_INIT_CHECK lets the containers start while the
+# server is down, instead of restarting in a loop.
 #
 # The repository is created on the first run if it does not exist yet. Old
-# snapshots are forgotten and pruned after each backup; the bucket's own
-# versioning is what protects the history from this container's key
-# (homelab: docs/hermes.md, Data and backups).
+# snapshots are forgotten and pruned after each backup.
 #
 # WORKDIR is the folder that holds the agents' data folders, mounted read-only.
 # The Ansible playbook (homelab: ansible/playbooks/ai.yml) sets the variables.
@@ -26,6 +30,7 @@ services:
     hostname: hermes-backup
     environment:
       BACKUP_CRON: "${HERMES_BACKUP_CRON:-0 0 4 * * *}"
+      SKIP_INIT_CHECK: "true"
       RESTIC_REPOSITORY: "${RESTIC_REPOSITORY}"
       RESTIC_PASSWORD: "${RESTIC_PASSWORD}"
       AWS_ACCESS_KEY_ID: "${AWS_ACCESS_KEY_ID}"
@@ -35,7 +40,15 @@ services:
       RESTIC_BACKUP_ARGS: "--exclude-caches"
       RESTIC_FORGET_ARGS: "--prune --keep-daily 7 --keep-weekly 4 --keep-monthly 6"
       # Space-separated container names, e.g. "hermes-angel hermes-marta".
-      PRE_COMMANDS: "docker stop ${HERMES_BACKUP_CONTAINERS}"
+      # Never let this fail: resticker 1.8.2 then keeps its lock file and skips
+      # every later backup until the container restarts. With the server down,
+      # the agents stay up and restic's own run fails and logs it.
+      # curl without -f: any HTTP answer means the server is up.
+      PRE_COMMANDS: >-
+        if curl -s -o /dev/null --max-time 10 ${HERMES_BACKUP_CHECK_URL};
+        then docker stop ${HERMES_BACKUP_CONTAINERS} || echo "Could not stop every agent";
+        else echo "S3 server not answering, agents left running";
+        fi
       POST_COMMANDS_EXIT: "docker start ${HERMES_BACKUP_CONTAINERS}"
       TZ: "${TZ:-Europe/Zurich}"
     volumes:
@@ -50,8 +63,9 @@ services:
     image: mazzolino/restic:1.8.2
     hostname: hermes-backup
     environment:
-      # Sundays at 05:00, after the night's backup; reads a tenth of the data.
+      # Weekly, after a backup; reads a tenth of the data.
       CHECK_CRON: "${HERMES_BACKUP_CHECK_CRON:-0 0 5 * * 0}"
+      SKIP_INIT_CHECK: "true"
       RESTIC_CHECK_ARGS: "--read-data-subset=10%"
       RESTIC_REPOSITORY: "${RESTIC_REPOSITORY}"
       RESTIC_PASSWORD: "${RESTIC_PASSWORD}"
