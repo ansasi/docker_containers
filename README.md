@@ -20,7 +20,6 @@ is maintained:
 | Stack | Repository status |
 |---|---|
 | [Hermes](docker-apps/ai/hermes) | Used & maintained |
-| [Hermes backup](docker-apps/ai/hermes-backup) | Used & maintained |
 | [Ollama](docker-apps/ai/ollama) | Maintained only |
 | [Open WebUI](docker-apps/ai/openwebui) | Maintained only |
 | [Paperclip](docker-apps/ai/paperclip) | Used & maintained |
@@ -46,7 +45,7 @@ is maintained:
 | [Nextcloud](docker-apps/storage/nextcloud) | Maintained only |
 | [Nextcloud AIO](docker-apps/storage/nextcloud-aio) | Maintained only |
 | [Paperless-ngx](docker-apps/storage/paperless-ngx) | Maintained only |
-| [Restic](docker-apps/storage/restic) | Maintained only |
+| [Restic](docker-apps/storage/restic) | Used & maintained |
 
 This matrix sets maintenance scope only. The deployment inventory and all
 homelab-specific configuration and operating notes belong in the

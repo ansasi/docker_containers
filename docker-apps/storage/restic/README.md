@@ -1,20 +1,22 @@
 # Restic
 
-Backup system.
+Scheduled [restic](https://restic.net/) backups of a host folder, with
+[resticker](https://github.com/djmaze/resticker) (`mazzolino/restic`). One
+Compose project per backup (`-p <name>`, `RESTIC_INSTANCE`); the variables are
+listed at the top of `docker-compose.yaml`. Where each backup runs, what it
+holds and its restore drill are in the homelab repository's app guides.
 
-## How to restore from a backup
+## Restore
 
-1. SSH into the container.
-2. List the snapshots:
-
-    ```bash
-    restic snapshots
-    ```
-
-3. Restore from an specific snapshot ID:
+From the backup container, with the repository and its password already set:
 
 ```bash
-restic restore 79766175 --target /tmp-for-restore
+docker exec <instance>-backup restic snapshots
+docker exec <instance>-backup restic restore latest --target /tmp/restore
 ```
+
+`/data` is mounted read-only, so restore elsewhere (inside the container, or
+on another machine with restic and the same variables) and move the files
+into place with the app stopped.
 
 [Official documentation](https://restic.readthedocs.io/en/latest/050_restore.html)
